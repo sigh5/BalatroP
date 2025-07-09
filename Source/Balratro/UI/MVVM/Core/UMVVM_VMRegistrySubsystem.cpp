@@ -6,6 +6,8 @@
 #include "MVVMViewModelBase.h"
 
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
+#include "UI/MVVM/ViewModel/VM_JockerSlot.h"
+#include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
 
 void UUMVVM_VMRegistrySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -21,6 +23,8 @@ void UUMVVM_VMRegistrySubsystem::RegisterViewModels()
 	const auto MVVMCollection = GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
 
 	AddViewModel(MVVMCollection, UVM_MainMenu::StaticClass(), FName("VM_MainMenu"));
+	AddViewModel(MVVMCollection, UVM_JockerSlot::StaticClass(), FName("VM_JockerSlot"));
+	AddViewModel(MVVMCollection, UVM_HandRankingCount::StaticClass(), FName("VM_HandRankingCount"));
 }
 
 void UUMVVM_VMRegistrySubsystem::AddViewModel(UMVVMViewModelCollectionObject* VMCollection, const TSubclassOf<UMVVMViewModelBase>& ViewModelClass,
