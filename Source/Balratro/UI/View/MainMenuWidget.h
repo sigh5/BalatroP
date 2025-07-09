@@ -23,7 +23,17 @@ protected:
 private:
     void OnFieldChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+    void OnFieldTextChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
+
     UPROPERTY(meta = (BindWidget))
-    class UProgressBar* HealthProgressBar;
+    TObjectPtr<class UProgressBar> HealthProgressBar;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UTextBlock> TestText;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> BackGroundImage;
+
 
 };
