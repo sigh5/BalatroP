@@ -24,6 +24,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	int32 UseNum;
+
+	UPROPERTY(BlueprintReadOnly)
+	uint8 isVisible : 1;
 };
 
 
@@ -46,15 +49,19 @@ public:
 		HandRankingNum = InHandRanking;
 	}
 
-	void AddHandRankingNum(const FText& Name)
+	void AddHandRankingNum(const FText& Name, bool isVisible)
 	{
 		auto HandRanking = NewObject<UHandRanking_Info>(this);
 		HandRanking->Name = Name;
 		HandRanking->ImageIndex = 0;
 		HandRanking->UseNum = 0;
-
+		HandRanking->isVisible = isVisible;
 		HandRankingNum.Add(HandRanking);
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(HandRankingNum);
+		
+		/*if (isVisible == true)
+			HandRankingNum.Insert(HandRanking, 0);
+		else*/
 	}
 
 

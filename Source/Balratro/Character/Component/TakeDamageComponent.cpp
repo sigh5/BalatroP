@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Character/TakeDamageComponent.h"
+#include "Character/Component/TakeDamageComponent.h"
 
 #include <TimerManager.h>
 #include <GameFramework/Actor.h>

@@ -5,8 +5,7 @@
 
 #include <Components/TextBlock.h>
 #include "Components\Button.h"
-
-#include "UI/View/HandRankingListView.h"
+#include "Components/ListView.h"
 
 #include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
 
@@ -25,24 +24,31 @@ void UHandRankingView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_HandRankingCount::FFieldNotificationClassDescriptor::HandRankingNum,
 		FFieldValueChangedDelegate::CreateUObject(this, &UHandRankingView::VM_FieldChanged_Status));
 
-	//VMInst->SetRoyalFlush(RoyalFlushNum);
 }
 
 void UHandRankingView::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	AddButton->OnClicked.AddDynamic(this, &UHandRankingView::AddClicked);
 }
 
 void UHandRankingView::VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInstance = Cast<UVM_HandRankingCount>(Object);
-	//RoyalFulshNum->SetText(FText::AsNumber(VMInstance->GetRoyalFlush()));
+	HandRankingListView->SetListItems(VMInstance->GetHandRankingNum());
 }
 
 
 void UHandRankingView::AddClicked()
 {
 	const auto VMInstance = TryGetViewModel<UVM_HandRankingCount>();
+
+	FString StringValue = TEXT("Testttttt");
+	FText TextValue = FText::FromString(StringValue);
+
+	VMInstance->AddHandRankingNum(TextValue, true);
+
+
 	//VMInstance->SetRoyalFlush(RoyalFlushNum++);
 }

@@ -13,4 +13,5 @@ class BALRATRO_API AMyPawn : public APawn
 
 public:
 	AMyPawn();
+
 };

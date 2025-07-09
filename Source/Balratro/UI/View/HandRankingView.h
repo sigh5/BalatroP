@@ -40,8 +40,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UListView> HandRankingListView;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> AddButton;
 
 	UPROPERTY()
 	int RoyalFlushNum = 0;
+
 
 };
