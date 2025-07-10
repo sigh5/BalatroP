@@ -16,16 +16,40 @@ class BALRATRO_API UHandRankingListView : public UUserWidget, public IUserObject
 	GENERATED_BODY()
 	
 protected:
+	virtual void NativeConstruct() override;
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
+
+	UFUNCTION()
+	void OnButtonHovered();
+
+	UFUNCTION()
+	void OnButtonUnhovered();
+
+	/*UPROPERTY(BlueprintReadWrite, meta = (AllowAcesss = "true"))
+	TObjectPtr<class UToolTipWidget> HandRankingToolTipWidget;*/
 
 private:
 	void UpdateVisuals();
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> LevelText;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> NameTextBlock;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> ChipText;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> drainageText;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> NumTextBlock;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> InfoButton;
+
+	
 
 	UPROPERTY()
 	TObjectPtr<class UHandRanking_Info> MemberData;

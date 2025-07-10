@@ -9,6 +9,9 @@
 
 #include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
 
+#include "Singleton\BBGameSingleton.h"
+
+
 UHandRankingView::UHandRankingView()
 {
 	ViewModelClass = UVM_HandRankingCount::StaticClass();
@@ -24,13 +27,14 @@ void UHandRankingView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_HandRankingCount::FFieldNotificationClassDescriptor::HandRankingNum,
 		FFieldValueChangedDelegate::CreateUObject(this, &UHandRankingView::VM_FieldChanged_Status));
 
+	SetToolTipWidget();
 }
 
 void UHandRankingView::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	AddButton->OnClicked.AddDynamic(this, &UHandRankingView::AddClicked);
+	//AddButton->OnClicked.AddDynamic(this, &UHandRankingView::AddClicked);
 }
 
 void UHandRankingView::VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -39,16 +43,23 @@ void UHandRankingView::VM_FieldChanged_Status(UObject* Object, UE::FieldNotifica
 	HandRankingListView->SetListItems(VMInstance->GetHandRankingNum());
 }
 
-
-void UHandRankingView::AddClicked()
+void UHandRankingView::SetToolTipWidget()
 {
-	const auto VMInstance = TryGetViewModel<UVM_HandRankingCount>();
+	UBBGameSingleton::Get().MyToolTipWidget = HandRankingToolTipWidget;
 
-	FString StringValue = TEXT("Testttttt");
-	FText TextValue = FText::FromString(StringValue);
-
-	VMInstance->AddHandRankingNum(TextValue, true);
-
-
-	//VMInstance->SetRoyalFlush(RoyalFlushNum++);
+	
 }
+
+
+//void UHandRankingView::AddClicked()
+//{
+//	const auto VMInstance = TryGetViewModel<UVM_HandRankingCount>();
+//
+//	FString StringValue = TEXT("Testttttt");
+//	FText TextValue = FText::FromString(StringValue);
+//
+//	//VMInstance->AddHandRankingNum(TextValue, true);
+//
+//
+//	//VMInstance->SetRoyalFlush(RoyalFlushNum++);
+//}

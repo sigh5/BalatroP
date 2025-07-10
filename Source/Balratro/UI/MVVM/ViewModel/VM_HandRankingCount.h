@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
+#include "GameData/HandRankingStat.h"
 #include "VM_HandRankingCount.generated.h"
 
 
@@ -14,21 +15,11 @@ class UHandRanking_Info :public UObject
 
 public:
 	UPROPERTY(BlueprintReadOnly)
-	FText Name;
+	FHandRankingStat Info;
 
 	UPROPERTY(BlueprintReadOnly)
-	int32 ImageIndex;
-
-	UPROPERTY(BlueprintReadOnly)
-	FGuid ID = FGuid();
-
-	UPROPERTY(BlueprintReadOnly)
-	int32 UseNum;
-
-	UPROPERTY(BlueprintReadOnly)
-	uint8 isVisible : 1;
+	FName	_Name;
 };
-
 
 /**
  * 
@@ -49,19 +40,23 @@ public:
 		HandRankingNum = InHandRanking;
 	}
 
-	void AddHandRankingNum(const FText& Name, bool isVisible)
+	void AddHandRankingNum(const FName& Name, const FHandRankingStat& Info)
 	{
 		auto HandRanking = NewObject<UHandRanking_Info>(this);
-		HandRanking->Name = Name;
-		HandRanking->ImageIndex = 0;
-		HandRanking->UseNum = 0;
-		HandRanking->isVisible = isVisible;
+		HandRanking->Info = Info;
+		HandRanking->_Name = Name;
 		HandRankingNum.Add(HandRanking);
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(HandRankingNum);
-		
-		/*if (isVisible == true)
-			HandRankingNum.Insert(HandRanking, 0);
-		else*/
+	}
+
+	void SetShowInfoImage(int32 InCurrentHealth)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(ShowInfoImage, InCurrentHealth);
+	}
+
+	int32 GetShowInfoImage() const
+	{
+		return ShowInfoImage;
 	}
 
 
@@ -69,4 +64,6 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<UHandRanking_Info*> HandRankingNum;
 
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	int32 ShowInfoImage;
 };

@@ -9,6 +9,7 @@
 
 #include "Core/MyPlayerState.h"
 #include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
+#include "Singleton/BBGameSingleton.h"
 
 // Called when the game starts
 void UHandRankingComponent::BeginPlay()
@@ -17,18 +18,13 @@ void UHandRankingComponent::BeginPlay()
 
 	auto PlayerState = GetPlayerState();
 	auto VM = GetVMHandRanking();
+	auto& Sigleton = UBBGameSingleton::Get();
 
-	FString StringValue = TEXT("RoyalFlush");
-	FText TextValue = FText::FromString(StringValue);
+	FHandRankingStat* RoyalFlushHandStat = Sigleton.GetHandRankingStat(FName(TEXT("RoyalFlush")));
+	VM->AddHandRankingNum(FName(TEXT("RoyalFlush")),*RoyalFlushHandStat);
 
-	VM->AddHandRankingNum(TextValue, true);
-
-
-
-	//VM->SetMaxHealth(NewMaxHealth);
-
-
-
+	FHandRankingStat* FlushandStat = Sigleton.GetHandRankingStat(FName(TEXT("Flush")));
+	VM->AddHandRankingNum(FName(TEXT("Flush")), *FlushandStat);
 	
 }
 

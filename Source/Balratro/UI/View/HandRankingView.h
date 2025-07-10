@@ -23,25 +23,18 @@ protected:
 
 	void VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
-	UFUNCTION()
-	void AddClicked();
+	/*UFUNCTION()
+	void AddClicked();*/
 
+	void SetToolTipWidget();
 
 private:
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UImage> RoyalFlushImage;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UTextBlock> RoyalFulshName;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UTextBlock> RoyalFulshNum;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UListView> HandRankingListView;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UButton> AddButton;
+	TObjectPtr<class UToolTipWidget> HandRankingToolTipWidget;
 
 	UPROPERTY()
 	int RoyalFlushNum = 0;
