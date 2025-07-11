@@ -28,10 +28,6 @@ public:
 		return HandRankingStat;
 	}
 
-	UPROPERTY()
-	TObjectPtr<class UToolTipWidget> MyToolTipWidget;
-
-
 
 	UPROPERTY()
 	int32 HandRankingMaxNum;

@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Interface/WidgetPosMoveInterface.h"
 #include "ToolTipWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BALRATRO_API UToolTipWidget : public UUserWidget
+class BALRATRO_API UToolTipWidget : public UUserWidget , public IWidgetPosMoveInterface
 {
 	GENERATED_BODY()
 	
@@ -19,6 +20,8 @@ public:
 
 public:
 	virtual void NativeConstruct() override;
+
+	virtual void SetWidgetPos(FVector2D& Pos) override;
 
 
 private:

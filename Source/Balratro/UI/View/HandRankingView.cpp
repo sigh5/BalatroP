@@ -8,9 +8,7 @@
 #include "Components/ListView.h"
 
 #include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
-
-#include "Singleton\BBGameSingleton.h"
-
+#include "Interface/WidgetPosMoveInterface.h"
 
 UHandRankingView::UHandRankingView()
 {
@@ -27,14 +25,13 @@ void UHandRankingView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_HandRankingCount::FFieldNotificationClassDescriptor::HandRankingNum,
 		FFieldValueChangedDelegate::CreateUObject(this, &UHandRankingView::VM_FieldChanged_Status));
 
-	SetToolTipWidget();
+	VMInst->AddFieldValueChangedDelegate(UVM_HandRankingCount::FFieldNotificationClassDescriptor::WidgetPos,
+		FFieldValueChangedDelegate::CreateUObject(this, &UHandRankingView::VM_FieldChanged_WidgetPos));
 }
 
 void UHandRankingView::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	//AddButton->OnClicked.AddDynamic(this, &UHandRankingView::AddClicked);
 }
 
 void UHandRankingView::VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -43,23 +40,14 @@ void UHandRankingView::VM_FieldChanged_Status(UObject* Object, UE::FieldNotifica
 	HandRankingListView->SetListItems(VMInstance->GetHandRankingNum());
 }
 
-void UHandRankingView::SetToolTipWidget()
+void UHandRankingView::VM_FieldChanged_WidgetPos(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
-	UBBGameSingleton::Get().MyToolTipWidget = HandRankingToolTipWidget;
+	const auto VMInstance = Cast<UVM_HandRankingCount>(Object);
 
-	
+	IWidgetPosMoveInterface* TooltipView = Cast<IWidgetPosMoveInterface>(HandRankingToolTipWidget);
+	if (TooltipView)
+	{
+		FVector2D WidgetPos = VMInstance->GetWidgetPos();
+		TooltipView->SetWidgetPos(WidgetPos);
+	}
 }
-
-
-//void UHandRankingView::AddClicked()
-//{
-//	const auto VMInstance = TryGetViewModel<UVM_HandRankingCount>();
-//
-//	FString StringValue = TEXT("Testttttt");
-//	FText TextValue = FText::FromString(StringValue);
-//
-//	//VMInstance->AddHandRankingNum(TextValue, true);
-//
-//
-//	//VMInstance->SetRoyalFlush(RoyalFlushNum++);
-//}

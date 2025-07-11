@@ -22,19 +22,15 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 	void VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_WidgetPos(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
-	/*UFUNCTION()
-	void AddClicked();*/
-
-	void SetToolTipWidget();
 
 private:
-
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UListView> HandRankingListView;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UToolTipWidget> HandRankingToolTipWidget;
+	TObjectPtr<class UUserWidget> HandRankingToolTipWidget;
 
 	UPROPERTY()
 	int RoyalFlushNum = 0;

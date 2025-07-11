@@ -6,11 +6,12 @@
 #include <Components/TextBlock.h>
 #include <Components/Button.h>
 
-#include <Components/CanvasPanelSlot.h>
-#include "UI/View/ToolTip/ToolTipWidget.h"
+#include <Engine/World.h>
+#include <MVVMGameSubsystem.h>
+#include <MVVMSubsystem.h>
+
 #include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
 
-#include "Singleton\BBGameSingleton.h"
 
 void UHandRankingListView::NativeConstruct()
 {
@@ -18,13 +19,6 @@ void UHandRankingListView::NativeConstruct()
 
 	InfoButton->OnHovered.AddDynamic(this, &UHandRankingListView::OnButtonHovered);
 	InfoButton->OnUnhovered.AddDynamic(this, &UHandRankingListView::OnButtonUnhovered);
-
-	InfoButton->ToolTipWidget = UBBGameSingleton::Get().MyToolTipWidget;
-	
-	auto Temp = UBBGameSingleton::Get().MyToolTipWidget;
-
-
-	Temp->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UHandRankingListView::NativeOnListItemObjectSet(UObject* ListItemObject)
@@ -39,36 +33,36 @@ void UHandRankingListView::NativeOnListItemObjectSet(UObject* ListItemObject)
 
 void UHandRankingListView::OnButtonHovered()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Button: %s Pos: %s"),
-		*GetNameSafe(this),
-		*GetCachedGeometry().GetAbsolutePosition().ToString());
-
-	auto Temp = UBBGameSingleton::Get().MyToolTipWidget;
+	auto VM = GetVMHandRanking();
 
 	FVector2D ViewportSize;
 	GEngine->GameViewport->GetViewportSize(ViewportSize);
 	FVector2D ScreenCenter = ViewportSize * 0.5f;
-
-	// 2. 툴팁 위젯의 크기 구하기
-	FVector2D TooltipSize = Temp->GetDesiredSize();
-
-	// 3. 중앙 정렬을 위한 위치 조정
-	FVector2D AlignedPos = ScreenCenter - TooltipSize * 0.5f;
-
+	
 	FVector2D ButtonPos = GetCachedGeometry().GetAbsolutePosition();
-
 	ScreenCenter.Y = ButtonPos.Y + 30.f;
 
-	Temp->SetRenderTranslation(ScreenCenter);
-
-	Temp->SetVisibility(ESlateVisibility::Visible);
+	VM->SetWidgetPos(ScreenCenter);
 }
 
 void UHandRankingListView::OnButtonUnhovered()
 {
-	//InfoButton->ToolTipWidget->SetVisibility(ESlateVisibility::Hidden);
-	auto Temp = UBBGameSingleton::Get().MyToolTipWidget;
-	Temp->SetVisibility(ESlateVisibility::Hidden);
+	FVector2D ZeroPos = FVector2D::Zero();
+
+	auto VM = GetVMHandRanking();
+	VM->SetWidgetPos(ZeroPos);
+}
+
+UVM_HandRankingCount* UHandRankingListView::GetVMHandRanking()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_HandRankingCount");
+	Context.ContextClass = UVM_HandRankingCount::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_HandRankingCount>(Found);
 }
 
 void UHandRankingListView::UpdateVisuals()

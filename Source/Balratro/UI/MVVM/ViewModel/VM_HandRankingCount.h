@@ -49,14 +49,14 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(HandRankingNum);
 	}
 
-	void SetShowInfoImage(int32 InCurrentHealth)
+	void SetWidgetPos(FVector2D& Pos)
 	{
-		UE_MVVM_SET_PROPERTY_VALUE(ShowInfoImage, InCurrentHealth);
+		UE_MVVM_SET_PROPERTY_VALUE(WidgetPos, Pos);
 	}
 
-	int32 GetShowInfoImage() const
+	const FVector2D& GetWidgetPos() const
 	{
-		return ShowInfoImage;
+		return WidgetPos;
 	}
 
 
@@ -64,6 +64,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<UHandRanking_Info*> HandRankingNum;
 
+
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	int32 ShowInfoImage;
+	FVector2D WidgetPos;
 };

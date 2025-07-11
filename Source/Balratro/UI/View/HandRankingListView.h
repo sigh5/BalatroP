@@ -25,8 +25,7 @@ protected:
 	UFUNCTION()
 	void OnButtonUnhovered();
 
-	/*UPROPERTY(BlueprintReadWrite, meta = (AllowAcesss = "true"))
-	TObjectPtr<class UToolTipWidget> HandRankingToolTipWidget;*/
+	class UVM_HandRankingCount* GetVMHandRanking();
 
 private:
 	void UpdateVisuals();
