@@ -22,5 +22,5 @@ class BALRATRO_API IWidgetPosMoveInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void SetWidgetPos(FVector2D& Pos) = 0;
+	virtual void SetWidgetPos(const FName& _Name, const FVector2D& Pos) = 0;
 };

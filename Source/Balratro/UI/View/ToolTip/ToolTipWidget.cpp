@@ -3,6 +3,9 @@
 
 #include "UI/View/ToolTip/ToolTipWidget.h"
 
+#include "Components/CanvasPanelSlot.h"
+#include "Components/TextBlock.h"
+
 void UToolTipWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -10,7 +13,7 @@ void UToolTipWidget::NativeConstruct()
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UToolTipWidget::SetWidgetPos(FVector2D& Pos)
+void UToolTipWidget::SetWidgetPos(const FName& _Name, const FVector2D& Pos)
 {
 	if (Pos.X == 0 && Pos.Y == 0)
 	{
@@ -18,12 +21,13 @@ void UToolTipWidget::SetWidgetPos(FVector2D& Pos)
 	}
 	else
 	{
-		FVector2D TooltipSize = GetDesiredSize();
-		FVector2D AlignedPos = Pos - TooltipSize * 0.5f;
+		TestText->SetText(FText::FromName(_Name));
 
-		AlignedPos.Y = Pos.Y;
-
-		SetRenderTranslation(AlignedPos);
+		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(this->Slot);
+		if(CanvasSlot)
+		{
+			CanvasSlot->SetPosition(Pos);
+		}
 		SetVisibility(ESlateVisibility::Visible);
 	}
 

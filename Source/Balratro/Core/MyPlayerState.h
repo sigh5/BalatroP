@@ -6,6 +6,16 @@
 #include "GameFramework/PlayerState.h"
 #include "MyPlayerState.generated.h"
 
+UENUM()
+enum class BlindValueType :uint8 
+{
+	BLIND_SKIP = 0,
+	SMALL_BLIND,
+	BIG_BLIND,
+	BOSS_BLIND
+};
+
+
 /**
  * 
  */
@@ -31,4 +41,23 @@ public:
 private:
 	int32 CurrentHealth = 0;
 	int32 MaxHealth = 0;
+
+	int32 RoundCnt = 0;
+	
+	int32 Gold = 0;
+	int32 MaxGold = 0;
+	
+	int32 EntiCnt = 0;
+	
+	int32 MaxHandCount = 0;
+	int32 UseHandCount = 0;
+
+	int32 MaxChuckCount = 0;
+	int32 UseChuckCount = 0;
+
+
+	int32 MaxScore = 0;
+
+
+	BlindValueType CurBlindType;
 };
