@@ -25,7 +25,6 @@ void UHandRankingComponent::BeginPlay()
 
 	FHandRankingStat* FlushandStat = Sigleton.GetHandRankingStat(FName(TEXT("Flush")));
 	VM->AddHandRankingNum(FName(TEXT("Flush")), *FlushandStat);
-	
 }
 
 UVM_HandRankingCount* UHandRankingComponent::GetVMHandRanking()

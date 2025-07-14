@@ -4,10 +4,12 @@
 #include "Character/MyPawn.h"
 #include "Character/Component/TakeDamageComponent.h"
 #include "Character/Component/HandRankingComponent.h"
+#include "Character/Component/PlayerInfoComponent.h"
 
 // Sets default values
 AMyPawn::AMyPawn()
 {
 	const auto DamageComponent = CreateDefaultSubobject<UTakeDamageComponent>("TakeDamage");
 	const auto HandRankingComponent = CreateDefaultSubobject<UHandRankingComponent>("HandRanking");
+	const auto PlayerInfoComponent = CreateDefaultSubobject<UPlayerInfoComponent>("PlayerInfo");
 }
