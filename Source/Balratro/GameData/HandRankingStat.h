@@ -12,7 +12,7 @@ struct FHandRankingStat : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FHandRankingStat() : Level(0), Chip(0), Drainage(0), UseNum(0){}
+	FHandRankingStat() : Level(0), Chip(0), Drainage(0), UseNum(0) , IncreaseChip(0), IncreaseDrainage(0){}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Level;
@@ -26,6 +26,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 UseNum;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 IncreaseChip;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 IncreaseDrainage;
 
 	/*FHandRankingStat operator+(const FHandRankingStat& Other) const
 	{

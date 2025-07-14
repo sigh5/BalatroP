@@ -12,6 +12,9 @@ class BALRATRO_API UPlayerInfoComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+public:
+	int32 Update
+
 protected:
 	virtual void BeginPlay() override;
 
