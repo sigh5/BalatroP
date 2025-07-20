@@ -34,16 +34,6 @@ void UMainMenuWidget::OnFieldChanged(UObject* Object, UE::FieldNotification::FFi
 	
 	FText CurrentHealth = FText::AsNumber(VM->GetCurrentHealth());
 	TestText->SetText(CurrentHealth);
-
-	/*if (VM->GetCurrentHealth() % 2 == 0)
-	{
-		BackGroundImage->SetColorAndOpacity(FColor::Red);
-	}
-	else
-	{
-		BackGroundImage->SetColorAndOpacity(FColor::Green);
-	}*/
-
 }
 
 void UMainMenuWidget::OnFieldTextChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId)

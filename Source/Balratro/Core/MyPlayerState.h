@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
+#include "GameData/HandRankingStat.h"
 #include "MyPlayerState.generated.h"
 
 UENUM()
@@ -55,8 +56,11 @@ public:
 	FORCEINLINE int16 GetCurrentScore() { return CurrentScore; }
 	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; }
 
-	FORCEINLINE int16 GetMaxScore() { return MaxScore; }
+	FORCEINLINE int32 GetMaxScore() { return MaxScore; }
 	FORCEINLINE void  SetMaxScore(int32 InValue) { MaxScore = InValue; }
+
+	FORCEINLINE const TArray<UHandRanking_Info*>& GetHandRankingNum() const {return MyHandRankingNum;}
+	FORCEINLINE void ReSetMyHandRankingNum(TArray<UHandRanking_Info*>& InHandRanking) {MyHandRankingNum = InHandRanking;}
 
 private:
 	int32 CurrentHealth = 0;
@@ -80,4 +84,6 @@ private:
 
 
 	BlindValueType CurBlindType;
+
+	TArray<class UHandRanking_Info*> MyHandRankingNum;  // 플레이시 초기화 필수 및 플레이시 내 핸드랭킹
 };
