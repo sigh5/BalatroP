@@ -4,7 +4,11 @@
 #include "UI/View/CardDeck/CardDeckView.h"
 
 #include "Components/TextBlock.h"
-#include "GameData/FHandRankingStat.h"
+#include "Components/Image.h"
+#include "PaperSprite.h"
+#include "Styling/SlateBrush.h"
+
+#include "GameData/HandRankingStat.h"
 
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
@@ -45,8 +49,27 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 {
 	const auto VMInstance = Cast<UVM_CardDeck>(Object);
 
+	// /Script/Paper2D.PaperSprite'/Game/CardResuorce/Card/C_2.C_2'
+	auto CurHandInfo = 	VMInstance->GetCurrentHandInCards();
+	int32 CurHandNum = CurHandInfo.Num();
 
 
+	//for (int i = 0; i < CurHandNum; ++i)
+	{
+		FName CurName= CurHandInfo[0]->Info.Name;
+		FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Card/%s.%s"), *CurName.ToString(), *CurName.ToString());
+
+		UPaperSprite* Sprite = LoadObject<UPaperSprite>(nullptr, *AssetPath);
+		if (Sprite)
+		{
+			FSlateBrush Brush;
+			Brush.SetResourceObject(Sprite);
+
+			Image0->SetBrush(Brush);
+		}
+
+	
+	}
 
 
 }

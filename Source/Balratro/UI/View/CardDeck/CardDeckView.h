@@ -28,28 +28,28 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> CurrentDeckNumText;
 
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<class UImage> Image0;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> Image0;
 
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<class UImage> Image1;
+	/*UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> Image1;
 
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<class UImage> Image2;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> Image2;
 
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<class UImage> Image3;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> Image3;
 
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<class UImage> Image4;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> Image4;
 
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<class UImage> Image5;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> Image5;
 
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<class UImage> Image6;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> Image6;
 
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<class UImage> Image7;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> Image7;*/
 
 };
