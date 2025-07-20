@@ -14,14 +14,22 @@ class BALRATRO_API UCardAndDeckComponent : public UActorComponent
 
 public:
 	void UpdateCardInHand(int32 _invalue);
-	void UpdateCardInDeck(int32 _invalue);
+	void UpdateCardInDeck();
 
+	void ShuffleDeck();
+	void DrawCard(int32 DrawCardNum);
+	
 
 protected:
 	virtual void BeginPlay() override;
-		
+	
+private:
+	void	InitDeck();
+
 private:
 	class UVM_CardDeck* GetVMCardDeck();
 	class AMyPlayerState* GetPlayerState();
+
+	int32  CurIndex = 0;
 
 };

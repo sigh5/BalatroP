@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 #include "GameData/HandRankingStat.h"
+#include "GameData/DeckCardStat.h"
 #include "MyPlayerState.generated.h"
 
 UENUM()
@@ -66,8 +67,11 @@ public:
 	FORCEINLINE void  SetMaxScore(int32 InValue) { MaxScore = InValue; }
 
 	FORCEINLINE const TArray<UHandRanking_Info*>& GetHandRankingNum() const {return MyHandRankingNum;}
-	FORCEINLINE void ReSetMyHandRankingNum(TArray<UHandRanking_Info*>& InHandRanking) {MyHandRankingNum = InHandRanking;}
+	FORCEINLINE void ResetMyHandRankingNum(TArray<UHandRanking_Info*>& InHandRanking) {MyHandRankingNum = InHandRanking;}
 
+	FORCEINLINE TArray<FDeckCardStat*>& GetDeckCardStatTable() { return MyDeckCardStat; }
+	FORCEINLINE void ResetDeckCardStatTable(TArray<FDeckCardStat*>& InHandRanking) { MyDeckCardStat = InHandRanking; }
+		
 private:
 	int32 CurrentHealth = 0;
 	int32 MaxHealth = 0;
@@ -86,7 +90,7 @@ private:
 	int32 UseChuckCount = 0;
 
 	int32 CardInHand = 8; // 초기 손에든 패 8장
-	int32 CardInDeck = 52; // 초기 Deck 52장
+	int32 CardInDeck = 0; // 초기 Deck 52장
 
 
 	int32 CurrentScore = 0;
@@ -97,4 +101,6 @@ private:
 	BlindValueType CurBlindType;
 
 	TArray<class UHandRanking_Info*> MyHandRankingNum;  // 플레이시 초기화 필수 및 플레이시 내 핸드랭킹
+
+	TArray<FDeckCardStat*> MyDeckCardStat;
 };

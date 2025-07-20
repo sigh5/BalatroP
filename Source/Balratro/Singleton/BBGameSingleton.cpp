@@ -25,6 +25,29 @@ UBBGameSingleton::UBBGameSingleton()
 		HandRankingMaxNum = HandRankingStatTable.Num();
 		ensure(HandRankingMaxNum > 0);
 	}
+
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> DeckDataTableRef(TEXT("/Script/Engine.DataTable'/Game/Data/DT_DeckCardStat.DT_DeckCardStat'"));
+	if (nullptr != DeckDataTableRef.Object)
+	{
+		const UDataTable* DataTable = DeckDataTableRef.Object;
+		check(DataTable->GetRowMap().Num() > 0);
+
+		for (const auto& Row : DataTable->GetRowMap())
+		{
+			const FName RowName = Row.Key;
+			FDeckCardStat* StatPtr = reinterpret_cast<FDeckCardStat*>(Row.Value);
+			if (StatPtr)
+			{
+				StatPtr->Name = RowName;
+				DeckCardStatTable.Add(StatPtr);
+			}
+		}
+
+		DeckCardNum = DeckCardStatTable.Num();
+		ensure(DeckCardNum > 0);
+	}
+
 }
 
 UBBGameSingleton& UBBGameSingleton::Get()

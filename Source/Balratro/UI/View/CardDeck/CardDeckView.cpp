@@ -4,7 +4,7 @@
 #include "UI/View/CardDeck/CardDeckView.h"
 
 #include "Components/TextBlock.h"
-
+#include "GameData/FHandRankingStat.h"
 
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
@@ -23,6 +23,10 @@ void UCardDeckView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::DeckNum,
 		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_DeckNum));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::CurrentHandInCards,
+		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_HandInCard));
+
 }
 
 void UCardDeckView::NativeOnInitialized()
@@ -35,4 +39,14 @@ void UCardDeckView::VM_FieldChanged_DeckNum(UObject* Object, UE::FieldNotificati
 	const auto VMInstance = Cast<UVM_CardDeck>(Object);
 
 	CurrentDeckNumText->SetText(FText::AsNumber(VMInstance->GetDeckNum()));
+}
+
+void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInstance = Cast<UVM_CardDeck>(Object);
+
+
+
+
+
 }

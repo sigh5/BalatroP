@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "GameData/DeckCardStat.h"
 #include "MyPawn.generated.h"
 
 UCLASS()

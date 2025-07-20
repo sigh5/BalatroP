@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "GameData/HandRankingStat.h"
+#include "GameData/DeckCardStat.h"
 #include "BBGameSingleton.generated.h"
 
 /**
@@ -32,6 +33,15 @@ public:
 	UPROPERTY()
 	int32 HandRankingMaxNum;
 
+	FORCEINLINE const TArray<FDeckCardStat*>& GetDeckCardStatTable() const { return DeckCardStatTable; }
+
+	UPROPERTY()
+	int32 DeckCardNum;
+
+
 private:
-	TMap<const FName,FHandRankingStat*> HandRankingStatTable;
+	TMap<const FName, FHandRankingStat*> HandRankingStatTable;
+
+	TArray<FDeckCardStat*> DeckCardStatTable;
+
 };
