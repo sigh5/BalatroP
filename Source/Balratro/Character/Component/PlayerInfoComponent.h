@@ -22,6 +22,8 @@ public:
 	void UpdateCurrentScore(int32 _invalue);
 	void UpdateMaxScore(int32 _invalue);
 
+
+
 	void UpdateHandRanking(const FName _Name, int Level);
 
 

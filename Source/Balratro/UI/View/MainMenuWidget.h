@@ -26,11 +26,11 @@ private:
     void OnFieldTextChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 
-    UPROPERTY(meta = (BindWidget))
+  /*  UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UProgressBar> HealthProgressBar;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UTextBlock> TestText;
+    TObjectPtr<class UTextBlock> TestText;*/
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UImage> BackGroundImage;

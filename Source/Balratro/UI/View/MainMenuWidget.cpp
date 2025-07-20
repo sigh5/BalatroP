@@ -28,12 +28,12 @@ void UMainMenuWidget::NativeConstruct()
 
 void UMainMenuWidget::OnFieldChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
-	const auto VM = TryGetViewModel<UVM_MainMenu>();
-	UE_LOG(LogTemp, Log, TEXT("CurrentHealth changed - new percent '%f' - current/max = %d/%d"), VM->GetHealthPercent(), VM->GetCurrentHealth(), VM->GetMaxHealth());
-	HealthProgressBar->SetPercent(VM->GetHealthPercent());
-	
-	FText CurrentHealth = FText::AsNumber(VM->GetCurrentHealth());
-	TestText->SetText(CurrentHealth);
+	//const auto VM = TryGetViewModel<UVM_MainMenu>();
+	//UE_LOG(LogTemp, Log, TEXT("CurrentHealth changed - new percent '%f' - current/max = %d/%d"), VM->GetHealthPercent(), VM->GetCurrentHealth(), VM->GetMaxHealth());
+	//HealthProgressBar->SetPercent(VM->GetHealthPercent());
+	//
+	//FText CurrentHealth = FText::AsNumber(VM->GetCurrentHealth());
+	//TestText->SetText(CurrentHealth);
 }
 
 void UMainMenuWidget::OnFieldTextChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId)
