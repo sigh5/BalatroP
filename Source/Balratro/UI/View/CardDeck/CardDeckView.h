@@ -28,12 +28,22 @@ protected:
 	UFUNCTION()
 	void OnCardButtonClicked();
 
+	UFUNCTION()
+	void OnSuitSortButtonClicked();
+
+	UFUNCTION()
+	void OnRankSortButtonClicked();
+
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> CurrentDeckNumText;
 
-	//UPROPERTY(meta = (BindWidget))
-	//TObjectPtr<class UButton> CurrentDeckNumText;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> SuitSortButton;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> RankSortButton;
 
 
 	UPROPERTY(meta = (BindWidget))

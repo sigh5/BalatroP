@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
 #include "GameData/DeckCardStat.h"
+#include "Core\MyPlayerState.h"
 #include "VM_CardDeck.generated.h"
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSortTypeChange, const EHandInCardSortType&);
 
 /**
  레드, 골드, 블루 봉인
@@ -13,20 +16,14 @@
  포일, 1.5배수, 10 배수  유령 카드 강화
  */
 
-UCLASS(BlueprintType)
-class UHandInCard_Info :public UObject
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(BlueprintReadOnly)
-	FDeckCardStat Info;
-};
-
 
 UCLASS()
 class BALRATRO_API UVM_CardDeck : public UMVVMViewModelBase
 {
 	GENERATED_BODY()
+
+public:
+	FOnSortTypeChange  OnSortTypeChange;
 
 public:
 	const int32 GetDeckNum() const
@@ -56,6 +53,16 @@ public:
 		CurrentHandInCards.Add(HandCard);
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurrentHandInCards);
 	}*/
+
+	void	SetSuitSort()
+	{
+		OnSortTypeChange.Broadcast(EHandInCardSortType::SORT_SUIT);
+	}
+
+	void	SetRankSort()
+	{
+		OnSortTypeChange.Broadcast(EHandInCardSortType::SORT_RANK);
+	}
 
 
 private:

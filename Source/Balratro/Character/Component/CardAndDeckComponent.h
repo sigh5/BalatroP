@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Core\MyPlayerState.h"
 #include "CardAndDeckComponent.generated.h"
+
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -18,14 +20,21 @@ public:
 
 	void ShuffleDeck();
 	void DrawCard(int32 DrawCardNum);
+
 	
-	void	SortRank();
-	void	SortSuit();
+
+
 protected:
 	virtual void BeginPlay() override;
 	
 private:
 	void	InitDeck();
+	
+	void	SortHandInCard(const EHandInCardSortType& InType);
+	
+	void	SortRank();
+	void	SortSuit();
+
 
 	
 
@@ -35,4 +44,5 @@ private:
 
 	int32  CurIndex = 0;
 
+	
 };

@@ -15,6 +15,13 @@
 
 // 142 /190
 
+void UCardAndDeckComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	InitDeck();
+}
+
 void UCardAndDeckComponent::UpdateCardInHand(int32 _invalue)
 {
 	auto VM = GetVMCardDeck();
@@ -72,48 +79,10 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 		PS->AddHandInCard(MyDeckStatTable[i]);
 	}
 
-	if (PS->GetCurSortType() == EHandInCardSortType::SORT_RANK)
-	{
-		SortRank();
-	}
-	else
-	{
-		SortSuit();
-	}
-
-
+	SortHandInCard(PS->GetCurSortType());
 	VM->SetCurrentHandInCards(PS->GetCurrentHandInCards());
 }
 
-void UCardAndDeckComponent::SortRank()
-{
-	auto PS = GetPlayerState();
-
-	auto& CurHandInCard = PS->GetCurrentHandInCardsModify();
-
-	CurHandInCard.Sort([&](const auto& A, const auto& B)
-	{
-		if (A.Info.RankGrade == B.Info.RankGrade)
-		{
-			return A.Info.SuitGrade < B.Info.SuitGrade;
-		}
-
-		return A.Info.RankGrade < B.Info.RankGrade;
-	});
-
-
-}
-
-void UCardAndDeckComponent::SortSuit()
-{
-}
-
-void UCardAndDeckComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	InitDeck();
-}
 
 void UCardAndDeckComponent::InitDeck()
 {
@@ -129,7 +98,45 @@ void UCardAndDeckComponent::InitDeck()
 		UpdateCardInDeck();
 		ShuffleDeck();
 		DrawCard(8);
+
+		const auto VM = GetVMCardDeck();
+		VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
 	}
+}
+
+void UCardAndDeckComponent::SortHandInCard(const EHandInCardSortType& InType)
+{
+	auto PS = GetPlayerState();
+	auto& CurHandInCard = PS->GetCurrentHandInCardsModify();
+	const auto VM = GetVMCardDeck();
+
+	if (InType == EHandInCardSortType::SORT_RANK)
+	{
+		CurHandInCard.Sort([&](const auto& A, const auto& B)
+			{
+				if (A.Info.RankGrade == B.Info.RankGrade)
+				{
+					return A.Info.SuitGrade < B.Info.SuitGrade;
+				}
+
+				return A.Info.RankGrade < B.Info.RankGrade;
+			});
+
+	}
+	else
+	{
+		CurHandInCard.Sort([&](const auto& A, const auto& B)
+			{
+				if (A.Info.SuitGrade == B.Info.SuitGrade)
+				{
+					return A.Info.RankGrade < B.Info.RankGrade;
+				}
+
+				return A.Info.SuitGrade < B.Info.SuitGrade;
+			});
+	}
+
+	VM->SetCurrentHandInCards(PS->GetCurrentHandInCards());
 }
 
 UVM_CardDeck* UCardAndDeckComponent::GetVMCardDeck()

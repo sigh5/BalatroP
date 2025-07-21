@@ -33,6 +33,7 @@ enum class GhostCardStatType : uint8
 	DRAINAGE_MUL,
 };
 
+
 USTRUCT(BlueprintType)
 struct FDeckCardStat : public FTableRowBase
 {
@@ -67,3 +68,11 @@ public:
 	TSoftObjectPtr<class UPaperSprite> CardSprite;
 };
 
+UCLASS(BlueprintType)
+class UHandInCard_Info :public UObject
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(BlueprintReadOnly)
+	FDeckCardStat Info;
+};

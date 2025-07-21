@@ -43,6 +43,9 @@ void UCardDeckView::NativeConstruct()
 void UCardDeckView::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	SuitSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnSuitSortButtonClicked);
+	RankSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnRankSortButtonClicked);
 }
 
 void UCardDeckView::VM_FieldChanged_DeckNum(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -118,5 +121,16 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 void UCardDeckView::OnCardButtonClicked()
 {
 	bool c = false;
+}
 
+void UCardDeckView::OnSuitSortButtonClicked()
+{
+	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+	VMInst->SetSuitSort();
+}
+
+void UCardDeckView::OnRankSortButtonClicked()
+{
+	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+	VMInst->SetRankSort();
 }

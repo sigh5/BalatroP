@@ -6,7 +6,6 @@
 #include "GameFramework/PlayerState.h"
 #include "GameData/HandRankingStat.h"
 #include "GameData/DeckCardStat.h"
-#include "UI/MVVM/ViewModel/VM_CardDeck.h"
 #include "MyPlayerState.generated.h"
 
 UENUM()
@@ -82,9 +81,9 @@ public:
 	FORCEINLINE const TArray<FDeckCardStat>& GetDeckCardStatTable() const { return MyDeckCardStat; }
 	void ResetDeckCardStatTable(const TArray<FDeckCardStat*>& InHandRanking);
 	
-	FORCEINLINE TArray<UHandInCard_Info*>& GetCurrentHandInCardsModify()  { return CurrentHandInCards; }
-	FORCEINLINE const TArray<UHandInCard_Info*>& GetCurrentHandInCards() const {return CurrentHandInCards;}
-	FORCEINLINE void SetCurrentHandInCards(TArray<UHandInCard_Info*>& InValue) { CurrentHandInCards = InValue;}
+	FORCEINLINE TArray<class UHandInCard_Info*>& GetCurrentHandInCardsModify()  { return CurrentHandInCards; }
+	FORCEINLINE const TArray<class UHandInCard_Info*>& GetCurrentHandInCards() const {return CurrentHandInCards;}
+	FORCEINLINE void SetCurrentHandInCards(TArray<class UHandInCard_Info*>& InValue) { CurrentHandInCards = InValue;}
 
 	void AddHandInCard(const FDeckCardStat& Info)
 	{
@@ -129,5 +128,5 @@ private:
 	TArray<FDeckCardStat> MyDeckCardStat;
 
 	UPROPERTY()
-	TArray<UHandInCard_Info*> CurrentHandInCards;
+	TArray<class UHandInCard_Info*> CurrentHandInCards;
 };
