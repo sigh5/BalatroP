@@ -34,6 +34,12 @@ protected:
 	UFUNCTION()
 	void OnRankSortButtonClicked();
 
+	UFUNCTION()
+	void OnChuckButtonClicked();
+
+	UFUNCTION()
+	void OnHandPlayButtonClicked();
+
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -45,7 +51,19 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> RankSortButton;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> HandPlayButton;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> ChuckButton;
+
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UHorizontalBox> CardPanel;
+
+	UPROPERTY()
+	TArray<TObjectPtr<class UButton>> ClickedButton;
+
+
+	int32 CardIndex = 0;
 };

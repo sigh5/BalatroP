@@ -10,6 +10,10 @@
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/Button.h"
+
+#include "UI/Button/Card/CardButton.h"
+
+
 #include "Components/Overlay.h"
 #include "Components/SizeBox.h"
 #include "Components/Border.h"
@@ -46,6 +50,8 @@ void UCardDeckView::NativeOnInitialized()
 
 	SuitSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnSuitSortButtonClicked);
 	RankSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnRankSortButtonClicked);
+	HandPlayButton->OnClicked.AddDynamic(this, &UCardDeckView::OnHandPlayButtonClicked);
+	ChuckButton->OnClicked.AddDynamic(this, &UCardDeckView::OnChuckButtonClicked);
 }
 
 void UCardDeckView::VM_FieldChanged_DeckNum(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -66,7 +72,9 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 	CardPanel->ClearChildren(); // 기존 이미지 제거
 	for (int i = 0; i < CurHandNum; ++i)
 	{
-		UButton* NewButton = NewObject<UButton>(this);
+		UCardButton* NewButton = NewObject<UCardButton>(this);
+		NewButton->SetCardInfoData(CurHandInfo[i]->Info);
+		NewButton->SetCardIndex(CardIndex++);
 
 		USizeBox* SizeBox = NewObject<USizeBox>(NewButton);
 		SizeBox->SetWidthOverride(100.f);
@@ -121,6 +129,9 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 void UCardDeckView::OnCardButtonClicked()
 {
 	bool c = false;
+	//ClickedButton.Add();
+
+
 }
 
 void UCardDeckView::OnSuitSortButtonClicked()
@@ -133,4 +144,14 @@ void UCardDeckView::OnRankSortButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	VMInst->SetRankSort();
+}
+
+void UCardDeckView::OnChuckButtonClicked()
+{
+	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+}
+
+void UCardDeckView::OnHandPlayButtonClicked()
+{
+
 }
