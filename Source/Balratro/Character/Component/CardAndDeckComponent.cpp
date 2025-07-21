@@ -5,6 +5,8 @@
 #include <MVVMSubsystem.h>
 
 #include "Kismet/GameplayStatics.h"
+#include "PaperSprite.h"
+
 
 #include "Singleton/BBGameSingleton.h"
 #include "Core/MyPlayerState.h"
@@ -30,7 +32,7 @@ void UCardAndDeckComponent::ShuffleDeck()
 {
 	auto PS = GetPlayerState();
 
-	auto& MyDeckStatTable = PS->GetDeckCardStatTable();
+	auto& MyDeckStatTable = PS->GetDeckCardStatTableModify();
 
 	FDateTime Now = FDateTime::UtcNow();
 	int64 Milliseconds = Now.ToUnixTimestamp() * 1000 + Now.GetMillisecond();
@@ -59,12 +61,51 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 	auto PS = GetPlayerState();
 	auto VM = GetVMCardDeck();
 	auto& MyDeckStatTable = PS->GetDeckCardStatTable();
-
+	
 	for (int i = CurIndex; i < CurIndex + DrawCardNum; ++i)
-	{
-		VM->AddHandInCard(*MyDeckStatTable[i]);
+	{	
+		if (!MyDeckStatTable[i].CardSprite.IsValid())
+		{
+			MyDeckStatTable[i].CardSprite.LoadSynchronous();
+		}
+	
+		PS->AddHandInCard(MyDeckStatTable[i]);
 	}
 
+	if (PS->GetCurSortType() == EHandInCardSortType::SORT_RANK)
+	{
+		SortRank();
+	}
+	else
+	{
+		SortSuit();
+	}
+
+
+	VM->SetCurrentHandInCards(PS->GetCurrentHandInCards());
+}
+
+void UCardAndDeckComponent::SortRank()
+{
+	auto PS = GetPlayerState();
+
+	auto& CurHandInCard = PS->GetCurrentHandInCardsModify();
+
+	CurHandInCard.Sort([&](const auto& A, const auto& B)
+	{
+		if (A.Info.RankGrade == B.Info.RankGrade)
+		{
+			return A.Info.SuitGrade < B.Info.SuitGrade;
+		}
+
+		return A.Info.RankGrade < B.Info.RankGrade;
+	});
+
+
+}
+
+void UCardAndDeckComponent::SortSuit()
+{
 }
 
 void UCardAndDeckComponent::BeginPlay()

@@ -24,32 +24,18 @@ protected:
 	
 	void VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+
+	UFUNCTION()
+	void OnCardButtonClicked();
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> CurrentDeckNumText;
 
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UImage> Image0;
+	//UPROPERTY(meta = (BindWidget))
+	//TObjectPtr<class UButton> CurrentDeckNumText;
 
-	/*UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UImage> Image1;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UImage> Image2;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UImage> Image3;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UImage> Image4;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UImage> Image5;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UImage> Image6;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UImage> Image7;*/
-
+	TObjectPtr<class UHorizontalBox> CardPanel;
 };

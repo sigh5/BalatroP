@@ -6,10 +6,11 @@
 #include "GameFramework/PlayerState.h"
 #include "GameData/HandRankingStat.h"
 #include "GameData/DeckCardStat.h"
+#include "UI/MVVM/ViewModel/VM_CardDeck.h"
 #include "MyPlayerState.generated.h"
 
 UENUM()
-enum class BlindValueType :uint8 
+enum class EBlindValueType :uint8 
 {
 	BLIND_SKIP = 0,
 	SMALL_BLIND,
@@ -17,6 +18,13 @@ enum class BlindValueType :uint8
 	BOSS_BLIND
 };
 
+UENUM()
+enum class EHandInCardSortType : uint8
+{
+	SORT_RANK = 0,
+	SORT_SUIT,
+
+};
 
 /**
  * 
@@ -66,12 +74,28 @@ public:
 	FORCEINLINE int32 GetMaxScore() { return MaxScore; }
 	FORCEINLINE void  SetMaxScore(int32 InValue) { MaxScore = InValue; }
 
-	FORCEINLINE const TArray<UHandRanking_Info*>& GetHandRankingNum() const {return MyHandRankingNum;}
-	FORCEINLINE void ResetMyHandRankingNum(TArray<UHandRanking_Info*>& InHandRanking) {MyHandRankingNum = InHandRanking;}
+	FORCEINLINE const TArray<class UHandRanking_Info*>& GetHandRankingNum() const {return MyHandRankingNum;}
+	FORCEINLINE void ResetMyHandRankingNum(TArray<class UHandRanking_Info*>& InHandRanking) {MyHandRankingNum = InHandRanking;}
 
-	FORCEINLINE TArray<FDeckCardStat*>& GetDeckCardStatTable() { return MyDeckCardStat; }
-	FORCEINLINE void ResetDeckCardStatTable(TArray<FDeckCardStat*>& InHandRanking) { MyDeckCardStat = InHandRanking; }
-		
+
+	FORCEINLINE TArray<FDeckCardStat>& GetDeckCardStatTableModify()  { return MyDeckCardStat; }
+	FORCEINLINE const TArray<FDeckCardStat>& GetDeckCardStatTable() const { return MyDeckCardStat; }
+	void ResetDeckCardStatTable(const TArray<FDeckCardStat*>& InHandRanking);
+	
+	FORCEINLINE TArray<UHandInCard_Info*>& GetCurrentHandInCardsModify()  { return CurrentHandInCards; }
+	FORCEINLINE const TArray<UHandInCard_Info*>& GetCurrentHandInCards() const {return CurrentHandInCards;}
+	FORCEINLINE void SetCurrentHandInCards(TArray<UHandInCard_Info*>& InValue) { CurrentHandInCards = InValue;}
+
+	void AddHandInCard(const FDeckCardStat& Info)
+	{
+		auto HandCard = NewObject<UHandInCard_Info>(this);
+		HandCard->Info = Info;
+		CurrentHandInCards.Add(HandCard);
+	}
+
+	FORCEINLINE const EHandInCardSortType& GetCurSortType() const { return CurSortType; }
+	FORCEINLINE void  SetCurSortType(EHandInCardSortType& InValue) { CurSortType = InValue; }
+
 private:
 	int32 CurrentHealth = 0;
 	int32 MaxHealth = 0;
@@ -96,11 +120,14 @@ private:
 	int32 CurrentScore = 0;
 	int32 MaxScore = 0;
 
-	
+	EBlindValueType			CurBlindType;
+	EHandInCardSortType		CurSortType = EHandInCardSortType::SORT_RANK;
 
-	BlindValueType CurBlindType;
-
+	UPROPERTY()
 	TArray<class UHandRanking_Info*> MyHandRankingNum;  // 플레이시 초기화 필수 및 플레이시 내 핸드랭킹
 
-	TArray<FDeckCardStat*> MyDeckCardStat;
+	TArray<FDeckCardStat> MyDeckCardStat;
+
+	UPROPERTY()
+	TArray<UHandInCard_Info*> CurrentHandInCards;
 };

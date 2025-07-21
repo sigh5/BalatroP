@@ -25,10 +25,8 @@ public:
 	FORCEINLINE FHandRankingStat* GetHandRankingStat(const FName& _Name) const 
 	{ 
 		auto HandRankingStat = *HandRankingStatTable.Find(_Name);
-
 		return HandRankingStat;
 	}
-
 
 	UPROPERTY()
 	int32 HandRankingMaxNum;

@@ -19,12 +19,15 @@ public:
 	void ShuffleDeck();
 	void DrawCard(int32 DrawCardNum);
 	
-
+	void	SortRank();
+	void	SortSuit();
 protected:
 	virtual void BeginPlay() override;
 	
 private:
 	void	InitDeck();
+
+	
 
 private:
 	class UVM_CardDeck* GetVMCardDeck();

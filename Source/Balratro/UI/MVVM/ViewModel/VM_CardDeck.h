@@ -44,18 +44,18 @@ public:
 		return CurrentHandInCards;
 	}
 
-	void SetCurrentHandInCards(TArray<UHandInCard_Info*>& InValue)
+	void SetCurrentHandInCards(const TArray<UHandInCard_Info*>& InValue)
 	{
-		CurrentHandInCards = InValue;
+		UE_MVVM_SET_PROPERTY_VALUE(CurrentHandInCards , InValue);
 	}
 
-	void AddHandInCard(const FDeckCardStat& Info)
+	/*void AddHandInCard(const FDeckCardStat& Info)
 	{
 		auto HandCard = NewObject<UHandInCard_Info>(this);
 		HandCard->Info = Info;
 		CurrentHandInCards.Add(HandCard);
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurrentHandInCards);
-	}
+	}*/
 
 
 private:

@@ -3,6 +3,8 @@
 
 #include "Singleton/BBGameSingleton.h"
 
+#include "PaperSprite.h"
+
 UBBGameSingleton::UBBGameSingleton()
 {
 	static ConstructorHelpers::FObjectFinder<UDataTable> DataTableRef(TEXT("/Script/Engine.DataTable'/Game/Data/DT_HandRankingStatTable.DT_HandRankingStatTable'"));
@@ -40,6 +42,8 @@ UBBGameSingleton::UBBGameSingleton()
 			if (StatPtr)
 			{
 				StatPtr->Name = RowName;
+				FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Card/%s.%s"), *RowName.ToString(), *RowName.ToString());		
+				StatPtr->CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
 				DeckCardStatTable.Add(StatPtr);
 			}
 		}
