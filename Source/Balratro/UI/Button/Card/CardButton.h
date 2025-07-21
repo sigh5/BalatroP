@@ -19,7 +19,10 @@ public:
 	FORCEINLINE void SetCardIndex(int InValue) { CardIndex = InValue; }
 	FORCEINLINE void SetCardInfoData(FDeckCardStat& InValue) { CardInfoData = InValue; }
 
+	void Test();
 
+	UFUNCTION()
+	void OnCardButtonClicked();
 
 private:
 	int CardIndex = 0;

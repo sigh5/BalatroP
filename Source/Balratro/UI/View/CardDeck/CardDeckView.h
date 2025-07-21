@@ -25,8 +25,8 @@ protected:
 	void VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 
-	UFUNCTION()
-	void OnCardButtonClicked();
+	/*UFUNCTION()
+	void OnCardButtonClicked();*/
 
 	UFUNCTION()
 	void OnSuitSortButtonClicked();

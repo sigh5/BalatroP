@@ -120,19 +120,21 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 		EmptyStyle.SetHovered(FSlateNoResource());
 		EmptyStyle.SetPressed(FSlateNoResource());
 		NewButton->SetStyle(EmptyStyle);
-	
-		NewButton->OnClicked.AddDynamic(this, &UCardDeckView::OnCardButtonClicked);
+		
+		NewButton->Test();
+
+		//NewButton->OnClicked.AddDynamic(this, &UCardDeckView::OnCardButtonClicked);
 	}
 
 }
 
-void UCardDeckView::OnCardButtonClicked()
-{
-	bool c = false;
-	//ClickedButton.Add();
-
-
-}
+//void UCardDeckView::OnCardButtonClicked()
+//{
+//	bool c = false;
+//	//ClickedButton.Add();
+//
+//
+//}
 
 void UCardDeckView::OnSuitSortButtonClicked()
 {
