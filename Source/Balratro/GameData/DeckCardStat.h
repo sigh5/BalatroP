@@ -66,6 +66,25 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<class UPaperSprite> CardSprite;
+
+
+	bool operator==(const FDeckCardStat& Other) const
+	{
+		return Name == Other.Name
+			&& BaseChip == Other.BaseChip
+			&& SealType == Other.SealType
+			&& EnforceType == Other.EnforceType
+			&& GhostCardType == Other.GhostCardType
+			&& RankGrade == Other.RankGrade
+			&& SuitGrade == Other.SuitGrade
+			&& CardSprite == Other.CardSprite;
+	}
+
+
+	bool operator!=(const FDeckCardStat& Other) const
+	{
+		return !(*this == Other);
+	}
 };
 
 UCLASS(BlueprintType)

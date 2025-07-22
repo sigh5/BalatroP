@@ -121,20 +121,12 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 		EmptyStyle.SetPressed(FSlateNoResource());
 		NewButton->SetStyle(EmptyStyle);
 		
-		NewButton->Test();
+		NewButton->SetClikcedEvent();
 
-		//NewButton->OnClicked.AddDynamic(this, &UCardDeckView::OnCardButtonClicked);
+		HandCardButton.Add(NewButton);
 	}
 
 }
-
-//void UCardDeckView::OnCardButtonClicked()
-//{
-//	bool c = false;
-//	//ClickedButton.Add();
-//
-//
-//}
 
 void UCardDeckView::OnSuitSortButtonClicked()
 {
@@ -151,6 +143,23 @@ void UCardDeckView::OnRankSortButtonClicked()
 void UCardDeckView::OnChuckButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+	
+	int Selected = 0;
+
+	TArray<FDeckCardStat> CardStatInfo;
+
+	for (auto& Button : HandCardButton)
+	{
+		if (Button->GetSelected())
+		{
+			++Selected;
+
+			Button->SetSelected(false);
+			CardStatInfo.Add(Button->GetCardInfoData());
+		}
+	}
+	
+	VMInst->UseChuck(Selected, CardStatInfo);
 }
 
 void UCardDeckView::OnHandPlayButtonClicked()

@@ -3,12 +3,32 @@
 
 #include "UI/Button/Card/CardButton.h"
 
-void UCardButton::Test()
+#include "Components/HorizontalBoxSlot.h"
+
+void UCardButton::SetClikcedEvent()
 {
 	OnClicked.AddDynamic(this, &UCardButton::OnCardButtonClicked);
 }
 
 void UCardButton::OnCardButtonClicked()
 {
-	bool c = false;
+	UHorizontalBoxSlot* HSlot = Cast<UHorizontalBoxSlot>(Slot);
+	check(HSlot);
+
+	if (bSelected)
+	{
+		FMargin Margin = HSlot->GetPadding();
+		Margin.Top += 150.f;   // 위로 올린 효과 (아래쪽 여백 줄이기)
+		HSlot->SetPadding(Margin);
+
+		bSelected = false;
+	}
+	else
+	{
+		FMargin Margin = HSlot->GetPadding();
+		Margin.Top -= 150.f;   // 위로 올린 효과 (아래쪽 여백 줄이기)
+		HSlot->SetPadding(Margin);
+
+		bSelected = true;
+	}
 }

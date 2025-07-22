@@ -21,7 +21,7 @@ public:
 	void ShuffleDeck();
 	void DrawCard(int32 DrawCardNum);
 
-	
+	void UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
 
 
 protected:

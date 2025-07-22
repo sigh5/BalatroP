@@ -34,6 +34,9 @@ class BALRATRO_API AMyPlayerState : public APlayerState
 	GENERATED_BODY()
 	
 public:
+	AMyPlayerState();
+
+public:
 	FORCEINLINE const int32 GetCurrentHealth() const { return CurrentHealth; };
 	FORCEINLINE void SetCurrentHealth(int32 InHealth) { CurrentHealth = InHealth; }
 	
@@ -99,28 +102,28 @@ private:
 	int32 CurrentHealth = 0;
 	int32 MaxHealth = 0;
 
-	int32 RoundCount = 0;
+	int32 RoundCount;
 	
-	int32 Gold = 0;
-	int32 MaxGold = 0;
+	int32 Gold;
+	int32 MaxGold;
 	
-	int32 EntiCount = 0;
+	int32 EntiCount;
 	
-	int32 MaxHandCount = 0;
-	int32 UseHandCount = 0;
+	int32 MaxHandCount;
+	int32 UseHandCount;
 
-	int32 MaxChuckCount = 0;
-	int32 UseChuckCount = 0;
+	int32 MaxChuckCount;
+	int32 UseChuckCount;
 
 	int32 CardInHand = 8; // 초기 손에든 패 8장
-	int32 CardInDeck = 0; // 초기 Deck 52장
+	int32 CardInDeck; // 초기 Deck 52장
 
 
 	int32 CurrentScore = 0;
 	int32 MaxScore = 0;
 
 	EBlindValueType			CurBlindType;
-	EHandInCardSortType		CurSortType = EHandInCardSortType::SORT_RANK;
+	EHandInCardSortType		CurSortType;
 
 	UPROPERTY()
 	TArray<class UHandRanking_Info*> MyHandRankingNum;  // 플레이시 초기화 필수 및 플레이시 내 핸드랭킹

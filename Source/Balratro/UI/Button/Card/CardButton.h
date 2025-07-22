@@ -17,14 +17,23 @@ class BALRATRO_API UCardButton : public UButton
 	
 public:
 	FORCEINLINE void SetCardIndex(int InValue) { CardIndex = InValue; }
+	
 	FORCEINLINE void SetCardInfoData(FDeckCardStat& InValue) { CardInfoData = InValue; }
+	FORCEINLINE FDeckCardStat& GetCardInfoData() {return CardInfoData; }
 
-	void Test();
+	void SetClikcedEvent();
 
 	UFUNCTION()
 	void OnCardButtonClicked();
 
+
+	FORCEINLINE const bool GetSelected() const { return bSelected; }
+	FORCEINLINE void SetSelected(bool _Selected) { bSelected = _Selected; }
 private:
 	int CardIndex = 0;
 	FDeckCardStat CardInfoData;
+	
+	uint8 bSelected : 1;
+
+
 };

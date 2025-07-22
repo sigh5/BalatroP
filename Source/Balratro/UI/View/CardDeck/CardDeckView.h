@@ -25,6 +25,7 @@ protected:
 	void VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 
+
 	/*UFUNCTION()
 	void OnCardButtonClicked();*/
 
@@ -62,7 +63,7 @@ private:
 	TObjectPtr<class UHorizontalBox> CardPanel;
 
 	UPROPERTY()
-	TArray<TObjectPtr<class UButton>> ClickedButton;
+	TArray<TObjectPtr<class UCardButton>> HandCardButton;
 
 
 	int32 CardIndex = 0;
