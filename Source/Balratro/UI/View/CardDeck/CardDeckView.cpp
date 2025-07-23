@@ -18,7 +18,7 @@
 #include "Components/SizeBox.h"
 #include "Components/Border.h"
 
-#include "GameData/HandRankingStat.h"
+
 
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
@@ -144,25 +144,43 @@ void UCardDeckView::OnChuckButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	
-	int Selected = 0;
+	TArray<FDeckCardStat> CardStatInfo; 
+	int32 SelectedNum = 0;
+
+	if (SetCardData(CardStatInfo, SelectedNum) == false)
+		return;
+	
+	VMInst->UseChuck(SelectedNum, CardStatInfo);
+}
+
+void UCardDeckView::OnHandPlayButtonClicked()
+{
+	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 
 	TArray<FDeckCardStat> CardStatInfo;
+	int32 SelectedNum = 0;
 
+	if (SetCardData(CardStatInfo, SelectedNum) == false)
+		return;
+
+	VMInst->UseHandPlay(SelectedNum, CardStatInfo);
+}
+
+bool UCardDeckView::SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum)
+{
 	for (auto& Button : HandCardButton)
 	{
 		if (Button->GetSelected())
 		{
-			++Selected;
+			++SelectedCardNum;
 
 			Button->SetSelected(false);
 			CardStatInfo.Add(Button->GetCardInfoData());
 		}
 	}
 	
-	VMInst->UseChuck(Selected, CardStatInfo);
-}
+	if (SelectedCardNum == 0)
+		return false;
 
-void UCardDeckView::OnHandPlayButtonClicked()
-{
-
+	return true;
 }

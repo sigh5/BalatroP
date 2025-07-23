@@ -12,6 +12,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnSortTypeChange, const EHandInCardSortType
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseChuckButton,int32 , TArray<FDeckCardStat>& /*ChuckCardNum*/);
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseHandPlayButton, int32, TArray<FDeckCardStat>& /*PlayCardNum*/);
+
 /**
  레드, 골드, 블루 봉인
  칩, 배수 , 글래스 , 골드 ,스틸 카드강화 (타로)
@@ -26,7 +28,8 @@ class BALRATRO_API UVM_CardDeck : public UMVVMViewModelBase
 
 public:
 	FOnSortTypeChange  OnSortTypeChange;
-	FOnUseChuckButton  OnUseChuckButton;
+	FOnUseChuckButton  OnUseChuck;
+	FOnUseHandPlayButton OnUseHandPlay;
 public:
 	const int32 GetDeckNum() const
 	{
@@ -51,7 +54,8 @@ public:
 	void	SetSuitSort() {OnSortTypeChange.Broadcast(EHandInCardSortType::SORT_SUIT);}
 	void	SetRankSort() { OnSortTypeChange.Broadcast(EHandInCardSortType::SORT_RANK);}
 
-	void    UseChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnUseChuckButton.Broadcast(CardNum,_DeckCardStat); }
+	void    UseChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnUseChuck.Broadcast(CardNum,_DeckCardStat); }
+	void    UseHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnUseHandPlay.Broadcast(CardNum, _DeckCardStat); }
 
 
 private:

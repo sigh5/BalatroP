@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UI/View/Core/BBUserWidgetBase.h"
+#include "GameData/HandRankingStat.h"
+#include "GameData/DeckCardStat.h"
 #include "CardDeckView.generated.h"
 
 /**
@@ -41,6 +43,9 @@ protected:
 	UFUNCTION()
 	void OnHandPlayButtonClicked();
 
+private:
+	bool SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum);
+
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -57,7 +62,6 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> ChuckButton;
-
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UHorizontalBox> CardPanel;

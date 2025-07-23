@@ -32,9 +32,6 @@ void UCardAndDeckComponent::UpdateCardInDeck()
 	auto VM = GetVMCardDeck();
 	auto PS = GetPlayerState();
 	
-
-
-
 	VM->SetDeckNum(PS->GetCardInDeck());
 }
 
@@ -124,6 +121,11 @@ void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _D
 	DrawCard(CardNum);
 }
 
+void UCardAndDeckComponent::SetHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
+{
+
+}
+
 void UCardAndDeckComponent::InitDeck()
 {
 	auto& Sigleton = UBBGameSingleton::Get();
@@ -143,8 +145,8 @@ void UCardAndDeckComponent::InitDeck()
 
 		const auto VM = GetVMCardDeck();
 		VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
-		VM->OnUseChuckButton.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
-
+		VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
+		VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::SetHandPlay);
 	}
 }
 
