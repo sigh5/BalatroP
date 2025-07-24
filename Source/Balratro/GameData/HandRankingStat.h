@@ -5,6 +5,22 @@
 #include "Engine/DataTable.h"
 #include "HandRankingStat.generated.h"
 
+UENUM(BlueprintType)
+enum class EPokerHand : uint8
+{
+	HIGH_CARD,
+	ONE_PAIR,
+	TWO_PAIR,
+	TRIPLE,
+	STRAIGHT,
+	FLUSH,
+	FULL_HOUSE,
+	FOUR_CARD,
+	STRAIGHT_FLUSH,
+	ROYAL_FLUSH,
+	FIVE_CARD
+};
+
 
 USTRUCT(BlueprintType)
 struct FHandRankingStat : public FTableRowBase

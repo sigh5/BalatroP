@@ -12,6 +12,8 @@
 #include "Core/MyPlayerState.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
+#include "GameData/HandRankingStat.h"
+#include "Interface/CalculatorScoreInterface.h"
 
 // 142 /190
 
@@ -123,7 +125,18 @@ void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _D
 
 void UCardAndDeckComponent::SetHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
-
+	//ICalculatorScoreInterface* HandRankingCom = Cast<ICalculatorScoreInterface>(GetOwner()->FindComponentByClass<UHandRankingComponent>();)
+	for (UActorComponent* Comp : GetOwner()->GetComponents())
+	{
+		if (Comp->GetClass()->ImplementsInterface(UCalculatorScoreInterface::StaticClass()))
+		{
+			ICalculatorScoreInterface* InterfacePtr = Cast<ICalculatorScoreInterface>(Comp);
+			if (InterfacePtr)
+			{
+				InterfacePtr->CalCulatorHandRanking(CardNum,_DeckCardStat);
+			}
+		}
+	}
 }
 
 void UCardAndDeckComponent::InitDeck()

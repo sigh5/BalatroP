@@ -32,12 +32,8 @@ private:
 	void	InitDeck();
 	
 	void	SortHandInCard(const EHandInCardSortType& InType);
-	
-	void	SortRank();
-	void	SortSuit();
 
 
-	
 
 private:
 	class UVM_CardDeck* GetVMCardDeck();

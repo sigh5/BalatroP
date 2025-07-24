@@ -16,6 +16,13 @@ UPlayerInfoWidget::UPlayerInfoWidget()
 void UPlayerInfoWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+
+	const auto VMInst = TryGetViewModel<UVM_PlayerInfo>();
+	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::Scroe,
+		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_Status));
 }
 
 void UPlayerInfoWidget::NativeOnInitialized()
@@ -25,4 +32,7 @@ void UPlayerInfoWidget::NativeOnInitialized()
 
 void UPlayerInfoWidget::VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
+	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
+
+	ScoreText->SetText(FText::AsNumber(VMInstance->GetScroe()));
 }

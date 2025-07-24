@@ -71,6 +71,16 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(ChuckCount, InValue);
 	}
 
+	/// /////////////////////////////////////////////////
+	const int32 GetScroe() const
+	{
+		return Scroe;
+	}
+
+	void SetScroe(int32 InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(Scroe, InValue);
+	}
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -87,5 +97,8 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 ChuckCount = 0;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	int32 Scroe = 0;
 
 };

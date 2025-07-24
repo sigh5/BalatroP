@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "GameData/DeckCardStat.h"
+#include "GameData/HandRankingStat.h"
 #include "CalculatorScoreInterface.generated.h"
 
 // This class does not need to be modified.
@@ -22,7 +24,6 @@ class BALRATRO_API ICalculatorScoreInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void CalCulatorScore() = 0;
-
+	virtual EPokerHand CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) = 0;
 
 };
