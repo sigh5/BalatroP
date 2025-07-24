@@ -42,6 +42,8 @@ void UCardDeckView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::CurrentHandInCards,
 		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_HandInCard));
 
+	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::IsUpCardExist,
+		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_CardUpExist));
 }
 
 void UCardDeckView::NativeOnInitialized()
@@ -121,11 +123,30 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 		EmptyStyle.SetPressed(FSlateNoResource());
 		NewButton->SetStyle(EmptyStyle);
 		
+		NewButton->SetSelected(false);
 		NewButton->SetClikcedEvent();
 
 		HandCardButton.Add(NewButton);
 	}
 
+}
+
+void UCardDeckView::VM_FieldChanged_CardUpExist(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+	
+	TArray<FDeckCardStat> CardStatInfo;
+	int32 SelectedNum = 0;
+
+	if (SetCardData(CardStatInfo, SelectedNum) == false)
+	{
+		if (SelectedNum == 0)
+		{
+			VMInst->BrodCastrHandRankName(0, CardStatInfo);
+		}
+	}
+
+	VMInst->BrodCastrHandRankName(SelectedNum, CardStatInfo);
 }
 
 void UCardDeckView::OnSuitSortButtonClicked()
@@ -174,7 +195,7 @@ bool UCardDeckView::SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int
 		{
 			++SelectedCardNum;
 
-			Button->SetSelected(false);
+			//Button->SetSelected(false);
 			CardStatInfo.Add(Button->GetCardInfoData());
 		}
 	}

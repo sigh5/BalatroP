@@ -22,6 +22,7 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 	void VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_CurPlayerHandName(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 
 private:

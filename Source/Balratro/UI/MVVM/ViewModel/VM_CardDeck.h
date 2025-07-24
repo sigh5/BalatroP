@@ -14,6 +14,8 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseChuckButton,int32 , TArray<FDeckCardS
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseHandPlayButton, int32, TArray<FDeckCardStat>& /*PlayCardNum*/);
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHandRankName, int32, TArray<FDeckCardStat>& /*PlayCardNum*/);
+
 /**
  레드, 골드, 블루 봉인
  칩, 배수 , 글래스 , 골드 ,스틸 카드강화 (타로)
@@ -30,6 +32,7 @@ public:
 	FOnSortTypeChange  OnSortTypeChange;
 	FOnUseChuckButton  OnUseChuck;
 	FOnUseHandPlayButton OnUseHandPlay;
+	FOnHandRankName OnHandRankName;
 public:
 	const int32 GetDeckNum() const
 	{
@@ -56,7 +59,21 @@ public:
 
 	void    UseChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnUseChuck.Broadcast(CardNum,_DeckCardStat); }
 	void    UseHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnUseHandPlay.Broadcast(CardNum, _DeckCardStat); }
+	void    BrodCastrHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnHandRankName.Broadcast(CardNum, _DeckCardStat); }
 
+
+	const bool GetIsUpCardExist() const
+	{
+		return IsUpCardExist;
+	}
+
+	void SetIsUpCardExist(const bool InValue)
+	{
+		if (InValue == false)
+			IsUpCardExist = false;
+		else
+			UE_MVVM_SET_PROPERTY_VALUE(IsUpCardExist, InValue);
+	}
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -65,5 +82,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<UHandInCard_Info*> CurrentHandInCards;
 
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool IsUpCardExist;
 
 };

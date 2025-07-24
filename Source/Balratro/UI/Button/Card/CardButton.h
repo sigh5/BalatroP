@@ -29,6 +29,11 @@ public:
 
 	FORCEINLINE const bool GetSelected() const { return bSelected; }
 	FORCEINLINE void SetSelected(bool _Selected) { bSelected = _Selected; }
+
+	class UVM_CardDeck* GetVMCardDeck();
+
+
+
 private:
 	int CardIndex = 0;
 	FDeckCardStat CardInfoData;

@@ -8,6 +8,7 @@
 
 #include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
+#include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
 #include "Singleton/BBGameSingleton.h"
 #include  "Algo/AnyOf.h"
@@ -28,6 +29,11 @@ void UHandRankingComponent::BeginPlay()
 
 	FHandRankingStat* FlushandStat = Sigleton.GetHandRankingStat(FName(TEXT("Flush")));
 	VM->AddHandRankingNum(FName(TEXT("Flush")), *FlushandStat);
+
+
+    const auto VM2 = GetVMCardDeck();
+    VM2->OnHandRankName.AddUObject(this, &UHandRankingComponent::SetHandRankName);
+
 }
 
 UVM_HandRankingCount* UHandRankingComponent::GetVMHandRanking()
@@ -40,6 +46,18 @@ UVM_HandRankingCount* UHandRankingComponent::GetVMHandRanking()
 
 	const auto Found = VMCollection->FindViewModelInstance(Context);
 	return Cast<UVM_HandRankingCount>(Found);
+}
+
+UVM_CardDeck* UHandRankingComponent::GetVMCardDeck()
+{
+    const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+    FMVVMViewModelContext Context;
+    Context.ContextName = TEXT("VM_CardDeck");
+    Context.ContextClass = UVM_CardDeck::StaticClass();
+
+    const auto Found = VMCollection->FindViewModelInstance(Context);
+    return Cast<UVM_CardDeck>(Found);
 }
 
 UVM_PlayerInfo* UHandRankingComponent::GetVMPlayerInfo()
@@ -63,7 +81,10 @@ AMyPlayerState* UHandRankingComponent::GetPlayerState()
 
 EPokerHand UHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
-	auto PlayerInfoVM = GetVMPlayerInfo();
+    if (CardNum == 0)
+        return EPokerHand::NONE;
+    
+    auto PlayerInfoVM = GetVMPlayerInfo();
     bool RoyalStraight = false;
 	bool Straight = false;
 	bool Flush = false;
@@ -76,7 +97,7 @@ EPokerHand UHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<FD
 	TArray<int32> SortedRanks;
 
     // Test
-    CalculatorBaseScore(EPokerHand::FIVE_CARD, _DeckCardStat);
+    //CalculatorBaseScore(EPokerHand::FIVE_CARD, _DeckCardStat);
 
 	for (int i = 0; i < CardNum; ++i)
 	{
@@ -242,5 +263,60 @@ void UHandRankingComponent::CalculatorBaseScore(EPokerHand HandRankingType, TArr
     default:
         break;
     }
+
+}
+
+void UHandRankingComponent::SetHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
+{
+    auto VM_PlayerInfo = GetVMPlayerInfo();
+    
+    EPokerHand CurHandType = CalCulatorHandRanking(CardNum, _DeckCardStat);
+   
+    FName Name;
+    switch (CurHandType)
+    {
+    case EPokerHand::NONE:
+        Name = "-";
+        break;
+    case EPokerHand::HIGH_CARD:
+        Name = "HIGH CARD";
+        break;
+    case EPokerHand::ONE_PAIR:
+        Name = "ONE PAIR";
+        break;
+    case EPokerHand::TWO_PAIR:
+        Name = "TWO PAIR";
+        break;
+    case EPokerHand::TRIPLE:
+        Name = "TRIPLE";
+        break;
+    case EPokerHand::STRAIGHT:
+        Name = "STRAIGHT";
+        break;
+    case EPokerHand::FLUSH:
+        Name = "FLUSH";
+        break;
+    case EPokerHand::FULL_HOUSE:
+        Name = "FULL HOUSE";
+        break;
+    case EPokerHand::FOUR_CARD:
+        Name = "FOUR CARD";
+        break;
+    case EPokerHand::STRAIGHT_FLUSH:
+        Name = "STRAIGHT FLUSH";
+        break;
+    case EPokerHand::ROYAL_FLUSH:
+        Name = "ROYAL FLUSH";
+        break;
+    case EPokerHand::FIVE_CARD:
+        Name = "FIVE CARD";
+        break;
+    default:
+        break;
+    }
+    VM_PlayerInfo->SetHandName(Name);
+
+    auto VM_CardDeck = GetVMCardDeck();
+    VM_CardDeck->SetIsUpCardExist(false);
 
 }

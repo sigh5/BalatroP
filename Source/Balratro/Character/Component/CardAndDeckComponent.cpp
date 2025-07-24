@@ -154,7 +154,7 @@ void UCardAndDeckComponent::InitDeck()
 	{
 		UpdateCardInDeck();
 		ShuffleDeck();
-		DrawCard(6);
+		DrawCard(8);
 
 		const auto VM = GetVMCardDeck();
 		VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);

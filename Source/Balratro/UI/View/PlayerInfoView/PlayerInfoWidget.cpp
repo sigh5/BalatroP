@@ -23,6 +23,9 @@ void UPlayerInfoWidget::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::Scroe,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_Status));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::HandName,
+		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_CurPlayerHandName));
 }
 
 void UPlayerInfoWidget::NativeOnInitialized()
@@ -35,4 +38,11 @@ void UPlayerInfoWidget::VM_FieldChanged_Status(UObject* Object, UE::FieldNotific
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
 
 	ScoreText->SetText(FText::AsNumber(VMInstance->GetScroe()));
+}
+
+void UPlayerInfoWidget::VM_FieldChanged_CurPlayerHandName(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
+
+	UseHandNameText->SetText(FText::FromName(VMInstance->GetHandName()));
 }

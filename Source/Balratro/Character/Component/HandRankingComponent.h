@@ -22,8 +22,11 @@ protected:
 private:
 	void	CalculatorBaseScore(EPokerHand HandRankingType, TArray<FDeckCardStat>& _DeckCardStat);
 
+	void SetHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
+
 private:
 	class UVM_HandRankingCount* GetVMHandRanking();
+	class UVM_CardDeck* GetVMCardDeck();
 	class UVM_PlayerInfo* GetVMPlayerInfo();
 	class AMyPlayerState* GetPlayerState();
 	

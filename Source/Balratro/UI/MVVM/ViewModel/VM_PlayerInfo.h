@@ -92,6 +92,7 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(HandName, InValue);
 	}
 
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 RoundCnt = 0;
@@ -113,5 +114,8 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	FName HandName;
+
+
+	
 
 };

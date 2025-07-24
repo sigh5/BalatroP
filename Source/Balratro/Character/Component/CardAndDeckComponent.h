@@ -25,6 +25,7 @@ public:
 	void SetHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
 
 
+
 protected:
 	virtual void BeginPlay() override;
 	

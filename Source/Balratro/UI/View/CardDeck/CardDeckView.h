@@ -26,6 +26,7 @@ protected:
 	
 	void VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+	void VM_FieldChanged_CardUpExist(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 
 	/*UFUNCTION()

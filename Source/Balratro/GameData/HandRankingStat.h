@@ -8,6 +8,7 @@
 UENUM(BlueprintType)
 enum class EPokerHand : uint8
 {
+	NONE,
 	HIGH_CARD,
 	ONE_PAIR,
 	TWO_PAIR,
