@@ -63,7 +63,8 @@ AMyPlayerState* UHandRankingComponent::GetPlayerState()
 
 EPokerHand UHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
-	bool RoyalStraight = false;
+	auto PlayerInfoVM = GetVMPlayerInfo();
+    bool RoyalStraight = false;
 	bool Straight = false;
 	bool Flush = false;
 
@@ -74,6 +75,7 @@ EPokerHand UHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<FD
 	TSet<int32> UniqueRanks;
 	TArray<int32> SortedRanks;
 
+    // Test
     CalculatorBaseScore(EPokerHand::FIVE_CARD, _DeckCardStat);
 
 	for (int i = 0; i < CardNum; ++i)

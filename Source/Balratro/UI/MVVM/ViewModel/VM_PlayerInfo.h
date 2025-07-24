@@ -82,6 +82,16 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(Scroe, InValue);
 	}
 
+	const FName GetHandName() const
+	{
+		return HandName;
+	}
+
+	void SetHandName(const FName& InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(HandName, InValue);
+	}
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 RoundCnt = 0;
@@ -100,5 +110,8 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 Scroe = 0;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	FName HandName;
 
 };
