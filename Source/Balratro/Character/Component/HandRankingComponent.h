@@ -14,7 +14,7 @@ class BALRATRO_API UHandRankingComponent : public UActorComponent, public ICalcu
 
 
 public:
-	virtual EPokerHand CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) override;
+	virtual void CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -22,7 +22,16 @@ protected:
 private:
 	void	CalculatorBaseScore(EPokerHand HandRankingType, TArray<FDeckCardStat>& _DeckCardStat);
 
-	void SetHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
+	void	SetHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
+
+	void	SetHandRankingType(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
+	void	SetHandRankingScore();
+
+private:
+	bool	IsStraight(TArray<int32>& SortedRanks);
+	bool	IsFlush(TMap<int32, int32>& SuitCounts);
+
+
 
 private:
 	class UVM_HandRankingCount* GetVMHandRanking();

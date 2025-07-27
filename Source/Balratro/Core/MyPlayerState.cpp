@@ -30,3 +30,13 @@ void AMyPlayerState::ResetDeckCardStatTable(const TArray<FDeckCardStat*>& InHand
 	}
 
 }
+
+void AMyPlayerState::SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue)
+{
+	CurCalculatorCardInHands.Empty();
+
+
+	CurCalculatorCardInHands = InValue; 
+
+	bool c = false;
+}

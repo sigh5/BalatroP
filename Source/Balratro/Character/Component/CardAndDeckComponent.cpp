@@ -45,19 +45,13 @@ void UCardAndDeckComponent::ShuffleDeck()
 
 	FDateTime Now = FDateTime::UtcNow();
 	int64 Milliseconds = Now.ToUnixTimestamp() * 1000 + Now.GetMillisecond();
-	int32 Seed = static_cast<int32>(Milliseconds & 0xFFFFFFFF); // int32로 제한
-
-	// 무작위 시드 설정
+	int32 Seed = static_cast<int32>(Milliseconds & 0xFFFFFFFF); 
 	FMath::RandInit(Seed);
 
 	int32 NumElements = MyDeckStatTable.Num();
-
 	for (int32 i = NumElements - 1; i > 0; --i)
 	{
-		// 0부터 i까지의 무작위 인덱스 선택
 		int32 RandomIndex = FMath::RandRange(0, i);
-
-		// 현재 요소와 무작위로 선택된 요소를 교환
 		if (i != RandomIndex)
 		{
 			MyDeckStatTable.Swap(i, RandomIndex);
@@ -106,9 +100,9 @@ void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _D
 	auto CurHandInCard = PS->GetCurrentHandInCardsModify();
 	CurHandInCard.RemoveAll([&](UHandInCard_Info* HandCard)
 		{
-			if (!HandCard) return false;
-
-			// DeckCardStats 배열에 HandCard->Info 와 같은 항목이 하나라도 있으면 true
+			if (!HandCard) 
+				return false;
+			
 			return _DeckCardStat.ContainsByPredicate([&](const FDeckCardStat& Stat)
 				{
 					return Stat == HandCard->Info;
@@ -125,7 +119,6 @@ void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _D
 
 void UCardAndDeckComponent::SetHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
-	//ICalculatorScoreInterface* HandRankingCom = Cast<ICalculatorScoreInterface>(GetOwner()->FindComponentByClass<UHandRankingComponent>();)
 	for (UActorComponent* Comp : GetOwner()->GetComponents())
 	{
 		if (Comp->GetClass()->ImplementsInterface(UCalculatorScoreInterface::StaticClass()))
@@ -134,6 +127,7 @@ void UCardAndDeckComponent::SetHandPlay(int32 CardNum, TArray<FDeckCardStat>& _D
 			if (InterfacePtr)
 			{
 				InterfacePtr->CalCulatorHandRanking(CardNum,_DeckCardStat);
+				break;
 			}
 		}
 	}

@@ -98,6 +98,14 @@ public:
 	FORCEINLINE const EHandInCardSortType& GetCurSortType() const { return CurSortType; }
 	FORCEINLINE void  SetCurSortType(EHandInCardSortType& InValue) { CurSortType = InValue; }
 
+	FORCEINLINE const EPokerHand& GetCardInDeckHandType() const { return CurCardInDeckHandType; }
+	FORCEINLINE void  SetCardInDeckHandType(EPokerHand InValue) { CurCardInDeckHandType = InValue; }
+
+
+	FORCEINLINE const TArray<FDeckCardStat>& GetCurCalculatorCardInHands() const { return CurCalculatorCardInHands; }
+	void  SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue);
+
+
 private:
 	int32 CurrentHealth = 0;
 	int32 MaxHealth = 0;
@@ -124,6 +132,8 @@ private:
 
 	EBlindValueType			CurBlindType;
 	EHandInCardSortType		CurSortType;
+	EPokerHand				CurCardInDeckHandType;
+
 
 	UPROPERTY()
 	TArray<class UHandRanking_Info*> MyHandRankingNum;  // 플레이시 초기화 필수 및 플레이시 내 핸드랭킹
@@ -132,4 +142,7 @@ private:
 
 	UPROPERTY()
 	TArray<class UHandInCard_Info*> CurrentHandInCards;
+
+	UPROPERTY()
+	TArray<FDeckCardStat> CurCalculatorCardInHands;
 };
