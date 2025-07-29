@@ -22,8 +22,7 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
 
-	void VM_FieldChanged_DeckNum(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-	
+
 	void VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 	void VM_FieldChanged_CardUpExist(UObject* Object, UE::FieldNotification::FFieldId FieldId);
@@ -50,9 +49,6 @@ private:
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UTextBlock> CurrentDeckNumText;
-
-	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> SuitSortButton;
 
 	UPROPERTY(meta = (BindWidget))
@@ -68,7 +64,7 @@ private:
 	TObjectPtr<class UHorizontalBox> CardPanel;
 
 	UPROPERTY()
-	TArray<TObjectPtr<class UCardButton>> HandCardButton; // 카드가 플레이에 소비될때 이것도 최신화 필요
+	TArray<TObjectPtr<class UCardButton>> HandCardButton;
 
 
 	int32 CardIndex = 0;

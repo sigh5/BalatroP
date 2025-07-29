@@ -5,7 +5,7 @@
 #include <MVVMSubsystem.h>
 
 
-
+#include "Singleton/BBGameSingleton.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 
 
@@ -13,18 +13,24 @@ void UPlayerInfoComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	auto& Sigleton = UBBGameSingleton::Get();
 	auto PS = GetPlayerState();
+
+	auto DataTable = Sigleton.GetDeckStatTable();
+	PS->ResetDeckStatTable(DataTable);
+	PS->SetCardInDeckNum(DataTable.Num());
+
 	PS->OnPlayerUseChuck.AddUObject(this, &UPlayerInfoComponent::UpdateUseChuckCount);
-
+	PS->OnPlayerUseHandPlay.AddUObject(this, &UPlayerInfoComponent::UpdateUseHandCount);
 	PS->OnCurrentPlayerHandRanking.AddUObject(this, &UPlayerInfoComponent::UpdateHandRanking);
+	PS->OnDeckCardNum.AddUObject(this, &UPlayerInfoComponent::UpdateCardInDeck);
 
-
+	UpdateUseHandCount(PS->GetMaxHandCount());
 	UpdateUseChuckCount(PS->GetMaxChuckCount());
-
-	UpdateRoundCount(0);
-	UpdateGold(4);
-	UpdateEntiCount(1);
-
+	UpdateGold(PS->GetGold());
+	UpdateEntiCount(PS->GetEntiCount());
+	UpdateRoundCount(PS->GetRoundCount());;
+	UpdateCardInDeck();
 }
 
 UVM_PlayerInfo* UPlayerInfoComponent::GetVMPlayerInfo()
@@ -44,6 +50,14 @@ AMyPlayerState* UPlayerInfoComponent::GetPlayerState()
 	const auto Pawn = Cast<APawn>(GetOwner());
 	auto PlayerState = Pawn->GetController()->GetPlayerState<AMyPlayerState>();
 	return PlayerState;
+}
+
+void UPlayerInfoComponent::UpdateCardInDeck()
+{
+	auto VM = GetVMPlayerInfo();
+	auto PS = GetPlayerState();
+
+	VM->SetDeckNum(PS->GetCardInDeckNum());
 }
 
 void UPlayerInfoComponent::UpdateRoundCount(int16 _invalue)
@@ -82,13 +96,15 @@ void UPlayerInfoComponent::UpdateMaxHandCount(int16 _invalue)
 	VM_PI->SetHand(PS->GetMaxHandCount());*/
 }
 
-void UPlayerInfoComponent::UpdateUseHandCount(int16 _invalue)
+void UPlayerInfoComponent::UpdateUseHandCount(int32 _invalue)
 {
-	/*auto VM_PI = GetVMPlayerInfo();
+	auto VM_PI = GetVMPlayerInfo();
 	auto PS = GetPlayerState();
 
-	PS->SetUseHandCount(_invalue);
-	VM_PI->SetRoundCnt(PS->GetUseHandCount());*/
+	int32 PlayHandCount = PS->GetMaxHandCount();
+	PlayHandCount -= PS->GetUseHandCount();
+
+	VM_PI->SetHandCount(PlayHandCount);
 }
 
 void UPlayerInfoComponent::UpdateUseChuckCount(int32 _Invalue)

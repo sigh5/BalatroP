@@ -35,53 +35,6 @@ void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<FDec
 
     SetHandRankingType(CardNum, _DeckCardStat);
    
-   /* 
-    EPokerHand CurHandType = PS->GetCurHandCard_Type();
-   
-   FName Name;
-    switch (CurHandType)
-    {
-    case EPokerHand::NONE:
-        Name = "-";
-        break;
-    case EPokerHand::HIGH_CARD:
-        Name = "HIGH CARD";
-        break;
-    case EPokerHand::ONE_PAIR:
-        Name = "ONE PAIR";
-        break;
-    case EPokerHand::TWO_PAIR:
-        Name = "TWO PAIR";
-        break;
-    case EPokerHand::TRIPLE:
-        Name = "TRIPLE";
-        break;
-    case EPokerHand::STRAIGHT:
-        Name = "STRAIGHT";
-        break;
-    case EPokerHand::FLUSH:
-        Name = "FLUSH";
-        break;
-    case EPokerHand::FULL_HOUSE:
-        Name = "FULL HOUSE";
-        break;
-    case EPokerHand::FOUR_CARD:
-        Name = "FOUR CARD";
-        break;
-    case EPokerHand::STRAIGHT_FLUSH:
-        Name = "STRAIGHT FLUSH";
-        break;
-    case EPokerHand::ROYAL_FLUSH:
-        Name = "ROYAL FLUSH";
-        break;
-    case EPokerHand::FIVE_CARD:
-        Name = "FIVE CARD";
-        break;
-    default:
-        break;
-    }*/
-	//VM_PlayerInfo->SetHandName(Name);
-
     if (CardNum == 5)  // 내가 공격할 수 있는 최대의 패
     {
         VM_CardDeck->SetIsSelectedMax(true);

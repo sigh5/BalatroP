@@ -17,8 +17,6 @@ protected:
 
 private:
 	class UVM_HandRankingCount* GetVMHandRanking();
-	//class UVM_PlayerInfo* GetVMPlayerInfo();
 	class AMyPlayerState* GetPlayerState();
-	
 
 };

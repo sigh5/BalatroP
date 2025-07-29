@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "GameData/HandRankingStat.h"
 #include "GameData/DeckCardStat.h"
+#include "GameData/BlindStat.h"
 #include "BBGameSingleton.generated.h"
 
 /**
@@ -30,18 +31,25 @@ public:
 
 	FORCEINLINE const TMap<const FName, FHandRankingStat*>& GetHandRankingStatTable() const { return HandRankingStatTable; }
 
-	UPROPERTY()
-	int32 HandRankingMaxNum;
-
 	FORCEINLINE const TArray<FDeckCardStat*>& GetDeckStatTable() const { return DeckCardStatTable; }
 
-	UPROPERTY()
-	int32 DeckCardNum;
 
+	
 
 private:
 	TMap<const FName, FHandRankingStat*> HandRankingStatTable;
 
 	TArray<FDeckCardStat*> DeckCardStatTable;
+
+	TArray<FBlindStat*> BlindStatTable;
+
+	UPROPERTY()
+	int32 HandRankingMaxNum;
+
+	UPROPERTY()
+	int32 DeckCardNum;
+
+	UPROPERTY()
+	int32 BlindStatNum;
 
 };

@@ -3,26 +3,20 @@
 
 #include "UI/View/CardDeck/CardDeckView.h"
 
-
-#include "Components/TextBlock.h"
-#include "Components/Image.h"
 #include "PaperSprite.h"
 #include "Styling/SlateBrush.h"
+#include "Components/TextBlock.h"
+#include "Components/Image.h"
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/Button.h"
-
-#include "UI/Button/Card/CardButton.h"
-
-
 #include "Components/Overlay.h"
 #include "Components/SizeBox.h"
 #include "Components/Border.h"
 
-
+#include "UI/Button/Card/CardButton.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
-
 
 UCardDeckView::UCardDeckView()
 {
@@ -36,9 +30,6 @@ void UCardDeckView::NativeConstruct()
 
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
-
-	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::DeckNum,
-		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_DeckNum));
 
 	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::CurrentAllHands,
 		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_HandInCard));
@@ -57,17 +48,10 @@ void UCardDeckView::NativeOnInitialized()
 	ChuckButton->OnClicked.AddDynamic(this, &UCardDeckView::OnChuckButtonClicked);
 }
 
-void UCardDeckView::VM_FieldChanged_DeckNum(UObject* Object, UE::FieldNotification::FFieldId FieldId)
-{
-	const auto VMInstance = Cast<UVM_CardDeck>(Object);
-
-	CurrentDeckNumText->SetText(FText::AsNumber(VMInstance->GetDeckNum()));
-}
-
 void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
-	HandCardButton.Empty();
-	// 나중에 오브젝트 풀 만들어서 해결하기
+	HandCardButton.Empty(); // 나중에 오브젝트 풀 만들어서 해결하기
+	
 	const auto VMInstance = Cast<UVM_CardDeck>(Object);
 	auto& CurHandInfo = VMInstance->GetCurrentAllHands();
 	int32 CurHandNum = CurHandInfo.Num();
@@ -131,8 +115,6 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 
 		HandCardButton.Add(NewButton);
 	}
-
-	bool c = false;
 }
 
 void UCardDeckView::VM_FieldChanged_CardUpExist(UObject* Object, UE::FieldNotification::FFieldId FieldId)

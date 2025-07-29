@@ -25,11 +25,13 @@ protected:
 	void VM_FieldChanged_CurPlayerHandName(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	
 	void VM_FieldChanged_CurPlayerChuckCount(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
+	void VM_FieldChanged_CurPlayerHandCount(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	
 	void VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CurHandRanking_Level(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CurHandRanking_Drainage(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+	void VM_FieldChanged_DeckNum(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 
 private:
@@ -62,4 +64,7 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> RoundText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> CurrentDeckNumText;
 };

@@ -34,15 +34,15 @@ public:
 	FOnUseHandPlayButton OnUseHandPlay;
 	FOnHandRankName OnHandRankName;
 public:
-	const int32 GetDeckNum() const
-	{
-		return DeckNum;
-	}
+	//const int32 GetDeckNum() const
+	//{
+	//	return DeckNum;
+	//}
 
-	void SetDeckNum(int32 InValue)
-	{
-		UE_MVVM_SET_PROPERTY_VALUE(DeckNum, InValue);
-	}
+	//void SetDeckNum(int32 InValue)
+	//{
+	//	UE_MVVM_SET_PROPERTY_VALUE(DeckNum, InValue);
+	//}
 
 	const TArray<UHandInCard_Info*>& GetCurrentAllHands() const
 	{
@@ -80,8 +80,8 @@ public:
 	FORCEINLINE bool GetIsSelectedMax() const { return IsSelectedMax; }
 
 private:
-	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	int32 DeckNum = 0;
+	//UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	//int32 DeckNum = 0;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<UHandInCard_Info*> CurrentAllHands;

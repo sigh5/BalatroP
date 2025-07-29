@@ -7,15 +7,9 @@
 #include "Core/MyPlayerState.h"
 
 #include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
-#include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
-#include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
 #include "Singleton/BBGameSingleton.h"
 
-
-
-
-// Called when the game starts
 void UHandRankingComponent::BeginPlay()
 {
 	Super::BeginPlay();

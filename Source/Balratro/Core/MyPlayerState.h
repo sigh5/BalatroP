@@ -26,7 +26,11 @@ enum class EHandInCardSortType : uint8
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseChuck, int32);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseHandPlay, int32);
+
+DECLARE_MULTICAST_DELEGATE(FOnDeckCardNum);
 DECLARE_MULTICAST_DELEGATE(FOnCurrentPlayerHandRanking);
+
 
 /**
  * 
@@ -39,8 +43,10 @@ class BALRATRO_API AMyPlayerState : public APlayerState
 public:
 	AMyPlayerState();
 
-	FOnPlayerUseChuck OnPlayerUseChuck;
+	FOnPlayerUseChuck			OnPlayerUseChuck;
+	FOnPlayerUseHandPlay		OnPlayerUseHandPlay;
 	FOnCurrentPlayerHandRanking OnCurrentPlayerHandRanking;
+	FOnDeckCardNum				OnDeckCardNum;
 
 public:
 	FORCEINLINE const int32 GetCurrentHealth() const { return CurrentHealth; };
@@ -62,7 +68,7 @@ public:
 	FORCEINLINE void  SetMaxHandCount(int32 InValue) { MaxHandCount = InValue; }
 
 	FORCEINLINE int32 GetUseHandCount() { return UseHandCount; }
-	FORCEINLINE void  SetUseHandCount(int32 InValue) { UseHandCount = InValue; }
+	FORCEINLINE void  SetUseHandCount(int32 InValue) { UseHandCount = InValue;  OnPlayerUseHandPlay.Broadcast(InValue); }
 
 	FORCEINLINE int32 GetMaxChuckCount() { return MaxChuckCount; }
 	FORCEINLINE void  SetMaxChuckCount(int32 InValue) { MaxChuckCount = InValue; }
@@ -76,8 +82,8 @@ public:
 	FORCEINLINE int32 GetCardInHand() { return CardInHand; }
 	FORCEINLINE void  SetCardInHand(int32 InValue) { CardInHand = InValue; }
 
-	FORCEINLINE int32 GetCardInDeck() { return CardInDeck; }
-	FORCEINLINE void  SetCardInDeck(int32 InValue) { CardInDeck = InValue; }
+	FORCEINLINE int32 GetCardInDeckNum() { return CardInDeckNum; }
+	FORCEINLINE void  SetCardInDeckNum(int32 InValue) { CardInDeckNum = InValue;  OnDeckCardNum.Broadcast(); }
 
 	FORCEINLINE int32 GetMaxScore() { return MaxScore; }
 	FORCEINLINE void  SetMaxScore(int32 InValue) { MaxScore = InValue; }
@@ -129,7 +135,7 @@ private:
 	int32 UseChuckCount;
 
 	int32 CardInHand = 8; // 초기 손에든 패 8장
-	int32 CardInDeck; // 초기 Deck 52장
+	int32 CardInDeckNum; // 초기 Deck 52장
 
 
 	int32 CurrentScore = 0;

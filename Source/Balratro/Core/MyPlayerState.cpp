@@ -52,4 +52,9 @@ void AMyPlayerState::SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue)
 {
 	CurCalculatorCardInHands.Empty();
 	CurCalculatorCardInHands = InValue; 
+
+	if (InValue.Num() == 0)
+	{
+		SetCurHandCard_Type(EPokerHand::NONE);
+	}
 }

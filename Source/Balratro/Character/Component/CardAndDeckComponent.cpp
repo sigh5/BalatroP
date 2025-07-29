@@ -15,8 +15,6 @@
 #include "GameData/HandRankingStat.h"
 #include "Interface/CalculatorScoreInterface.h"
 
-// 142 /190
-
 void UCardAndDeckComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -24,18 +22,33 @@ void UCardAndDeckComponent::BeginPlay()
 	InitDeck();
 }
 
-void UCardAndDeckComponent::UpdateCardInHand(int32 _invalue)
-{
-	auto VM = GetVMCardDeck();
-}
-
-void UCardAndDeckComponent::UpdateCardInDeck()
+void UCardAndDeckComponent::UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardStat)
 {
 	auto VM = GetVMCardDeck();
 	auto PS = GetPlayerState();
-	
-	VM->SetDeckNum(PS->GetCardInDeck());
+
+	auto CurHandInCard = PS->GetCurrentAllHandsModify();
+	CurHandInCard.RemoveAll([&](UHandInCard_Info* HandCard)
+		{
+			if (!HandCard)
+				return false;
+
+			return _DeckCardStat.ContainsByPredicate([&](const FDeckCardStat& Stat)
+				{
+					return Stat == HandCard->Info;
+				});
+		});
+	// 나중에 DeckNumIndex ==> 카드가 덱에 추가된 순서를 csv에 넣어줘야함
+
+	PS->SetCurrentAllHands(CurHandInCard);
+	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
+
+	TArray<FDeckCardStat> Empty;
+	PS->SetCurCalculatorCardInHands(Empty);
+	VM->SetIsSelectedMax(false);
 }
+
+
 
 void UCardAndDeckComponent::ShuffleDeck()
 {
@@ -65,7 +78,7 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 	auto VM = GetVMCardDeck();
 	auto& MyDeckStatTable = PS->GetDeckStatTable();
 	
-	for (int i = CurIndex; i < CurIndex + DrawCardNum; ++i)
+	for (int i = CurDrawIndex; i < CurDrawIndex + DrawCardNum; ++i)
 	{	
 		if (!MyDeckStatTable[i].CardSprite.IsValid())
 		{
@@ -78,9 +91,9 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 	SortHandInCard(PS->GetCurSortType());
 	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
 	
-	PS->SetCardInDeck(PS->GetCardInDeck() - DrawCardNum);
-	VM->SetDeckNum(PS->GetCardInDeck());
-	CurIndex += DrawCardNum;
+	PS->SetCardInDeckNum(PS->GetCardInDeckNum() - DrawCardNum);
+	//VM->SetDeckNum(PS->GetCardInDeckNum());
+	CurDrawIndex += DrawCardNum;
 }
 
 void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
@@ -97,32 +110,22 @@ void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _D
 	
 	PS->SetUseChuckCount(++CurChuckCnt);
 	
-	auto CurHandInCard = PS->GetCurrentAllHandsModify();
-	CurHandInCard.RemoveAll([&](UHandInCard_Info* HandCard)
-		{
-			if (!HandCard) 
-				return false;
-			
-			return _DeckCardStat.ContainsByPredicate([&](const FDeckCardStat& Stat)
-				{
-					return Stat == HandCard->Info;
-				});
-		});
-	// 나중에 DeckNumIndex ==> 카드가 덱에 추가된 순서를 csv에 넣어줘야함
-
-
-	PS->SetCurrentAllHands(CurHandInCard);
-	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
+	UpdateCardInHand(_DeckCardStat);
 	
-	TArray<FDeckCardStat> Empty;
-	PS->SetCurCalculatorCardInHands(Empty);
-	VM->SetIsSelectedMax(false);
 
 	DrawCard(CardNum);
 }
 
 void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
+	auto PS = GetPlayerState();
+	
+	int32 MaxCount = PS->GetMaxHandCount();
+	int32 UseCount = PS->GetUseHandCount();
+
+	if (MaxCount < UseCount + 1)
+		return;
+
 	for (UActorComponent* Comp : GetOwner()->GetComponents())
 	{
 		if (Comp->GetClass()->ImplementsInterface(UCalculatorScoreInterface::StaticClass()))
@@ -131,34 +134,32 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>&
 			if (InterfacePtr)
 			{
 				InterfacePtr->CalCulatorHandRanking(CardNum,_DeckCardStat);
-				UpdateChuck(CardNum, _DeckCardStat);
+				UpdateCardInHand(_DeckCardStat);
+				DrawCard(CardNum);
+
+				// 점수 올리는 이벤트 후에 다시 초기화 해야되지만 일단 초기화 먼저하는코드 넣기
+
 				break;
 			}
 		}
 	}
+
+	PS->SetUseHandCount(UseCount + 1);
 }
 
 void UCardAndDeckComponent::InitDeck()
 {
-	auto& Sigleton = UBBGameSingleton::Get();
-	auto PS = GetPlayerState();
+	const auto VM = GetVMCardDeck();
 
-	auto DataTable = Sigleton.GetDeckStatTable();
+	VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
+	VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
+	VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::UpdateHandPlay);
 
-	PS->ResetDeckStatTable(DataTable);
-
-	PS->SetCardInDeck(DataTable.Num());
+	ShuffleDeck();
 
 	// Test
 	{
-		UpdateCardInDeck();
-		ShuffleDeck();
 		DrawCard(8);
-
-		const auto VM = GetVMCardDeck();
-		VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
-		VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
-		VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::UpdateHandPlay);
 	}
 }
 

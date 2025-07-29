@@ -28,7 +28,6 @@ private:
 
 
 private:
-	class UVM_HandRankingCount* GetVMHandRanking();
 	class UVM_CardDeck* GetVMCardDeck();
 	class AMyPlayerState* GetPlayerState();
 

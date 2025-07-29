@@ -105,6 +105,16 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(CurChip, InValue);
 	}
 
+	const int32 GetDeckNum() const
+	{
+		return DeckNum;
+	}
+
+	void SetDeckNum(int32 InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(DeckNum, InValue);
+	}
+
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -127,6 +137,9 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 CurChip = 0;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	int32 DeckNum = 0;
 
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))

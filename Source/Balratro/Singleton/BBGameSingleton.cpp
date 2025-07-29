@@ -52,6 +52,27 @@ UBBGameSingleton::UBBGameSingleton()
 		ensure(DeckCardNum > 0);
 	}
 
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> BlindDataTableRef(TEXT("/Script/Engine.DataTable'/Game/Data/DT_BlindStat.DT_BlindStat'"));
+	if (nullptr != BlindDataTableRef.Object)
+	{
+		const UDataTable* DataTable = BlindDataTableRef.Object;
+		check(DataTable->GetRowMap().Num() > 0);
+
+		for (const auto& Row : DataTable->GetRowMap())
+		{
+			const FName RowName = Row.Key;
+			FBlindStat* StatPtr = reinterpret_cast<FBlindStat*>(Row.Value);
+			if (StatPtr)
+			{
+				BlindStatTable.Add(StatPtr);
+			}
+		}
+
+		BlindStatNum = BlindStatTable.Num();
+		ensure(BlindStatNum > 0);
+	}
+
 }
 
 UBBGameSingleton& UBBGameSingleton::Get()
