@@ -12,40 +12,40 @@
 
 void UCardButton::SetClikcedEvent()
 {
+	bSelected = false;
 	OnClicked.AddDynamic(this, &UCardButton::OnCardButtonClicked);
 }
 
 void UCardButton::OnCardButtonClicked()
 {
-	bSelected = !bSelected; // Toggle
-
 	auto VM = GetVMCardDeck();
-	
+	bool CurSelectedMax = VM->GetIsSelectedMax();
 
+	if (CurSelectedMax == true && bSelected == false) // 5장이 꽉찼고 추가적으로 더 선택할 경우 return;
+	{
+		return;
+	}
+
+	bSelected = !bSelected; // Toggle
+	
 	UHorizontalBoxSlot* HSlot = Cast<UHorizontalBoxSlot>(Slot);
 	check(HSlot);
-
-	if (!bSelected)
+	if (bSelected == false )
 	{
-		FMargin Margin = HSlot->GetPadding();
-		Margin.Top += 150.f;   // 위로 올린 효과 (아래쪽 여백 줄이기)
+		FMargin Margin = HSlot->GetPadding(); 
+		Margin.Top += 150.f;  // 선택한 카드 내리는 것
 		HSlot->SetPadding(Margin);
 
-		bSelected = false;
 		VM->SetIsUpCardExist(true);
-		
 	}
-	else
+	else if(bSelected == true && CurSelectedMax == false)
 	{
 		FMargin Margin = HSlot->GetPadding();
-		Margin.Top -= 150.f;   // 위로 올린 효과 (아래쪽 여백 줄이기)
+		Margin.Top -= 150.f;    // 선택한 카드 올리는 것
 		HSlot->SetPadding(Margin);
 
-		bSelected = true;
 		VM->SetIsUpCardExist(true);
 	}
-	
-	//VM->SetIsUpCardExist(true);
 }
 
 UVM_CardDeck* UCardButton::GetVMCardDeck()

@@ -26,6 +26,13 @@ void UPlayerInfoWidget::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::HandName,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_CurPlayerHandName));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::ChuckCount,
+		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_CurPlayerChuckCount));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::CurChip,
+		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Chip));
+
 }
 
 void UPlayerInfoWidget::NativeOnInitialized()
@@ -45,4 +52,30 @@ void UPlayerInfoWidget::VM_FieldChanged_CurPlayerHandName(UObject* Object, UE::F
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
 
 	UseHandNameText->SetText(FText::FromName(VMInstance->GetHandName()));
+}
+
+void UPlayerInfoWidget::VM_FieldChanged_CurPlayerChuckCount(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
+
+	ChuckCountText->SetText(FText::AsNumber(VMInstance->GetChuckCount()));
+}
+
+void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
+
+	ChipText->SetText(FText::AsNumber(VMInstance->GetCurChip()));
+}
+
+void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Level(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
+
+
+}
+
+void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
 }

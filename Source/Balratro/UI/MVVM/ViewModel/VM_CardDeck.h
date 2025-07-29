@@ -44,14 +44,14 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(DeckNum, InValue);
 	}
 
-	const TArray<UHandInCard_Info*>& GetCurrentHandInCards() const
+	const TArray<UHandInCard_Info*>& GetCurrentAllHands() const
 	{
-		return CurrentHandInCards;
+		return CurrentAllHands;
 	}
 
-	void SetCurrentHandInCards(const TArray<UHandInCard_Info*>& InValue)
+	void SetCurrentAllHands(const TArray<UHandInCard_Info*>& InValue)
 	{
-		UE_MVVM_SET_PROPERTY_VALUE(CurrentHandInCards , InValue);
+		UE_MVVM_SET_PROPERTY_VALUE(CurrentAllHands, InValue);
 	}
 
 	void	SetSuitSort() {OnSortTypeChange.Broadcast(EHandInCardSortType::SORT_SUIT);}
@@ -75,14 +75,22 @@ public:
 			UE_MVVM_SET_PROPERTY_VALUE(IsUpCardExist, InValue);
 	}
 
+	void	SetIsSelectedMax(bool _InValue) { IsSelectedMax = _InValue; }
+
+	FORCEINLINE bool GetIsSelectedMax() const { return IsSelectedMax; }
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 DeckNum = 0;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	TArray<UHandInCard_Info*> CurrentHandInCards;
+	TArray<UHandInCard_Info*> CurrentAllHands;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool IsUpCardExist;
+
+	UPROPERTY()
+	bool IsSelectedMax = false;
+
 
 };

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
+#include "GameData/DeckCardStat.h"
+#include "GameData/HandRankingStat.h"
 #include "VM_PlayerInfo.generated.h"
 
 /**
@@ -13,6 +15,7 @@ UCLASS()
 class BALRATRO_API UVM_PlayerInfo : public UMVVMViewModelBase
 {
 	GENERATED_BODY()
+
 
 public:
 	const int32 GetRoundCnt() const
@@ -92,6 +95,16 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(HandName, InValue);
 	}
 
+	const int32 GetCurChip() const
+	{
+		return CurChip;
+	}
+
+	void SetCurChip(int32 InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(CurChip, InValue);
+	}
+
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -111,6 +124,10 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 Scroe = 0;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	int32 CurChip = 0;
+
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	FName HandName;

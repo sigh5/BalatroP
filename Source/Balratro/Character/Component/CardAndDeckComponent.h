@@ -22,7 +22,7 @@ public:
 	void DrawCard(int32 DrawCardNum);
 
 	void UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
-	void SetHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
+	void UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
 
 
 

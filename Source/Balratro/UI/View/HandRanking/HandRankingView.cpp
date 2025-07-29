@@ -26,7 +26,7 @@ void UHandRankingView::NativeConstruct()
 
 	const auto VMInst = TryGetViewModel<UVM_HandRankingCount>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
-	VMInst->AddFieldValueChangedDelegate(UVM_HandRankingCount::FFieldNotificationClassDescriptor::HandRankingNum,
+	VMInst->AddFieldValueChangedDelegate(UVM_HandRankingCount::FFieldNotificationClassDescriptor::VM_HandRankingData,
 		FFieldValueChangedDelegate::CreateUObject(this, &UHandRankingView::VM_FieldChanged_Status));
 
 	//VMInst->AddFieldValueChangedDelegate(UVM_HandRankingCount::FFieldNotificationClassDescriptor::HandRankingButtonPos,
@@ -44,7 +44,7 @@ void UHandRankingView::NativeOnInitialized()
 void UHandRankingView::VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInstance = Cast<UVM_HandRankingCount>(Object);
-	HandRankingListView->SetListItems(VMInstance->GetHandRankingNum());
+	HandRankingListView->SetListItems(VMInstance->GetVM_HandRankingData());
 }
 
 void UHandRankingView::VM_FieldChanged_WidgetPos(UObject* Object, UE::FieldNotification::FFieldId FieldId)

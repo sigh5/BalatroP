@@ -6,7 +6,7 @@
 #include "Character/Component/HandRankingComponent.h"
 #include "Character/Component/PlayerInfoComponent.h"
 #include "Character/Component/CardAndDeckComponent.h"
-
+#include "Character/Component/CalculatorHandRankingComponent.h"
 
 // Sets default values
 AMyPawn::AMyPawn()
@@ -15,4 +15,5 @@ AMyPawn::AMyPawn()
 	const auto HandRankingComponent = CreateDefaultSubobject<UHandRankingComponent>("HandRanking");
 	const auto PlayerInfoComponent = CreateDefaultSubobject<UPlayerInfoComponent>("PlayerInfo");
 	const auto CardAndDeckComponent = CreateDefaultSubobject<UCardAndDeckComponent>("CardDeck");
+	const auto CalculatorHandPlayComponent = CreateDefaultSubobject<UCalculatorHandRankingComponent>("CalculatorHandPlay");
 }

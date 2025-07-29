@@ -68,7 +68,7 @@ private:
 	TObjectPtr<class UHorizontalBox> CardPanel;
 
 	UPROPERTY()
-	TArray<TObjectPtr<class UCardButton>> HandCardButton;
+	TArray<TObjectPtr<class UCardButton>> HandCardButton; // 카드가 플레이에 소비될때 이것도 최신화 필요
 
 
 	int32 CardIndex = 0;

@@ -25,6 +25,9 @@ enum class EHandInCardSortType : uint8
 
 };
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseChuck, int32);
+DECLARE_MULTICAST_DELEGATE(FOnCurrentPlayerHandRanking);
+
 /**
  * 
  */
@@ -35,6 +38,9 @@ class BALRATRO_API AMyPlayerState : public APlayerState
 	
 public:
 	AMyPlayerState();
+
+	FOnPlayerUseChuck OnPlayerUseChuck;
+	FOnCurrentPlayerHandRanking OnCurrentPlayerHandRanking;
 
 public:
 	FORCEINLINE const int32 GetCurrentHealth() const { return CurrentHealth; };
@@ -62,7 +68,7 @@ public:
 	FORCEINLINE void  SetMaxChuckCount(int32 InValue) { MaxChuckCount = InValue; }
 
 	FORCEINLINE int32 GetUseChuckCount() { return UseChuckCount; }
-	FORCEINLINE void  SetUseChuckCount(int32 InValue) { UseChuckCount = InValue; }
+	FORCEINLINE void  SetUseChuckCount(int32 InValue) { UseChuckCount = InValue;  OnPlayerUseChuck.Broadcast(UseChuckCount); }
 
 	FORCEINLINE int32 GetCurrentScore() { return CurrentScore; }
 	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; }
@@ -76,35 +82,34 @@ public:
 	FORCEINLINE int32 GetMaxScore() { return MaxScore; }
 	FORCEINLINE void  SetMaxScore(int32 InValue) { MaxScore = InValue; }
 
-	FORCEINLINE const TArray<class UHandRanking_Info*>& GetHandRankingNum() const {return MyHandRankingNum;}
-	FORCEINLINE void ResetMyHandRankingNum(TArray<class UHandRanking_Info*>& InHandRanking) {MyHandRankingNum = InHandRanking;}
+	FORCEINLINE const TArray<class UHandRanking_Info*>& GetHandRankingInfo() const {return MyHandRankingInfo;}
+	void ResetMyHandRankingInfo(const TMap<const FName, FHandRankingStat*>& InHandRanking);
 
 
-	FORCEINLINE TArray<FDeckCardStat>& GetDeckCardStatTableModify()  { return MyDeckCardStat; }
-	FORCEINLINE const TArray<FDeckCardStat>& GetDeckCardStatTable() const { return MyDeckCardStat; }
-	void ResetDeckCardStatTable(const TArray<FDeckCardStat*>& InHandRanking);
+	FORCEINLINE TArray<FDeckCardStat>& GetDeckStatTableModify()  { return Deck_Stat; }
+	FORCEINLINE const TArray<FDeckCardStat>& GetDeckStatTable() const { return Deck_Stat; }
+	void ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRanking);
 	
-	FORCEINLINE TArray<class UHandInCard_Info*>& GetCurrentHandInCardsModify()  { return CurrentHandInCards; }
-	FORCEINLINE const TArray<class UHandInCard_Info*>& GetCurrentHandInCards() const {return CurrentHandInCards;}
-	FORCEINLINE void SetCurrentHandInCards(TArray<class UHandInCard_Info*>& InValue) { CurrentHandInCards = InValue;}
+	FORCEINLINE TArray<class UHandInCard_Info*>& GetCurrentAllHandsModify()  { return CurrentAllHands; }
+	FORCEINLINE const TArray<class UHandInCard_Info*>& GetCurrentAllHands() const {return CurrentAllHands;}
+	FORCEINLINE void SetCurrentAllHands(TArray<class UHandInCard_Info*>& InValue) { CurrentAllHands = InValue;}
 
 	void AddHandInCard(const FDeckCardStat& Info)
 	{
 		auto HandCard = NewObject<UHandInCard_Info>(this);
 		HandCard->Info = Info;
-		CurrentHandInCards.Add(HandCard);
+		CurrentAllHands.Add(HandCard);
 	}
 
 	FORCEINLINE const EHandInCardSortType& GetCurSortType() const { return CurSortType; }
 	FORCEINLINE void  SetCurSortType(EHandInCardSortType& InValue) { CurSortType = InValue; }
 
-	FORCEINLINE const EPokerHand& GetCardInDeckHandType() const { return CurCardInDeckHandType; }
-	FORCEINLINE void  SetCardInDeckHandType(EPokerHand InValue) { CurCardInDeckHandType = InValue; }
+	FORCEINLINE const EPokerHand& GetCurHandCard_Type() const { return CurHandCard_Type; }
+	FORCEINLINE void  SetCurHandCard_Type(EPokerHand InValue) { CurHandCard_Type = InValue;  OnCurrentPlayerHandRanking.Broadcast(); }
 
 
 	FORCEINLINE const TArray<FDeckCardStat>& GetCurCalculatorCardInHands() const { return CurCalculatorCardInHands; }
 	void  SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue);
-
 
 private:
 	int32 CurrentHealth = 0;
@@ -132,16 +137,16 @@ private:
 
 	EBlindValueType			CurBlindType;
 	EHandInCardSortType		CurSortType;
-	EPokerHand				CurCardInDeckHandType;
+	EPokerHand				CurHandCard_Type;
 
 
 	UPROPERTY()
-	TArray<class UHandRanking_Info*> MyHandRankingNum;  // 플레이시 초기화 필수 및 플레이시 내 핸드랭킹
+	TArray<class UHandRanking_Info*> MyHandRankingInfo;  // 플레이시 초기화 필수 및 플레이시 내 핸드랭킹
 
-	TArray<FDeckCardStat> MyDeckCardStat;
+	TArray<FDeckCardStat> Deck_Stat;
 
 	UPROPERTY()
-	TArray<class UHandInCard_Info*> CurrentHandInCards;
+	TArray<class UHandInCard_Info*> CurrentAllHands;
 
 	UPROPERTY()
 	TArray<FDeckCardStat> CurCalculatorCardInHands;

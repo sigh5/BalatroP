@@ -28,10 +28,12 @@ public:
 		return HandRankingStat;
 	}
 
+	FORCEINLINE const TMap<const FName, FHandRankingStat*>& GetHandRankingStatTable() const { return HandRankingStatTable; }
+
 	UPROPERTY()
 	int32 HandRankingMaxNum;
 
-	FORCEINLINE const TArray<FDeckCardStat*>& GetDeckCardStatTable() const { return DeckCardStatTable; }
+	FORCEINLINE const TArray<FDeckCardStat*>& GetDeckStatTable() const { return DeckCardStatTable; }
 
 	UPROPERTY()
 	int32 DeckCardNum;

@@ -8,35 +8,16 @@
 #include "HandRankingComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BALRATRO_API UHandRankingComponent : public UActorComponent, public ICalculatorScoreInterface
+class BALRATRO_API UHandRankingComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
-
-public:
-	virtual void CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) override;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	void	CalculatorBaseScore(EPokerHand HandRankingType, TArray<FDeckCardStat>& _DeckCardStat);
-
-	void	SetHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
-
-	void	SetHandRankingType(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
-	void	SetHandRankingScore();
-
-private:
-	bool	IsStraight(TArray<int32>& SortedRanks);
-	bool	IsFlush(TMap<int32, int32>& SuitCounts);
-
-
-
-private:
 	class UVM_HandRankingCount* GetVMHandRanking();
-	class UVM_CardDeck* GetVMCardDeck();
-	class UVM_PlayerInfo* GetVMPlayerInfo();
+	//class UVM_PlayerInfo* GetVMPlayerInfo();
 	class AMyPlayerState* GetPlayerState();
 	
 

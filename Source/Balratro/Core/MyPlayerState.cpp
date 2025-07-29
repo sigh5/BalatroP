@@ -11,7 +11,24 @@ AMyPlayerState::AMyPlayerState()
 	MaxHandCount = 4;
 }
 
-void AMyPlayerState::ResetDeckCardStatTable(const TArray<FDeckCardStat*>& InHandRanking)
+void AMyPlayerState::ResetMyHandRankingInfo(const TMap<const FName, FHandRankingStat*>& InHandRanking)
+{
+	for (const auto& Info : InHandRanking)
+	{
+		UHandRanking_Info* MyInfo = NewObject<UHandRanking_Info>();
+		MyInfo->Info.Level = Info.Value->Level;
+		MyInfo->Info.Chip = Info.Value->Chip;
+		MyInfo->Info.Drainage = Info.Value->Drainage;
+		MyInfo->Info.UseNum = Info.Value->UseNum;
+		MyInfo->Info.IncreaseChip = Info.Value->IncreaseChip;
+		MyInfo->Info.IncreaseDrainage = Info.Value->IncreaseDrainage;
+
+		MyInfo->_Name = Info.Key;
+		MyHandRankingInfo.Add(MyInfo);
+	}
+}
+
+void AMyPlayerState::ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRanking)
 {
 	FDeckCardStat StatInfo;
 
@@ -26,7 +43,7 @@ void AMyPlayerState::ResetDeckCardStatTable(const TArray<FDeckCardStat*>& InHand
 		StatInfo.SuitGrade = Info->SuitGrade;
 		StatInfo.CardSprite = Info->CardSprite;
 
-		MyDeckCardStat.Add(StatInfo);
+		Deck_Stat.Add(StatInfo);
 	}
 
 }
@@ -34,9 +51,5 @@ void AMyPlayerState::ResetDeckCardStatTable(const TArray<FDeckCardStat*>& InHand
 void AMyPlayerState::SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue)
 {
 	CurCalculatorCardInHands.Empty();
-
-
 	CurCalculatorCardInHands = InValue; 
-
-	bool c = false;
 }

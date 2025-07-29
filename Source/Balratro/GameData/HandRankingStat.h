@@ -65,3 +65,16 @@ public:
 		return Result;
 	}*/
 };
+
+UCLASS(BlueprintType)
+class UHandRanking_Info :public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadOnly)
+	FHandRankingStat Info;
+
+	UPROPERTY(BlueprintReadOnly)
+	FName	_Name;
+};
