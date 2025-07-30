@@ -31,11 +31,23 @@ public:
 	FORCEINLINE void SetSelected(bool _Selected) { bSelected = _Selected; }
 
 	class UVM_CardDeck* GetVMCardDeck();
+
+	void	SetImage();
+
+	FORCEINLINE void SetButtonBorder(class UBorder* InValue) { Border = InValue; }
+	FORCEINLINE void SetButtonImage(class UImage* InValue) { Image = InValue; }
+
 private:
 	int CardIndex = 0;
 	FDeckCardStat CardInfoData;
 	
 	uint8 bSelected : 1;
+
+	UPROPERTY()
+	TObjectPtr<class UBorder> Border;
+
+	UPROPERTY()
+	TObjectPtr<class UImage> Image;
 
 
 };

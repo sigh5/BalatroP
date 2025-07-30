@@ -33,8 +33,7 @@ public:
 
 	FORCEINLINE const TArray<FDeckCardStat*>& GetDeckStatTable() const { return DeckCardStatTable; }
 
-
-	
+	FORCEINLINE const TArray<FBlindStat*>& GetBlindStat() const { return BlindStatTable; }
 
 private:
 	TMap<const FName, FHandRankingStat*> HandRankingStatTable;
@@ -51,5 +50,7 @@ private:
 
 	UPROPERTY()
 	int32 BlindStatNum;
+
+
 
 };

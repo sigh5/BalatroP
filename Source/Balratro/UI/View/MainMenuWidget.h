@@ -15,25 +15,38 @@ class UMainMenuWidget : public UBBUserWidgetBase
 	GENERATED_BODY()
 	
 public:
-	UMainMenuWidget();
+    UMainMenuWidget();
 
 protected:
     void NativeConstruct() override;
 
+protected:
+    void VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+   
+
 private:
-    void OnFieldChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
-    void OnFieldTextChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
-
-  /*  UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UProgressBar> HealthProgressBar;
-
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UTextBlock> TestText;*/
+    class UCanvasPanel* CanvasSlot;
+
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UImage> BackGroundImage;
+
+    UPROPERTY()
+    TSubclassOf<class UBlindSelectView> BlindSelectView;
+
+    UPROPERTY()
+    TSubclassOf<class UPlayerInfoWidget> PlayerInfoView;
+
+    UPROPERTY()
+    TSubclassOf<class UJokerSlotWidget> JokerSlotView;
+
+    UPROPERTY()
+    TSubclassOf<class UCardDeckView> CadDeckView;
+
+
+    UPROPERTY()
+    TObjectPtr<class UBBUserWidgetPool> WidgetPool;
 
 
 };

@@ -22,30 +22,24 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
 
-
+protected:
 	void VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
 	void VM_FieldChanged_CardUpExist(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
-
-	/*UFUNCTION()
-	void OnCardButtonClicked();*/
 
 	UFUNCTION()
 	void OnSuitSortButtonClicked();
-
 	UFUNCTION()
 	void OnRankSortButtonClicked();
-
 	UFUNCTION()
 	void OnChuckButtonClicked();
-
 	UFUNCTION()
 	void OnHandPlayButtonClicked();
 
-private:
-	bool SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum);
 
+
+private:
+	bool  SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum);
+	class UCardButton* ReuseCardButton(int32 CurAllCardNum , int32 CurNum, UHandInCard_Info* CardInfo);
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -66,6 +60,7 @@ private:
 	UPROPERTY()
 	TArray<TObjectPtr<class UCardButton>> HandCardButton;
 
+	const int32 PaddingX = 8;
 
 	int32 CardIndex = 0;
 };

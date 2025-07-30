@@ -72,7 +72,6 @@ UBBGameSingleton::UBBGameSingleton()
 		BlindStatNum = BlindStatTable.Num();
 		ensure(BlindStatNum > 0);
 	}
-
 }
 
 UBBGameSingleton& UBBGameSingleton::Get()

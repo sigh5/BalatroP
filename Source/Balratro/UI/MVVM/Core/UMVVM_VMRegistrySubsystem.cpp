@@ -10,6 +10,8 @@
 #include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
+#include "UI/MVVM/ViewModel/VM_BlindSelect.h"
+
 void UUMVVM_VMRegistrySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -28,6 +30,7 @@ void UUMVVM_VMRegistrySubsystem::RegisterViewModels()
 	AddViewModel(MVVMCollection, UVM_HandRankingCount::StaticClass(), FName("VM_HandRankingCount"));
 	AddViewModel(MVVMCollection, UVM_PlayerInfo::StaticClass(), FName("VM_PlayerInfo"));
 	AddViewModel(MVVMCollection, UVM_CardDeck::StaticClass(), FName("VM_CardDeck"));
+	AddViewModel(MVVMCollection, UVM_BlindSelect::StaticClass(), FName("VM_BlindSelect"));
 }
 
 void UUMVVM_VMRegistrySubsystem::AddViewModel(UMVVMViewModelCollectionObject* VMCollection, const TSubclassOf<UMVVMViewModelBase>& ViewModelClass,

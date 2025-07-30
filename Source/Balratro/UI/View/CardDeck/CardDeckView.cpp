@@ -18,6 +18,7 @@
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
+
 UCardDeckView::UCardDeckView()
 {
 	ViewModelClass = UVM_CardDeck::StaticClass();
@@ -48,21 +49,13 @@ void UCardDeckView::NativeOnInitialized()
 	ChuckButton->OnClicked.AddDynamic(this, &UCardDeckView::OnChuckButtonClicked);
 }
 
-void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+UCardButton* UCardDeckView::ReuseCardButton(int32 CurAllCardNum ,int32 CurNum, UHandInCard_Info* CardInfo)
 {
-	HandCardButton.Empty(); // 나중에 오브젝트 풀 만들어서 해결하기
-	
-	const auto VMInstance = Cast<UVM_CardDeck>(Object);
-	auto& CurHandInfo = VMInstance->GetCurrentAllHands();
-	int32 CurHandNum = CurHandInfo.Num();
-	const int32 PaddingX = 8;
-
-	CardPanel->ClearChildren(); // 기존 이미지 제거
-	
-	for (int i = 0; i < CurHandNum; ++i)
+	UCardButton* NewButton = nullptr;
+	if (HandCardButton.Num() < CurAllCardNum)
 	{
-		UCardButton* NewButton = NewObject<UCardButton>(this);
-		NewButton->SetCardInfoData(CurHandInfo[i]->Info);
+		NewButton = NewObject<UCardButton>(this);
+		NewButton->SetCardInfoData(CardInfo->Info);
 		NewButton->SetCardIndex(CardIndex++);
 
 		USizeBox* SizeBox = NewObject<USizeBox>(NewButton);
@@ -76,7 +69,7 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 		BackgroundBorder->SetVerticalAlignment(VAlign_Fill);
 		SizeBox->SetContent(BackgroundBorder);
 
-		if (UPaperSprite* Sprite = CurHandInfo[i]->Info.CardSprite.Get())
+		if (UPaperSprite* Sprite = CardInfo->Info.CardSprite.Get())
 		{
 			UImage* CardImage = NewObject<UImage>(BackgroundBorder);
 			FSlateBrush SpriteBrush;
@@ -84,9 +77,46 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 			SpriteBrush.ImageSize = FVector2D(100.f, 150.f);
 			SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
 			CardImage->SetBrush(SpriteBrush);
-
 			BackgroundBorder->SetContent(CardImage);
+
+			NewButton->SetButtonImage(CardImage);
+			NewButton->SetButtonBorder(BackgroundBorder);
 		}
+		// 버튼 기본 배경 제거(투명)
+		FButtonStyle EmptyStyle;
+		EmptyStyle.SetNormal(FSlateNoResource());
+		EmptyStyle.SetHovered(FSlateNoResource());
+		EmptyStyle.SetPressed(FSlateNoResource());
+		NewButton->SetStyle(EmptyStyle);
+		NewButton->SetClikcedEvent();
+
+		HandCardButton.Add(NewButton);
+	}
+	else
+	{
+		NewButton = HandCardButton[CurNum];
+		check(NewButton);
+		NewButton->SetSelected(false);
+		NewButton->SetCardInfoData(CardInfo->Info);
+		NewButton->SetCardIndex(CardIndex++);
+		NewButton->SetImage();
+	}
+	return NewButton;
+}
+
+void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	//HandCardButton.Empty(); // 나중에 오브젝트 풀 만들어서 해결하기
+	
+	const auto VMInstance = Cast<UVM_CardDeck>(Object);
+	auto& CurHandInfo = VMInstance->GetCurrentAllHands();
+	int32 CurAllHandNum = CurHandInfo.Num();
+	
+	CardPanel->ClearChildren(); // 기존 이미지 제거
+
+	for (int i = 0; i < CurAllHandNum; ++i)
+	{
+		UCardButton* NewButton = ReuseCardButton(CurAllHandNum, i, CurHandInfo[i]);
 
 		UHorizontalBoxSlot* BoxSlot = CardPanel->AddChildToHorizontalBox(NewButton);
 		BoxSlot->SetSize(FSlateChildSize(ESlateSizeRule::Automatic));
@@ -102,18 +132,6 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 
 		BoxSlot->SetHorizontalAlignment(HAlign_Center);
 		BoxSlot->SetVerticalAlignment(VAlign_Center);
-
-		// 버튼 기본 배경 제거(투명)
-		FButtonStyle EmptyStyle;
-		EmptyStyle.SetNormal(FSlateNoResource());
-		EmptyStyle.SetHovered(FSlateNoResource());
-		EmptyStyle.SetPressed(FSlateNoResource());
-		NewButton->SetStyle(EmptyStyle);
-		
-		NewButton->SetSelected(false);
-		NewButton->SetClikcedEvent();
-
-		HandCardButton.Add(NewButton);
 	}
 }
 
@@ -190,3 +208,4 @@ bool UCardDeckView::SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int
 
 	return true;
 }
+

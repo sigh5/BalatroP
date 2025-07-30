@@ -10,7 +10,9 @@
 
 #include "Singleton/BBGameSingleton.h"
 #include "Core/MyPlayerState.h"
+
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
+#include "UI/MVVM/ViewModel/VM_MainMenu.h"
 
 #include "GameData/HandRankingStat.h"
 #include "Interface/CalculatorScoreInterface.h"
@@ -19,12 +21,17 @@ void UCardAndDeckComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitDeck();
+	const auto VM = GetVMCardDeck();
+	auto	PS = GetPlayerState();
+	PS->OnCardBattleScene.AddUObject(this, &UCardAndDeckComponent::SetVisibleCardDeckView);
+
+	VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
+	VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
+	VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::UpdateHandPlay);
 }
 
 void UCardAndDeckComponent::UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardStat)
 {
-	auto VM = GetVMCardDeck();
 	auto PS = GetPlayerState();
 
 	auto CurHandInCard = PS->GetCurrentAllHandsModify();
@@ -41,14 +48,23 @@ void UCardAndDeckComponent::UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardSta
 	// 나중에 DeckNumIndex ==> 카드가 덱에 추가된 순서를 csv에 넣어줘야함
 
 	PS->SetCurrentAllHands(CurHandInCard);
-	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
 
 	TArray<FDeckCardStat> Empty;
 	PS->SetCurCalculatorCardInHands(Empty);
-	VM->SetIsSelectedMax(false);
+	
 }
 
-
+void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
+{
+	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND
+		|| InValue == EPlayerStateType::SMALL_BLIND)
+	{
+		auto VM_MainMenu = GetVMMainWidget();
+		FName CurName = "CadDeckView";
+		VM_MainMenu->SetCurWidgetName(CurName);
+		InitDeck();
+	}
+}
 
 void UCardAndDeckComponent::ShuffleDeck()
 {
@@ -87,32 +103,27 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 	
 		PS->AddHandInCard(MyDeckStatTable[i]);
 	}
-
 	SortHandInCard(PS->GetCurSortType());
+
 	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
-	
+	VM->SetIsSelectedMax(false);
+
 	PS->SetCardInDeckNum(PS->GetCardInDeckNum() - DrawCardNum);
-	//VM->SetDeckNum(PS->GetCardInDeckNum());
 	CurDrawIndex += DrawCardNum;
 }
 
 void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
 	auto PS = GetPlayerState();
-	auto VM = GetVMCardDeck();
 
 	int32 CurChuckCnt = PS->GetUseChuckCount();
-
 	if (PS->GetMaxChuckCount() < CurChuckCnt + 1)
 	{
 		return;
 	}
 	
 	PS->SetUseChuckCount(++CurChuckCnt);
-	
 	UpdateCardInHand(_DeckCardStat);
-	
-
 	DrawCard(CardNum);
 }
 
@@ -136,9 +147,7 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>&
 				InterfacePtr->CalCulatorHandRanking(CardNum,_DeckCardStat);
 				UpdateCardInHand(_DeckCardStat);
 				DrawCard(CardNum);
-
 				// 점수 올리는 이벤트 후에 다시 초기화 해야되지만 일단 초기화 먼저하는코드 넣기
-
 				break;
 			}
 		}
@@ -149,18 +158,8 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>&
 
 void UCardAndDeckComponent::InitDeck()
 {
-	const auto VM = GetVMCardDeck();
-
-	VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
-	VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
-	VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::UpdateHandPlay);
-
 	ShuffleDeck();
-
-	// Test
-	{
-		DrawCard(8);
-	}
+	DrawCard(8);
 }
 
 void UCardAndDeckComponent::SortHandInCard(const EHandInCardSortType& InType)
@@ -209,6 +208,19 @@ UVM_CardDeck* UCardAndDeckComponent::GetVMCardDeck()
 	const auto Found = VMCollection->FindViewModelInstance(Context);
 	return Cast<UVM_CardDeck>(Found);
 }
+
+UVM_MainMenu* UCardAndDeckComponent::GetVMMainWidget()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_MainMenu");
+	Context.ContextClass = UVM_MainMenu::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_MainMenu>(Found);
+}
+
 
 AMyPlayerState* UCardAndDeckComponent::GetPlayerState()
 {

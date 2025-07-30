@@ -6,16 +6,9 @@
 #include "GameFramework/PlayerState.h"
 #include "GameData/HandRankingStat.h"
 #include "GameData/DeckCardStat.h"
+#include "GameData/BlindStat.h"
 #include "MyPlayerState.generated.h"
 
-UENUM()
-enum class EBlindValueType :uint8 
-{
-	BLIND_SKIP = 0,
-	SMALL_BLIND,
-	BIG_BLIND,
-	BOSS_BLIND
-};
 
 UENUM()
 enum class EHandInCardSortType : uint8
@@ -27,6 +20,8 @@ enum class EHandInCardSortType : uint8
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseChuck, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseHandPlay, int32);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCardBattleScene, EPlayerStateType);
+
 
 DECLARE_MULTICAST_DELEGATE(FOnDeckCardNum);
 DECLARE_MULTICAST_DELEGATE(FOnCurrentPlayerHandRanking);
@@ -47,7 +42,7 @@ public:
 	FOnPlayerUseHandPlay		OnPlayerUseHandPlay;
 	FOnCurrentPlayerHandRanking OnCurrentPlayerHandRanking;
 	FOnDeckCardNum				OnDeckCardNum;
-
+	FOnCardBattleScene			OnCardBattleScene;
 public:
 	FORCEINLINE const int32 GetCurrentHealth() const { return CurrentHealth; };
 	FORCEINLINE void SetCurrentHealth(int32 InHealth) { CurrentHealth = InHealth; }
@@ -117,6 +112,9 @@ public:
 	FORCEINLINE const TArray<FDeckCardStat>& GetCurCalculatorCardInHands() const { return CurCalculatorCardInHands; }
 	void  SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue);
 
+	FORCEINLINE const EPlayerStateType GetPlayerState() const { return CurPlayerState; }
+	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { CurPlayerState = InType; OnCardBattleScene.Broadcast(CurPlayerState); }
+
 private:
 	int32 CurrentHealth = 0;
 	int32 MaxHealth = 0;
@@ -141,7 +139,7 @@ private:
 	int32 CurrentScore = 0;
 	int32 MaxScore = 0;
 
-	EBlindValueType			CurBlindType;
+	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;
 	EPokerHand				CurHandCard_Type;
 

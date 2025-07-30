@@ -24,15 +24,23 @@ protected:
 private:
 	void	InitDeck();
 	void	ShuffleDeck();
+
+	//		현재 모델에 있는 카드 데이터를 VM에 전달
 	void	DrawCard(int32 DrawCardNum);
 
 
 	void	SortHandInCard(const EHandInCardSortType& InType);
+
+	// 핸드플레이, 버리기 등 현재 손패에 있는 카드 데이터 제거 후 모델에 전달
+	// 여기서 VM 사용 하지말기
 	void	UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardStat);
 
-private:
-	class UVM_CardDeck* GetVMCardDeck();
-	class AMyPlayerState* GetPlayerState();
+	void	SetVisibleCardDeckView(EPlayerStateType InValue);
 
+private:
+	class UVM_CardDeck*		GetVMCardDeck();
+	class AMyPlayerState*	GetPlayerState();
+	class UVM_MainMenu*		GetVMMainWidget();
+	
 	int32  CurDrawIndex = 0;
 };

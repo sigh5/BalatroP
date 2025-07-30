@@ -10,6 +10,11 @@
 #include <MVVMSubsystem.h>
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
+#include "PaperSprite.h"
+#include "Styling/SlateBrush.h"
+#include "Components/Border.h"
+#include "Components/Image.h"
+
 void UCardButton::SetClikcedEvent()
 {
 	bSelected = false;
@@ -58,4 +63,18 @@ UVM_CardDeck* UCardButton::GetVMCardDeck()
 
 	const auto Found = VMCollection->FindViewModelInstance(Context);
 	return Cast<UVM_CardDeck>(Found);
+}
+
+void UCardButton::SetImage()
+{
+	if (UPaperSprite* Sprite = CardInfoData.CardSprite.Get())
+	{
+		FSlateBrush SpriteBrush;
+		SpriteBrush.SetResourceObject(Sprite);
+		SpriteBrush.ImageSize = FVector2D(100.f, 150.f);
+		SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
+		Image->SetBrush(SpriteBrush);
+
+		Border->SetContent(Image);
+	}
 }
