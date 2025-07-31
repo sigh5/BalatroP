@@ -34,6 +34,24 @@ protected:
 		return nullptr;
 	}
 
+
+	template <typename VMClass>
+	VMClass* TryGetViewModel(FName _ViewModelName, TSubclassOf<UMVVMViewModelBase> _ViewModelClass) const
+	{
+		const auto Collection = GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+		FMVVMViewModelContext Context;
+		Context.ContextClass = _ViewModelName;
+		Context.ContextName = _ViewModelClass;
+		const auto VMInstance = Collection->FindViewModelInstance(Context);
+		if (IsValid(VMInstance))
+		{
+			return Cast<VMClass>(VMInstance);
+		}
+		checkf(false, TEXT("Unable to find a ViewModel that matches the given ViewModelName and ViewModelClass!"));
+		return nullptr;
+	}
+
 protected:
 	UPROPERTY(EditAnywhere)
 	FName ViewModelName;

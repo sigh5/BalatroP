@@ -37,8 +37,6 @@ void UBlindComponent::InitBlindSelectView()
 	VM->SetSmallGrade(BlindStatTable[RoundCnt]->SMallGrade);
 	VM->SetBigGrade(BlindStatTable[RoundCnt]->BigGrade);
 	VM->SetBossGrade(BlindStatTable[RoundCnt]->BossGrade);
-
-
 }
 
 void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)

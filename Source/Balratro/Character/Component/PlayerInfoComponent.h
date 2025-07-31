@@ -15,21 +15,25 @@ class BALRATRO_API UPlayerInfoComponent : public UActorComponent
 
 
 public:
+	void UpdateRoundCount();
+	void UpdateEntiCount();
+	void UpdateGold();
+	
 	void UpdateCardInDeck();
-	void UpdateRoundCount(int16 _invalue);
-	void UpdateGold(int16 _invalue);
-	void UpdateEntiCount(int16 _invalue);
 	void UpdateMaxHandCount(int16 _invalue);
 	void UpdateUseHandCount(int32 _invalue);
 	void UpdateUseChuckCount(int32 _Invalue);
-	void UpdateCurrentScore(int32 _invalue);
+	void UpdateCurrentScore();
 	void UpdateMaxScore(int32 _invalue);
 
 	void UpdateHandRanking();
-
+	void UpdateBlindInfo(EPlayerStateType _InType);
 
 protected:
 	virtual void BeginPlay() override;
+
+private:
+	void  Init_PlayerInfo();
 
 private:
 	class UVM_PlayerInfo* GetVMPlayerInfo();

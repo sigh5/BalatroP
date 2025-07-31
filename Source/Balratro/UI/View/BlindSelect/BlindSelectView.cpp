@@ -33,8 +33,6 @@ void UBlindSelectView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::BossGrade,
 		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_BossBlindGrade));
-
-
 }
 
 void UBlindSelectView::NativeOnInitialized()
@@ -72,9 +70,9 @@ void UBlindSelectView::VM_FieldChanged_BigBlindGrade(UObject* Object, UE::FieldN
 	BigBlindScoreText->SetText(FText::AsNumber(Grade, &NumberFormatOptions));
 
 	if (Grade < 10000)
-		SmallBlindScoreText->SetJustification(ETextJustify::Center);
+		BigBlindScoreText->SetJustification(ETextJustify::Center);
 	else
-		SmallBlindScoreText->SetJustification(ETextJustify::Left);
+		BigBlindScoreText->SetJustification(ETextJustify::Left);
 }
 
 void UBlindSelectView::VM_FieldChanged_BossBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -83,10 +81,10 @@ void UBlindSelectView::VM_FieldChanged_BossBlindGrade(UObject* Object, UE::Field
 	FNumberFormattingOptions NumberFormatOptions;
 
 	int32 Grade = VMInst->GetBossGrade();
-	BossBlindScoreText->SetText(FText::AsNumber(Grade), &NumberFormatOptions));
+	BossBlindScoreText->SetText(FText::AsNumber(Grade, &NumberFormatOptions));
 
 	if (Grade < 10000)
-		SmallBlindScoreText->SetJustification(ETextJustify::Center);
+		BossBlindScoreText->SetJustification(ETextJustify::Center);
 	else
-		SmallBlindScoreText->SetJustification(ETextJustify::Left);
+		BossBlindScoreText->SetJustification(ETextJustify::Left);
 }

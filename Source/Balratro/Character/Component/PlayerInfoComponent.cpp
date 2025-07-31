@@ -20,17 +20,30 @@ void UPlayerInfoComponent::BeginPlay()
 	PS->ResetDeckStatTable(DataTable);
 	PS->SetCardInDeckNum(DataTable.Num());
 
-	PS->OnPlayerUseChuck.AddUObject(this, &UPlayerInfoComponent::UpdateUseChuckCount);
+	PS->OnSetRoundCount.AddUObject(this, &UPlayerInfoComponent::UpdateRoundCount);
+	PS->OnSetEntiCount.AddUObject(this, &UPlayerInfoComponent::UpdateEntiCount);
+	PS->OnSetCurrentGold.AddUObject(this, &UPlayerInfoComponent::UpdateGold);
 	PS->OnPlayerUseHandPlay.AddUObject(this, &UPlayerInfoComponent::UpdateUseHandCount);
+	PS->OnPlayerUseChuck.AddUObject(this, &UPlayerInfoComponent::UpdateUseChuckCount);
 	PS->OnCurrentPlayerHandRanking.AddUObject(this, &UPlayerInfoComponent::UpdateHandRanking);
 	PS->OnDeckCardNum.AddUObject(this, &UPlayerInfoComponent::UpdateCardInDeck);
+	PS->OnCardBattleScene.AddUObject(this, &UPlayerInfoComponent::UpdateBlindInfo);
+	PS->OnSetCurrentScore.AddUObject(this, &UPlayerInfoComponent::UpdateCurrentScore);
 
-	UpdateUseHandCount(PS->GetMaxHandCount());
+	Init_PlayerInfo();
+}
+
+void UPlayerInfoComponent::Init_PlayerInfo()
+{
+	auto PS = GetPlayerState();
+	UpdateRoundCount();;
+	UpdateEntiCount();
+	UpdateGold();
 	UpdateUseChuckCount(PS->GetMaxChuckCount());
-	UpdateGold(PS->GetGold());
-	UpdateEntiCount(PS->GetEntiCount());
-	UpdateRoundCount(PS->GetRoundCount());;
+	UpdateUseHandCount(PS->GetMaxHandCount());
 	UpdateCardInDeck();
+	UpdateBlindInfo(EPlayerStateType::NONE);
+	UpdateCurrentScore();
 }
 
 UVM_PlayerInfo* UPlayerInfoComponent::GetVMPlayerInfo()
@@ -60,40 +73,37 @@ void UPlayerInfoComponent::UpdateCardInDeck()
 	VM->SetDeckNum(PS->GetCardInDeckNum());
 }
 
-void UPlayerInfoComponent::UpdateRoundCount(int16 _invalue)
+void UPlayerInfoComponent::UpdateRoundCount()
 {
 	auto VM_PI = GetVMPlayerInfo();
 	auto PS = GetPlayerState();
 
-	PS->SetRoundCount(_invalue);
 	VM_PI->SetRoundCnt(PS->GetRoundCount());
 }
 
-void UPlayerInfoComponent::UpdateGold(int16 _invalue)
+void UPlayerInfoComponent::UpdateGold()
 {
 	auto VM_PI = GetVMPlayerInfo();
 	auto PS = GetPlayerState();
 
-	PS->SetGold(_invalue);
 	VM_PI->SetGold(PS->GetGold());
 }
 
-void UPlayerInfoComponent::UpdateEntiCount(int16 _invalue)
+void UPlayerInfoComponent::UpdateEntiCount()
 {
 	auto VM_PI = GetVMPlayerInfo();
 	auto PS = GetPlayerState();
 
-	PS->SetEntiCount(_invalue);
 	VM_PI->SetEntiCnt(PS->GetEntiCount());
 }
 
 void UPlayerInfoComponent::UpdateMaxHandCount(int16 _invalue)
 {
-	/*auto VM_PI = GetVMPlayerInfo();
+	// 나중에 수정 필요
+	auto VM_PI = GetVMPlayerInfo();
 	auto PS = GetPlayerState();
 
 	PS->SetMaxHandCount(_invalue);
-	VM_PI->SetHand(PS->GetMaxHandCount());*/
 }
 
 void UPlayerInfoComponent::UpdateUseHandCount(int32 _invalue)
@@ -118,18 +128,18 @@ void UPlayerInfoComponent::UpdateUseChuckCount(int32 _Invalue)
 	VM_PI->SetChuckCount(ChuckCount);
 }
 
-void UPlayerInfoComponent::UpdateCurrentScore(int32 _invalue)
+void UPlayerInfoComponent::UpdateCurrentScore()
 {
 	auto VM_PI = GetVMPlayerInfo();
 	auto PS = GetPlayerState();
 
-	//PS->SetCurrentScore(_invalue);
-	//VM_PI->SetRoundCnt(PS->GetCurrentScore());
+	VM_PI->SetScroe(PS->GetCurrentScore());
 }
 
 void UPlayerInfoComponent::UpdateMaxScore(int32 _invalue)
 {
 	auto VM = GetVMPlayerInfo();
+	// 나중에 수정필요
 }
 
 void UPlayerInfoComponent::UpdateHandRanking()
@@ -202,6 +212,62 @@ void UPlayerInfoComponent::UpdateHandRanking()
 	BaseChip += IncreaseChip * (Level-1);
 
 	VM_PI->SetCurChip(BaseChip);
-	
-
 }
+
+void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
+{
+	auto VM_PI = GetVMPlayerInfo();
+	auto PS = GetPlayerState();
+	auto& Sigleton = UBBGameSingleton::Get();
+
+	int32 RoundCnt = PS->GetRoundCount();
+	int32 Reward = -1;
+
+	FName MainOrder = "";
+	bool  BlindInfoActive = false;
+	switch (_InType)
+	{
+	case EPlayerStateType::NONE:
+		MainOrder = "Choose Your \n Next Blind";
+		BlindInfoActive = false;
+		break;
+	case EPlayerStateType::STORE:
+		MainOrder = "-";
+		BlindInfoActive = false;
+		break;
+	case EPlayerStateType::SMALL_BLIND:
+		MainOrder = "Small Blind";
+		BlindInfoActive = true;
+		Reward = Sigleton.GetBlindStat()[RoundCnt]->SMallReward;
+		++RoundCnt;
+		break;
+	case EPlayerStateType::SMALL_BLIND_SKIP:
+		MainOrder = "Choose Your \n Next Blind";
+		BlindInfoActive = false;
+		break;
+	case EPlayerStateType::BIG_BLIND:
+		MainOrder = "Big Blind";
+		BlindInfoActive = true;
+		Reward = Sigleton.GetBlindStat()[RoundCnt]->BigReward;
+		++RoundCnt;
+		break;
+	case EPlayerStateType::BIG_BLIND_SKIP:
+		MainOrder = "Choose Your \n Next Blind";
+		BlindInfoActive = false;
+		break;
+	case EPlayerStateType::BOSS_BLIND:
+		MainOrder = "Boss Blind";
+		BlindInfoActive = true;
+		Reward = Sigleton.GetBlindStat()[RoundCnt]->BossReward;
+		++RoundCnt;
+		break;
+	default:
+		break;
+	}
+	
+	PS->SetRoundCount(RoundCnt);
+	VM_PI->SetBlindInfoActive(BlindInfoActive); // Active가 가장 먼저와야됌
+	VM_PI->SetBlindReward(Reward);
+	VM_PI->SetMainOrder(MainOrder);
+}
+

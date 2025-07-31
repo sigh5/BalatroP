@@ -26,6 +26,10 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnCardBattleScene, EPlayerStateType);
 DECLARE_MULTICAST_DELEGATE(FOnDeckCardNum);
 DECLARE_MULTICAST_DELEGATE(FOnCurrentPlayerHandRanking);
 
+DECLARE_MULTICAST_DELEGATE(FOnSetCurrentScore);
+DECLARE_MULTICAST_DELEGATE(FOnSetRoundCount);
+DECLARE_MULTICAST_DELEGATE(FOnSetCurrentGold);
+DECLARE_MULTICAST_DELEGATE(FOnSetEntiCount);
 
 /**
  * 
@@ -38,26 +42,29 @@ class BALRATRO_API AMyPlayerState : public APlayerState
 public:
 	AMyPlayerState();
 
-	FOnPlayerUseChuck			OnPlayerUseChuck;
+	FOnSetRoundCount			OnSetRoundCount;
+	FOnSetEntiCount				OnSetEntiCount;
+	FOnSetCurrentGold			OnSetCurrentGold;
 	FOnPlayerUseHandPlay		OnPlayerUseHandPlay;
+	FOnPlayerUseChuck			OnPlayerUseChuck;
 	FOnCurrentPlayerHandRanking OnCurrentPlayerHandRanking;
-	FOnDeckCardNum				OnDeckCardNum;
 	FOnCardBattleScene			OnCardBattleScene;
-public:
-	FORCEINLINE const int32 GetCurrentHealth() const { return CurrentHealth; };
-	FORCEINLINE void SetCurrentHealth(int32 InHealth) { CurrentHealth = InHealth; }
+	FOnSetCurrentScore			OnSetCurrentScore;
 	
-	FORCEINLINE const int32 GetMaxHealth() const { return MaxHealth; };
-	FORCEINLINE void SetMaxHealth(int32 InMaxHealth) {MaxHealth = InMaxHealth;}
+	FOnDeckCardNum				OnDeckCardNum;
 
+public:
 	FORCEINLINE int32 GetRoundCount() { return RoundCount; }
-	FORCEINLINE void  SetRoundCount(int32 InValue) { RoundCount = InValue; }
-
-	FORCEINLINE int32 GetGold() { return Gold; }
-	FORCEINLINE void  SetGold(int32 InValue) { Gold = InValue; }
+	FORCEINLINE void  SetRoundCount(int32 InValue) { RoundCount = InValue; OnSetRoundCount.Broadcast(); }
 
 	FORCEINLINE int32 GetEntiCount() { return EntiCount; }
-	FORCEINLINE void  SetEntiCount(int32 InValue) { EntiCount = InValue; }
+	FORCEINLINE void  SetEntiCount(int32 InValue) { EntiCount = InValue; OnSetEntiCount.Broadcast(); }
+
+	FORCEINLINE int32 GetGold() { return Gold; }
+	FORCEINLINE void  SetGold(int32 InValue) { Gold = InValue; SetMaxGold(Gold); OnSetCurrentGold.Broadcast(); }
+
+	FORCEINLINE int32 GetMaxGold() { return MaxGold; }
+	FORCEINLINE void  SetMaxGold(int32 InValue) { MaxScore = FMath::Max(MaxScore, InValue); }
 
 	FORCEINLINE int32 GetMaxHandCount() { return MaxHandCount; }
 	FORCEINLINE void  SetMaxHandCount(int32 InValue) { MaxHandCount = InValue; }
@@ -72,7 +79,7 @@ public:
 	FORCEINLINE void  SetUseChuckCount(int32 InValue) { UseChuckCount = InValue;  OnPlayerUseChuck.Broadcast(UseChuckCount); }
 
 	FORCEINLINE int32 GetCurrentScore() { return CurrentScore; }
-	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; }
+	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; SetMaxScore(CurrentScore); OnSetCurrentScore.Broadcast(); }
 
 	FORCEINLINE int32 GetCardInHand() { return CardInHand; }
 	FORCEINLINE void  SetCardInHand(int32 InValue) { CardInHand = InValue; }
@@ -81,7 +88,7 @@ public:
 	FORCEINLINE void  SetCardInDeckNum(int32 InValue) { CardInDeckNum = InValue;  OnDeckCardNum.Broadcast(); }
 
 	FORCEINLINE int32 GetMaxScore() { return MaxScore; }
-	FORCEINLINE void  SetMaxScore(int32 InValue) { MaxScore = InValue; }
+	FORCEINLINE void  SetMaxScore(int32 InValue){ MaxScore = FMath::Max(MaxScore, InValue); }
 
 	FORCEINLINE const TArray<class UHandRanking_Info*>& GetHandRankingInfo() const {return MyHandRankingInfo;}
 	void ResetMyHandRankingInfo(const TMap<const FName, FHandRankingStat*>& InHandRanking);
@@ -116,9 +123,6 @@ public:
 	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { CurPlayerState = InType; OnCardBattleScene.Broadcast(CurPlayerState); }
 
 private:
-	int32 CurrentHealth = 0;
-	int32 MaxHealth = 0;
-
 	int32 RoundCount;
 	
 	int32 Gold;

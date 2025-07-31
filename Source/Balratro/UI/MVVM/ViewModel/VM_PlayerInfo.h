@@ -116,6 +116,38 @@ public:
 	}
 
 
+	const FName GetMainOrder() const
+	{
+		return MainOrder;
+	}
+
+	void SetMainOrder(const FName& InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(MainOrder, InValue);
+	}
+
+
+	const bool GetBlindInfoActive() const
+	{
+		return BlindInfoActive;
+	}
+
+	void SetBlindInfoActive(const bool& InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(BlindInfoActive, InValue);
+	}
+
+
+	const int32 GetBlindReward() const
+	{
+		return BlindReward;
+	}
+
+	void SetBlindReward(int32 InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(BlindReward, InValue);
+	}
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 RoundCnt = 0;
@@ -133,19 +165,24 @@ private:
 	int32 ChuckCount = 0;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	int32 Scroe = 0;
+	int32 Scroe = -1;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	int32 CurChip = 0;
+	int32 CurChip = -1;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 DeckNum = 0;
 
-
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	FName HandName;
 
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	FName MainOrder;
 
-	
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool BlindInfoActive = true;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	int32 BlindReward = 0;
 
 };

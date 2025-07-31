@@ -44,15 +44,26 @@ struct FBlindStat : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FBlindStat() : SMallGrade(0), BigGrade(0), BossGrade(0){}
+	FBlindStat() : SMallGrade(0), SMallReward(0), BigGrade(0), BigReward(0), BossGrade(0), BossReward(0){}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SMallGrade;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 SMallReward;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 BigGrade;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 BigReward;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 BossGrade;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32  BossReward;
+
+	
 };
 
