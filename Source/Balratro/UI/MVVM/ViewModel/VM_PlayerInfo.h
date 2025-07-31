@@ -105,6 +105,16 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(CurChip, InValue);
 	}
 
+	const int32 GetCurDrainage() const
+	{
+		return CurDrainage;
+	}
+
+	void SetCurDrainage(int32 InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(CurDrainage, InValue);
+	}	
+
 	const int32 GetDeckNum() const
 	{
 		return DeckNum;
@@ -148,6 +158,37 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(BlindReward, InValue);
 	}
 
+	const int32 GetBlindGrade() const
+	{
+		return BlindGrade;
+	}
+
+	void SetBlindGrade(int32 InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(BlindGrade, InValue);
+	}
+
+	const int32 GetBlindImageIndex() const
+	{
+		return BlindImageIndex;
+	}
+
+	void SetBlindImageIndex(int32 InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(BlindImageIndex, InValue);
+	}
+
+	const FLinearColor GetBlindBorderColor() const
+	{
+		return BlindBorderColor;
+	}
+
+	void SetBlindBorderColor(FLinearColor InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(BlindBorderColor, InValue);
+	}
+
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 RoundCnt = 0;
@@ -171,6 +212,9 @@ private:
 	int32 CurChip = -1;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	int32 CurDrainage = -1;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 DeckNum = 0;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -185,4 +229,12 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 BlindReward = 0;
 
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	int32 BlindGrade = 0;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	FLinearColor BlindBorderColor = FColor::White;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	int32 BlindImageIndex = -1;
 };

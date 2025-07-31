@@ -27,8 +27,8 @@ private: /*VM_PlayerInfo*/
 	void VM_FieldChanged_CurPlayerChuckCount(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CurPlayerHandCount(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-	void VM_FieldChanged_CurHandRanking_Level(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CurHandRanking_Drainage(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_CurHandRanking_Level(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_DeckNum(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_Gold(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
@@ -38,9 +38,10 @@ private: /*VM_PlayerInfo*/
 	void VM_FieldChanged_MainOrder(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_BlindInfoActive(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_BlindReward(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
-private: /* UVM_BlindSelect*/
 	void VM_FieldChanged_BlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_BlindNameBorderColor(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_BlindPresentImage(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -78,6 +79,9 @@ private:
 
 
 	/* 블라인드 이미지 */
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UBorder> CurBlindNameBorder;
+	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UImage> CurBlindChipImage;
 
