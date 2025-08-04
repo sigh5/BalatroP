@@ -94,8 +94,8 @@ UBBGameSingleton::UBBGameSingleton()
 			}*/
 		}
 
-		JokerStatMaxNum = JokerStatTable.Num();
-		ensure(JokerStatMaxNum > 0);
+		//JokerStatMaxNum = JokerStatTable.Num();
+		//ensure(JokerStatMaxNum > 0);
 	}
 }
 

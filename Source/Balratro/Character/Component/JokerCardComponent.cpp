@@ -36,7 +36,7 @@ void UJokerCardComponent::CalculatorJoker(UJokerCard_Info* JokerCard)
 	int32 CurrentChip = PS->GetCurrentShowChip();
 	int32 CurrentDrainage = PS->GetCurrentShowDrainage();
 
-	JokerType Type = (JokerType)(JokerCard->Info.Stat);
+	JokerType Type = JokerType::BASE_JOKER;		//(JokerType)(JokerCard->Info.Stat);
 	if (Type == JokerType::BASE_JOKER)
 	{
 		VM_PlayerInfo->SetCurDrainage(CurrentDrainage * 4);

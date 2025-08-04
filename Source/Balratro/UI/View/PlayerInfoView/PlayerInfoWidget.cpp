@@ -127,6 +127,8 @@ void UPlayerInfoWidget::VM_FieldChanged_CurPlayerHandCount(UObject* Object, UE::
 void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
+	
+	FString MyFString = ChipText->GetText().ToString();
 	int Value = VMInstance->GetCurChip();
 
 	FNumberFormattingOptions NumberFormatOptions;
@@ -135,6 +137,16 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE:
 		ChipText->SetJustification(ETextJustify::Center);
 	else
 		ChipText->SetJustification(ETextJustify::Left);
+
+	
+	int PrevDrainage = FCString::Atoi(*MyFString);
+	if (Value != PrevDrainage)
+	{
+		FName CurAnimNaim = TEXT("ChipChangeEvent_INST");
+		UWidgetAnimation* Anim = GetAnimationByName(CurAnimNaim);
+		PlayAnimation(Anim);
+	}
+
 }
 
 void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -142,15 +154,7 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object,
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
 
 	int Value = VMInstance->GetCurDrainage();
-
 	FString MyFString = DrainageText->GetText().ToString();
-	int PrevDrainage = FCString::Atoi(*MyFString);
-	if (Value != PrevDrainage)
-	{
-		FName CurAnimNaim = TEXT("DrainageChangeEvent");
-		UWidgetAnimation* Anim = GetAnimationByName(CurAnimNaim);
-		PlayAnimation(Anim);
-	}
 
 	FNumberFormattingOptions NumberFormatOptions;
 	DrainageText->SetText(FText::AsNumber(Value, &NumberFormatOptions));
@@ -158,6 +162,14 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object,
 		DrainageText->SetJustification(ETextJustify::Center);
 	else
 		DrainageText->SetJustification(ETextJustify::Left);
+
+	int PrevDrainage = FCString::Atoi(*MyFString);
+	if (Value != PrevDrainage)
+	{
+		FName CurAnimNaim = TEXT("DrainageChangeEvent_INST");
+		UWidgetAnimation* Anim = GetAnimationByName(CurAnimNaim);
+		PlayAnimation(Anim);
+	}
 }
 
 void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Level(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -345,7 +357,9 @@ void UPlayerInfoWidget::FillAnimMap()
 			UObject* Obj = Prop->GetObjectPropertyValue_InContainer(this);
 			UWidgetAnimation* anim = Cast<UWidgetAnimation>(Obj);
 
-			FName animName = anim->GetName();
+
+			FName animName = FName(*anim->GetName());
+		
 
 			AnimationsMap.Add(animName, anim);
 		}

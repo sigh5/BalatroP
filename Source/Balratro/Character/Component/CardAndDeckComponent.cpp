@@ -145,7 +145,16 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>&
 			if (InterfacePtr)
 			{
 				InterfacePtr->CalCulatorHandRanking(CardNum,_DeckCardStat);
+				
+				// 여기서 이제 
+				// 1번)현재 패에 있는 배수 카드 계산,
+				// 2번) 현재 손패에 남은 카드에서 스틸카드 계산
+				// 3번)  조커 카드 계산
+				// 할때까지 패 안뽑고 점수 계산하게 만들어야함
+
 				UpdateCardInHand(_DeckCardStat);
+				
+				
 				DrawCard(CardNum);
 				// 점수 올리는 이벤트 후에 다시 초기화 해야되지만 일단 초기화 먼저하는코드 넣기
 				break;
