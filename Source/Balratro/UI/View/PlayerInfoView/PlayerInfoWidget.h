@@ -104,5 +104,10 @@ private:
 	TObjectPtr<class UTextBlock> RewardResultText;
 
 	FVector2D		MainOrderPos;
+
+
+	/*UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* DrainageChangeEvent;*/
+
 	
 };

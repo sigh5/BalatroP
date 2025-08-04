@@ -139,6 +139,14 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object,
 
 	int Value = VMInstance->GetCurDrainage();
 
+	FString MyFString = DrainageText->GetText().ToString();
+	int PrevDrainage = FCString::Atoi(*MyFString);
+	if (Value != PrevDrainage)
+	{
+		// Event ¸¸µé±â
+		//PlayAnimation(DrainageChangeEvent);
+	}
+
 	FNumberFormattingOptions NumberFormatOptions;
 	DrainageText->SetText(FText::AsNumber(Value, &NumberFormatOptions));
 	if (Value < 10000)

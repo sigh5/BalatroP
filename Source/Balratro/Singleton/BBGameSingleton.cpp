@@ -72,6 +72,31 @@ UBBGameSingleton::UBBGameSingleton()
 		BlindStatNum = BlindStatTable.Num();
 		ensure(BlindStatNum > 0);
 	}
+
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> JockerStatTableRef(TEXT("/Script/Engine.DataTable'/Game/Data/DT_JokerStatTable.DT_JokerStatTable'"));
+	if (nullptr != JockerStatTableRef.Object)
+	{
+		const UDataTable* DataTable = DeckDataTableRef.Object;
+		check(DataTable->GetRowMap().Num() > 0);
+
+		for (const auto& Row : DataTable->GetRowMap())
+		{
+			// 나중에 리소스 확보하고 주석해제하기
+			/*const FName RowName = Row.Key;
+			FJokerStat* StatPtr = reinterpret_cast<FJokerStat*>(Row.Value);
+			if (StatPtr)
+			{
+				StatPtr->Name = RowName;
+				FString AssetPath = FString::Printf(TEXT(""), *RowName.ToString(), *RowName.ToString());
+				StatPtr->CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+				JokerStatTable.Add(StatPtr);
+			}*/
+		}
+
+		JokerStatMaxNum = JokerStatTable.Num();
+		ensure(JokerStatMaxNum > 0);
+	}
 }
 
 UBBGameSingleton& UBBGameSingleton::Get()

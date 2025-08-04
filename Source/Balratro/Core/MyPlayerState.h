@@ -7,6 +7,7 @@
 #include "GameData/HandRankingStat.h"
 #include "GameData/DeckCardStat.h"
 #include "GameData/BlindStat.h"
+#include "GameData/JokerStat.h"
 #include "MyPlayerState.generated.h"
 
 
@@ -122,6 +123,26 @@ public:
 	FORCEINLINE const EPlayerStateType GetPlayerState() const { return CurPlayerState; }
 	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { CurPlayerState = InType; OnCardBattleScene.Broadcast(CurPlayerState); }
 
+
+	FORCEINLINE TArray<class UJokerCard_Info*>& GetCurrentJokerCardsModify() { return CurJokerCardInfo; }
+	FORCEINLINE const TArray<class UJokerCard_Info*>& GetCurrentJokerCards() const { return CurJokerCardInfo; }
+	FORCEINLINE void SetCurrentJokerCards(TArray<class UJokerCard_Info*>& InValue) { CurJokerCardInfo = InValue; }
+
+	void AddCurrentJokerCard(const FJokerStat& Info)
+	{
+		auto JokerCard = NewObject<UJokerCard_Info>(this);
+		JokerCard->Info = Info;
+		CurJokerCardInfo.Add(JokerCard);
+	}
+
+
+	FORCEINLINE int32 GetCurrentShowChip() { return CurrentShowChip; }
+	FORCEINLINE void  SetCurrentShowChip(int32 InValue) { CurrentShowChip = InValue; }
+
+	FORCEINLINE int32 GetCurrentShowDrainage() { return CurrentShowDrainage; }
+	FORCEINLINE void  SetCurrentShowDrainage(int32 InValue) { CurrentShowDrainage = InValue; }
+
+
 private:
 	int32 RoundCount;
 	
@@ -158,4 +179,11 @@ private:
 
 	UPROPERTY()
 	TArray<FDeckCardStat> CurCalculatorCardInHands;
+
+	UPROPERTY()
+	TArray<class UJokerCard_Info*> CurJokerCardInfo;
+
+	int32		CurrentShowChip;
+	int32		CurrentShowDrainage;
+
 };

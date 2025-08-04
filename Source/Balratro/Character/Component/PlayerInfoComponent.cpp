@@ -213,6 +213,9 @@ void UPlayerInfoComponent::UpdateHandRanking()
 	BaseChip += IncreaseChip * (Level-1);
 	BaseDrainage += IncreaseDrainage * (Level - 1);
 
+	PS->SetCurrentShowChip(BaseChip);
+	PS->SetCurrentShowDrainage(BaseDrainage);
+
 	VM_PI->SetCurChip(BaseChip);
 	VM_PI->SetCurDrainage(BaseDrainage);
 }

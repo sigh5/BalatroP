@@ -7,6 +7,7 @@
 #include "GameData/HandRankingStat.h"
 #include "GameData/DeckCardStat.h"
 #include "GameData/BlindStat.h"
+#include "GameData/JokerStat.h"
 #include "BBGameSingleton.generated.h"
 
 /**
@@ -42,6 +43,8 @@ private:
 
 	TArray<FBlindStat*> BlindStatTable;
 
+	TArray<FJokerStat*> JokerStatTable;
+
 	UPROPERTY()
 	int32 HandRankingMaxNum;
 
@@ -51,6 +54,7 @@ private:
 	UPROPERTY()
 	int32 BlindStatNum;
 
-
+	UPROPERTY()
+	int32 JokerStatMaxNum;
 
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameData/JokerStat.h"
 #include "JokerCardComponent.generated.h"
 
 
@@ -15,5 +16,18 @@ class BALRATRO_API UJokerCardComponent : public UActorComponent
 protected:
 	virtual void BeginPlay() override;
 
-		
+
+
+private:
+	void UpdateJoker();
+	void CalculatorJoker(UJokerCard_Info* JokerCard);
+
+
+private:
+	class UVM_PlayerInfo* GetVMPlayerInfo();
+
+	class UVM_JockerSlot* GetVMJockerSlot();
+
+	class AMyPlayerState* GetPlayerState();
+
 };
