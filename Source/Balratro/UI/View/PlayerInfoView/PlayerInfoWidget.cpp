@@ -15,6 +15,8 @@
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_BlindSelect.h"
 
+#include "Animation/WidgetAnimation.h"
+
 UPlayerInfoWidget::UPlayerInfoWidget()
 {
 	ViewModelClass = UVM_PlayerInfo::StaticClass();
@@ -24,6 +26,8 @@ UPlayerInfoWidget::UPlayerInfoWidget()
 void UPlayerInfoWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	FillAnimMap();
 
 	UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(MainOrderText->Slot);
 	check(CanvasSlot);
@@ -143,8 +147,9 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object,
 	int PrevDrainage = FCString::Atoi(*MyFString);
 	if (Value != PrevDrainage)
 	{
-		// Event ¸¸µé±â
-		//PlayAnimation(DrainageChangeEvent);
+		FName CurAnimNaim = TEXT("DrainageChangeEvent");
+		UWidgetAnimation* Anim = GetAnimationByName(CurAnimNaim);
+		PlayAnimation(Anim);
 	}
 
 	FNumberFormattingOptions NumberFormatOptions;
@@ -317,4 +322,33 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 	SpriteBrush.ImageSize = FVector2D(100.f, 150.f);
 	SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
 	CurBlindPresentImage->SetBrush(SpriteBrush);
+}
+
+UWidgetAnimation* UPlayerInfoWidget::GetAnimationByName(FName& AnimName) const
+{
+	UWidgetAnimation*  const* WidgetAnim = AnimationsMap.Find(AnimName);
+	if (WidgetAnim)
+		return *WidgetAnim;
+
+	return nullptr;
+}
+
+void UPlayerInfoWidget::FillAnimMap()
+{
+	AnimationsMap.Empty();
+
+	for (TFieldIterator<FObjectProperty> PropIt(GetClass(), EFieldIteratorFlags::IncludeSuper); PropIt; ++PropIt)
+	{
+		FObjectProperty* Prop = *PropIt;
+		if (Prop->PropertyClass == UWidgetAnimation::StaticClass())
+		{
+			UObject* Obj = Prop->GetObjectPropertyValue_InContainer(this);
+			UWidgetAnimation* anim = Cast<UWidgetAnimation>(Obj);
+
+			FName animName = anim->GetName();
+
+			AnimationsMap.Add(animName, anim);
+		}
+	}
+
 }

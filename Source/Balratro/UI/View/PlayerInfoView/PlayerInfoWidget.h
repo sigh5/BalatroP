@@ -42,6 +42,9 @@ private: /*VM_PlayerInfo*/
 	void VM_FieldChanged_BlindNameBorderColor(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_BlindPresentImage(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+private:
+	UWidgetAnimation* GetAnimationByName(FName& AnimName) const;
+	void			FillAnimMap();
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -106,8 +109,6 @@ private:
 	FVector2D		MainOrderPos;
 
 
-	/*UPROPERTY(meta = (BindWidgetAnim), Transient)
-	UWidgetAnimation* DrainageChangeEvent;*/
-
+	TMap<FName, class UWidgetAnimation*> AnimationsMap;
 	
 };
