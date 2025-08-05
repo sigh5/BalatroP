@@ -18,6 +18,8 @@ public:
 	void UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
 	void UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
 
+	void	SetPlayCardEffect();
+
 protected:
 	virtual void BeginPlay() override;
 	
@@ -36,6 +38,8 @@ private:
 	void	UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardStat);
 
 	void	SetVisibleCardDeckView(EPlayerStateType InValue);
+
+	
 
 private:
 	class UVM_CardDeck*		GetVMCardDeck();

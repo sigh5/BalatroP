@@ -26,6 +26,10 @@ void UCalculatorHandRankingComponent::BeginPlay()
 void UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
 	SetHandRankingType(CardNum, _DeckCardStat);
+
+	//auto PS = GetPlayerState();
+	//PS->OnScoreEffectStart.Broadcast();
+
 }
 
 void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)

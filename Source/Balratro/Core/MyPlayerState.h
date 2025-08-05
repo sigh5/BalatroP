@@ -31,6 +31,7 @@ DECLARE_MULTICAST_DELEGATE(FOnSetCurrentScore);
 DECLARE_MULTICAST_DELEGATE(FOnSetRoundCount);
 DECLARE_MULTICAST_DELEGATE(FOnSetCurrentGold);
 DECLARE_MULTICAST_DELEGATE(FOnSetEntiCount);
+//DECLARE_MULTICAST_DELEGATE(FOnScoreEffectStart);
 
 /**
  * 
@@ -53,6 +54,7 @@ public:
 	FOnSetCurrentScore			OnSetCurrentScore;
 	
 	FOnDeckCardNum				OnDeckCardNum;
+	//FOnScoreEffectStart			OnScoreEffectStart;
 
 public:
 	FORCEINLINE int32 GetRoundCount() { return RoundCount; }
@@ -78,6 +80,9 @@ public:
 
 	FORCEINLINE int32 GetUseChuckCount() { return UseChuckCount; }
 	FORCEINLINE void  SetUseChuckCount(int32 InValue) { UseChuckCount = InValue;  OnPlayerUseChuck.Broadcast(UseChuckCount); }
+
+	FORCEINLINE int32 GetCurrentRoundSumScore() { return CurrentRoundSumScore; }
+	FORCEINLINE void SetCurrentRoundSumScore(int32 InValue) { CurrentRoundSumScore = InValue; }
 
 	FORCEINLINE int32 GetCurrentScore() { return CurrentScore; }
 	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; SetMaxScore(CurrentScore); OnSetCurrentScore.Broadcast(); }
@@ -160,7 +165,7 @@ private:
 	int32 CardInHand = 8; // 초기 손에든 패 8장
 	int32 CardInDeckNum; // 초기 Deck 52장
 
-
+	int32 CurrentRoundSumScore = 0;
 	int32 CurrentScore = 0;
 	int32 MaxScore = 0;
 

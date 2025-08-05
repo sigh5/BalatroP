@@ -24,6 +24,8 @@ void UCardAndDeckComponent::BeginPlay()
 	const auto VM = GetVMCardDeck();
 	auto	PS = GetPlayerState();
 	PS->OnCardBattleScene.AddUObject(this, &UCardAndDeckComponent::SetVisibleCardDeckView);
+	//PS->OnScoreEffectStart.AddUObject(this, &UCardAndDeckComponent::SetPlayCardEffect);
+
 
 	VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
 	VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
@@ -64,6 +66,16 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 		VM_MainMenu->SetCurWidgetName(CurName);
 		InitDeck();
 	}
+}
+
+void UCardAndDeckComponent::SetPlayCardEffect()
+{
+	auto PS = GetPlayerState();
+
+	auto Temp = 	PS->GetCurCalculatorCardInHands();
+
+
+	bool c = false;
 }
 
 void UCardAndDeckComponent::ShuffleDeck()

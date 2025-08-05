@@ -29,9 +29,6 @@ public:
 	void UpdateHandRanking();
 	void UpdateBlindInfo(EPlayerStateType _InType);
 
-	void UpdateCurChip();
-
-
 protected:
 	virtual void BeginPlay() override;
 
