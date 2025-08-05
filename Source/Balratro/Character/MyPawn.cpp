@@ -19,5 +19,5 @@ AMyPawn::AMyPawn()
 	const auto CalculatorHandPlayComponent = CreateDefaultSubobject<UCalculatorHandRankingComponent>("CalculatorHandPlay");
 	const auto BlindComponent = CreateDefaultSubobject<UBlindComponent>("BlindComponent");
 	const auto JokerCardComponent = CreateDefaultSubobject<UJokerCardComponent>("JokerCardComponent");
-	const auto StoreComponent = CreateDefaultSubobject<UStoreComponent>("StoreComponent")
+	const auto StoreComponent = CreateDefaultSubobject<UStoreComponent>("StoreComponent");
 }
