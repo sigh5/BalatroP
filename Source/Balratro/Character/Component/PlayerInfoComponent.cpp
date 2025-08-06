@@ -289,3 +289,22 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	VM_PI->SetBlindImageIndex(0);
 }
 
+void UPlayerInfoComponent::UpdateCalculatorChip()
+{
+	auto VM_PI = GetVMPlayerInfo();
+	auto PS = GetPlayerState();
+
+	int32 CurShowChip = PS->GetCurrentShowChip();
+
+	VM_PI->SetCurChip(CurShowChip);
+}
+
+void UPlayerInfoComponent::UpdateCalculatorDrainage()
+{
+	auto VM_PI = GetVMPlayerInfo();
+	auto PS = GetPlayerState();
+
+	int32 CurDrainage = PS->GetCurrentShowDrainage();
+
+	VM_PI->SetCurDrainage(CurDrainage);
+}

@@ -39,12 +39,18 @@ private:
 
 	void	SetVisibleCardDeckView(EPlayerStateType InValue);
 
-	
+	void    FinishHandPlay();
 
 private:
 	class UVM_CardDeck*		GetVMCardDeck();
 	class AMyPlayerState*	GetPlayerState();
 	class UVM_MainMenu*		GetVMMainWidget();
-	
+
 	int32  CurDrawIndex = 0;
+
+	FTimerHandle TotalScoreHandle;
+
+	TArray<FDeckCardStat> CurData;
+	int32 _CardNum = 0;
+	float _Delay = 0.f;
 };

@@ -79,6 +79,20 @@ public:
 
 	FORCEINLINE bool GetIsSelectedMax() const { return IsSelectedMax; }
 
+
+	const TArray<FDeckCardStat>& GetCurCardsData()  const
+	{
+		return CurCardsData;
+	}
+
+	void	SetCurCardsData(TArray<FDeckCardStat>& _InValue)
+	{ 
+		UE_MVVM_SET_PROPERTY_VALUE(CurCardsData, _InValue);
+	}
+
+
+
+
 private:
 	//UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	//int32 DeckNum = 0;
@@ -89,8 +103,12 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool IsUpCardExist;
 
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	TArray<FDeckCardStat> CurCardsData;
+
 	UPROPERTY()
 	bool IsSelectedMax = false;
+
 
 
 };

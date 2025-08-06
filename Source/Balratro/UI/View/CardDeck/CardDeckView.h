@@ -26,6 +26,9 @@ protected:
 	void VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CardUpExist(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+	void VM_FieldChanged_CurPlayCardData(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
+
 	UFUNCTION()
 	void OnSuitSortButtonClicked();
 	UFUNCTION()
@@ -35,6 +38,8 @@ protected:
 	UFUNCTION()
 	void OnHandPlayButtonClicked();
 
+private:
+	void  TestQQQ();
 
 
 private:
@@ -63,4 +68,7 @@ private:
 	const int32 PaddingX = 8;
 
 	int32 CardIndex = 0;
+
+	int32 CurPlayCardNum = 0;
+	FTimerHandle MyTimerHandle;
 };

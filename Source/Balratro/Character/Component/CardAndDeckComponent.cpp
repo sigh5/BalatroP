@@ -17,6 +17,8 @@
 #include "GameData/HandRankingStat.h"
 #include "Interface/CalculatorScoreInterface.h"
 
+
+
 void UCardAndDeckComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -53,7 +55,7 @@ void UCardAndDeckComponent::UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardSta
 
 	TArray<FDeckCardStat> Empty;
 	PS->SetCurCalculatorCardInHands(Empty);
-	
+
 }
 
 void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
@@ -68,11 +70,47 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 	}
 }
 
+void UCardAndDeckComponent::FinishHandPlay()
+{
+	UpdateCardInHand(CurData);
+	DrawCard(_CardNum);
+}
+
 void UCardAndDeckComponent::SetPlayCardEffect()
 {
 	auto PS = GetPlayerState();
 
-	auto Temp = 	PS->GetCurCalculatorCardInHands();
+	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
+
+	auto VM = GetVMCardDeck();
+
+	int CurCardNum = CurPlayCards.Num();
+
+	VM->SetCurCardsData(CurPlayCards);
+	PS->GetCurrentAllHands();
+
+	_Delay = CurCardNum * 0.5f;
+
+	//// 전체 점수 합산은 마지막 카드 점수 표시 이후
+	//float TotalDelay = CurCardNum * 0.2f + 0.2f;
+	//GetWorld()->GetTimerManager().SetTimer(
+	//	TotalScoreHandle,
+	//	this,
+	//	&UCardAndDeckComponent::FinishPlay,
+	//	TotalDelay,
+	//	false
+	//);
+	
+	
+	//VM->Set
+
+	// 여기서 이제 
+	// 1번)현재 패에 있는 배수 카드 계산,
+	// 2번) 현재 손패에 남은 카드에서 스틸카드 계산
+	// 3번)  조커 카드 계산
+	// 할때까지 패 안뽑고 점수 계산하게 만들어야함
+
+
 
 
 	bool c = false;
@@ -86,7 +124,7 @@ void UCardAndDeckComponent::ShuffleDeck()
 
 	FDateTime Now = FDateTime::UtcNow();
 	int64 Milliseconds = Now.ToUnixTimestamp() * 1000 + Now.GetMillisecond();
-	int32 Seed = static_cast<int32>(Milliseconds & 0xFFFFFFFF); 
+	int32 Seed = static_cast<int32>(Milliseconds & 0xFFFFFFFF);
 	FMath::RandInit(Seed);
 
 	int32 NumElements = MyDeckStatTable.Num();
@@ -105,14 +143,14 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 	auto PS = GetPlayerState();
 	auto VM = GetVMCardDeck();
 	auto& MyDeckStatTable = PS->GetDeckStatTable();
-	
+
 	for (int i = CurDrawIndex; i < CurDrawIndex + DrawCardNum; ++i)
-	{	
+	{
 		if (!MyDeckStatTable[i].CardSprite.IsValid())
 		{
 			MyDeckStatTable[i].CardSprite.LoadSynchronous();
 		}
-	
+
 		PS->AddHandInCard(MyDeckStatTable[i]);
 	}
 	SortHandInCard(PS->GetCurSortType());
@@ -133,7 +171,7 @@ void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _D
 	{
 		return;
 	}
-	
+
 	PS->SetUseChuckCount(++CurChuckCnt);
 	UpdateCardInHand(_DeckCardStat);
 	DrawCard(CardNum);
@@ -142,7 +180,7 @@ void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _D
 void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
 	auto PS = GetPlayerState();
-	
+
 	int32 MaxCount = PS->GetMaxHandCount();
 	int32 UseCount = PS->GetUseHandCount();
 
@@ -156,19 +194,19 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>&
 			ICalculatorScoreInterface* InterfacePtr = Cast<ICalculatorScoreInterface>(Comp);
 			if (InterfacePtr)
 			{
-				InterfacePtr->CalCulatorHandRanking(CardNum,_DeckCardStat);
-				
-				// 여기서 이제 
-				// 1번)현재 패에 있는 배수 카드 계산,
-				// 2번) 현재 손패에 남은 카드에서 스틸카드 계산
-				// 3번)  조커 카드 계산
-				// 할때까지 패 안뽑고 점수 계산하게 만들어야함
+				InterfacePtr->CalCulatorHandRanking(CardNum, _DeckCardStat);
+				SetPlayCardEffect();
 
-				UpdateCardInHand(_DeckCardStat);
-				
-				
-				DrawCard(CardNum);
-				// 점수 올리는 이벤트 후에 다시 초기화 해야되지만 일단 초기화 먼저하는코드 넣기
+				CurData = _DeckCardStat;
+				_CardNum = CardNum;
+
+				FTimerDelegate Delegate;
+				Delegate.BindLambda([&]()
+					{
+						FinishHandPlay();
+					});
+
+				GetWorld()->GetTimerManager().SetTimer(TotalScoreHandle, Delegate, 2.f, false);				
 				break;
 			}
 		}

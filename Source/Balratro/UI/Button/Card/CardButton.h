@@ -37,6 +37,7 @@ public:
 	FORCEINLINE void SetButtonBorder(class UBorder* InValue) { Border = InValue; }
 	FORCEINLINE void SetButtonImage(class UImage* InValue) { Image = InValue; }
 
+
 private:
 	int CardIndex = 0;
 	FDeckCardStat CardInfoData;

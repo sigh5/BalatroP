@@ -18,6 +18,9 @@
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
+#include "Kismet/KismetSystemLibrary.h"
+#include "Engine/Engine.h"
+#include "TimerManager.h"
 
 UCardDeckView::UCardDeckView()
 {
@@ -37,6 +40,9 @@ void UCardDeckView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::IsUpCardExist,
 		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_CardUpExist));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::CurCardsData,
+		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_CurPlayCardData));
 }
 
 void UCardDeckView::NativeOnInitialized()
@@ -106,8 +112,6 @@ UCardButton* UCardDeckView::ReuseCardButton(int32 CurAllCardNum ,int32 CurNum, U
 
 void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
-	//HandCardButton.Empty(); // 나중에 오브젝트 풀 만들어서 해결하기
-	
 	const auto VMInstance = Cast<UVM_CardDeck>(Object);
 	auto& CurHandInfo = VMInstance->GetCurrentAllHands();
 	int32 CurAllHandNum = CurHandInfo.Num();
@@ -154,6 +158,61 @@ void UCardDeckView::VM_FieldChanged_CardUpExist(UObject* Object, UE::FieldNotifi
 	VMInst->BrodCastrHandRankName(SelectedNum, CardStatInfo);
 }
 
+void UCardDeckView::VM_FieldChanged_CurPlayCardData(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
+
+	auto& Data = VMInst->GetCurCardsData();
+	/*
+	int32 ChipGrade = Data.BaseChip;
+	int32 DraiageGrade = 0;
+	
+	EnforceStatType Type = Data.EnforceType;
+	switch (Type)
+	{
+	case EnforceStatType::NONE:
+		break;
+	case EnforceStatType::CHIP_PLUS:
+		ChipGrade += 40;
+		break;
+	case EnforceStatType::DRAINAGE:
+		DraiageGrade += 4;
+		break;
+	case EnforceStatType::STEEL:
+		break;
+	case EnforceStatType::GOLD:
+		break;
+	case EnforceStatType::GLASS:
+		break;
+	default:
+		break;
+	}
+
+	UCardButton* CurCardButton;
+
+	for (auto& Card : HandCardButton)
+	{
+		if (Card->GetCardInfoData() == Data)
+		{
+			CurCardButton = Card;
+			break;
+		}
+	}*/
+	
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([&]()
+		{
+			TestQQQ();
+		});
+
+	CurPlayCardNum = Data.Num();
+	TestQQQ();
+
+	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, TimerDelegate, 0.5f, true, 0.5f * Data.Num());
+
+}
+
 void UCardDeckView::OnSuitSortButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
@@ -190,6 +249,16 @@ void UCardDeckView::OnHandPlayButtonClicked()
 		return;
 
 	VMInst->UseHandPlay(SelectedNum, CardStatInfo);
+}
+
+void UCardDeckView::TestQQQ()
+{
+	if (--CurPlayCardNum < 0)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(MyTimerHandle);
+	}
+	else
+		UE_LOG(LogTemp, Log, TEXT("!!! %d "), CurPlayCardNum);
 }
 
 bool UCardDeckView::SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum)
