@@ -50,6 +50,23 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 		FName CurName = "SelectBlindView";
 		VM_MainWidget->SetCurWidgetName(CurName);
 		PS->SetPlayerState(InValue);
+		
+		auto BlindStatTable = UBBGameSingleton::Get().GetBlindStat();
+		int RoundCnt = PS->GetRoundCount();
+		
+		if (InValue == EPlayerStateType::SMALL_BLIND)
+		{
+			PS->SetCurrentRoundBlindGrade(BlindStatTable[RoundCnt]->SMallGrade);
+		}
+		else if (InValue == EPlayerStateType::BIG_BLIND)
+		{
+			PS->SetCurrentRoundBlindGrade(BlindStatTable[RoundCnt]->BigGrade);
+		}
+		else
+		{
+			PS->SetCurrentRoundBlindGrade(BlindStatTable[RoundCnt]->BossGrade);
+		}
+		
 	}
 	else if(InValue == EPlayerStateType::SMALL_BLIND_SKIP || InValue == EPlayerStateType::BIG_BLIND_SKIP)
 	{

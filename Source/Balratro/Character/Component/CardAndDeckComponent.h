@@ -50,7 +50,8 @@ private:
 
 	FTimerHandle TotalScoreHandle;
 
-	TArray<FDeckCardStat> CurData;
+	TArray<FDeckCardStat> _CurData;
 	int32 _CardNum = 0;
 	float _Delay = 0.f;
+	int32 ResultScore = 0;
 };

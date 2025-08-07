@@ -24,6 +24,6 @@ class BALRATRO_API ICalculatorScoreInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) = 0;
+	virtual int32 CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) = 0;
 
 };

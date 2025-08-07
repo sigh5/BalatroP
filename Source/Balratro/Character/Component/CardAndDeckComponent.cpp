@@ -26,8 +26,6 @@ void UCardAndDeckComponent::BeginPlay()
 	const auto VM = GetVMCardDeck();
 	auto	PS = GetPlayerState();
 	PS->OnCardBattleScene.AddUObject(this, &UCardAndDeckComponent::SetVisibleCardDeckView);
-	//PS->OnScoreEffectStart.AddUObject(this, &UCardAndDeckComponent::SetPlayCardEffect);
-
 
 	VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
 	VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
@@ -72,37 +70,37 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 
 void UCardAndDeckComponent::FinishHandPlay()
 {
-	UpdateCardInHand(CurData);
-	DrawCard(_CardNum);
+	auto PS = GetPlayerState();
+	
+	int32 SumScore = PS->GetCurrentRoundSumScore();
+	int32 CurrentSum = ResultScore + SumScore;
+
+	if (CurrentSum >= PS->GetCurrentRoundBlindGrade() )
+	{
+		PS->SetMaxScore(CurrentSum);
+		// 라운드 끝 로직 실행
+		PS->SetCurrentRoundSumScore(CurrentSum);
+
+	}
+	else
+	{
+		PS->SetCurrentRoundSumScore(CurrentSum);
+		PS->SetCurrentScore(ResultScore);
+		UpdateCardInHand(_CurData);
+		DrawCard(_CardNum);
+	}
 }
 
 void UCardAndDeckComponent::SetPlayCardEffect()
 {
 	auto PS = GetPlayerState();
-
-	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
-
 	auto VM = GetVMCardDeck();
 
-	int CurCardNum = CurPlayCards.Num();
+	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
+	int32 CurCardNum = CurPlayCards.Num();
 
-	VM->SetCurCardsData(CurPlayCards);
-	PS->GetCurrentAllHands();
-
+	VM->SetCurCardsData(CurPlayCards);	
 	_Delay = CurCardNum * 0.5f;
-
-	//// 전체 점수 합산은 마지막 카드 점수 표시 이후
-	//float TotalDelay = CurCardNum * 0.2f + 0.2f;
-	//GetWorld()->GetTimerManager().SetTimer(
-	//	TotalScoreHandle,
-	//	this,
-	//	&UCardAndDeckComponent::FinishPlay,
-	//	TotalDelay,
-	//	false
-	//);
-	
-	
-	//VM->Set
 
 	// 여기서 이제 
 	// 1번)현재 패에 있는 배수 카드 계산,
@@ -111,9 +109,6 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 	// 할때까지 패 안뽑고 점수 계산하게 만들어야함
 
 
-
-
-	bool c = false;
 }
 
 void UCardAndDeckComponent::ShuffleDeck()
@@ -194,10 +189,10 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>&
 			ICalculatorScoreInterface* InterfacePtr = Cast<ICalculatorScoreInterface>(Comp);
 			if (InterfacePtr)
 			{
-				InterfacePtr->CalCulatorHandRanking(CardNum, _DeckCardStat);
+				ResultScore = InterfacePtr->CalCulatorHandRanking(CardNum, _DeckCardStat);
 				SetPlayCardEffect();
 
-				CurData = _DeckCardStat;
+				_CurData = _DeckCardStat;
 				_CardNum = CardNum;
 
 				FTimerDelegate Delegate;

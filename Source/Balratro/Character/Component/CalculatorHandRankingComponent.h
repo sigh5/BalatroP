@@ -14,7 +14,7 @@ class BALRATRO_API UCalculatorHandRankingComponent : public UActorComponent, pub
 	GENERATED_BODY()
 
 public:
-	virtual void CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) override;
+	virtual int32 CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -25,6 +25,9 @@ protected:
 private:
 	bool	IsStraight(TArray<int32>& SortedRanks);
 	bool	IsFlush(TMap<int32, int32>& SuitCounts);
+
+	int32	ResultScore();
+
 
 
 private:

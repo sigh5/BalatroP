@@ -82,10 +82,10 @@ public:
 	FORCEINLINE void  SetUseChuckCount(int32 InValue) { UseChuckCount = InValue;  OnPlayerUseChuck.Broadcast(UseChuckCount); }
 
 	FORCEINLINE int32 GetCurrentRoundSumScore() { return CurrentRoundSumScore; }
-	FORCEINLINE void SetCurrentRoundSumScore(int32 InValue) { CurrentRoundSumScore = InValue; }
+	FORCEINLINE void SetCurrentRoundSumScore(int32 InValue) { CurrentRoundSumScore = InValue;  OnSetCurrentScore.Broadcast();}
 
 	FORCEINLINE int32 GetCurrentScore() { return CurrentScore; }
-	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; SetMaxScore(CurrentScore); OnSetCurrentScore.Broadcast(); }
+	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; SetMaxScore(CurrentScore); }
 
 	FORCEINLINE int32 GetCardInHand() { return CardInHand; }
 	FORCEINLINE void  SetCardInHand(int32 InValue) { CardInHand = InValue; }
@@ -147,6 +147,9 @@ public:
 	FORCEINLINE int32 GetCurrentShowDrainage() { return CurrentShowDrainage; }
 	FORCEINLINE void  SetCurrentShowDrainage(int32 InValue) { CurrentShowDrainage = InValue; }
 
+	FORCEINLINE int32 GetCurrentRoundBlindGrade() { return CurrentRoundBlindGrade; }
+	FORCEINLINE void  SetCurrentRoundBlindGrade(int32 InValue) { CurrentRoundBlindGrade = InValue; }
+
 
 private:
 	int32 RoundCount;
@@ -169,9 +172,17 @@ private:
 	int32 CurrentScore = 0;
 	int32 MaxScore = 0;
 
+	int32		CurrentShowChip;
+	int32		CurrentShowDrainage;
+
+
+
 	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;
 	EPokerHand				CurHandCard_Type;
+
+	int32	CurrentRoundBlindGrade = 0;
+
 
 
 	UPROPERTY()
@@ -188,7 +199,6 @@ private:
 	UPROPERTY()
 	TArray<class UJokerCard_Info*> CurJokerCardInfo;
 
-	int32		CurrentShowChip;
-	int32		CurrentShowDrainage;
+	
 
 };

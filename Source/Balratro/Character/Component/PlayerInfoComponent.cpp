@@ -133,7 +133,7 @@ void UPlayerInfoComponent::UpdateCurrentScore()
 	auto VM_PI = GetVMPlayerInfo();
 	auto PS = GetPlayerState();
 
-	VM_PI->SetScroe(PS->GetCurrentScore());
+	VM_PI->SetScroe(PS->GetCurrentRoundSumScore());
 }
 
 void UPlayerInfoComponent::UpdateMaxScore(int32 _invalue)

@@ -23,9 +23,11 @@ void UCalculatorHandRankingComponent::BeginPlay()
 	
 }
 
-void UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
+int32 UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
 	SetHandRankingType(CardNum, _DeckCardStat);
+
+	return ResultScore();
 
 	//auto PS = GetPlayerState();
 	//PS->OnScoreEffectStart.Broadcast();
@@ -224,6 +226,30 @@ void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<F
 	}
 	PS->SetCurCalculatorCardInHands(CurCalCulatorCards);
 	PS->SetCurHandCard_Type(EPokerHand::HIGH_CARD);
+}
+
+int32 UCalculatorHandRankingComponent::ResultScore()
+{
+	auto PS = GetPlayerState();
+	
+	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
+
+	int32 Score = 0;
+
+	int32 ShowChip = PS->GetCurrentShowChip();
+	int32 ShowDrainage = PS->GetCurrentShowDrainage();
+
+
+	for (auto cardInfo : CurPlayCards)
+	{
+		ShowChip += cardInfo.BaseChip;
+		if (cardInfo.EnforceType == EnforceStatType::DRAINAGE)
+		{
+			ShowDrainage += 4;
+		}
+	}
+	
+	return Score = ShowChip * ShowDrainage;
 }
 
 bool UCalculatorHandRankingComponent::IsStraight(TArray<int32>& SortedRanks)
