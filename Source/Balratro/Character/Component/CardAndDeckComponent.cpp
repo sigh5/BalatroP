@@ -72,19 +72,18 @@ void UCardAndDeckComponent::FinishHandPlay()
 {
 	auto PS = GetPlayerState();
 	
-	int32 SumScore = PS->GetCurrentRoundSumScore();
+	int32 SumScore = PS->GetCurrentScore();
 	int32 CurrentSum = ResultScore + SumScore;
 
 	if (CurrentSum >= PS->GetCurrentRoundBlindGrade() )
 	{
 		PS->SetMaxScore(CurrentSum);
 		// 扼款靛 场 肺流 角青
-		PS->SetCurrentRoundSumScore(CurrentSum);
+		PS->SetCurrentScore(CurrentSum);
 
 	}
 	else
 	{
-		PS->SetCurrentRoundSumScore(CurrentSum);
 		PS->SetCurrentScore(ResultScore);
 		UpdateCardInHand(_CurData);
 		DrawCard(_CardNum);

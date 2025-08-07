@@ -81,11 +81,8 @@ public:
 	FORCEINLINE int32 GetUseChuckCount() { return UseChuckCount; }
 	FORCEINLINE void  SetUseChuckCount(int32 InValue) { UseChuckCount = InValue;  OnPlayerUseChuck.Broadcast(UseChuckCount); }
 
-	FORCEINLINE int32 GetCurrentRoundSumScore() { return CurrentRoundSumScore; }
-	FORCEINLINE void SetCurrentRoundSumScore(int32 InValue) { CurrentRoundSumScore = InValue;  OnSetCurrentScore.Broadcast();}
-
 	FORCEINLINE int32 GetCurrentScore() { return CurrentScore; }
-	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; SetMaxScore(CurrentScore); }
+	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; SetMaxScore(CurrentScore);   OnSetCurrentScore.Broadcast();}
 
 	FORCEINLINE int32 GetCardInHand() { return CardInHand; }
 	FORCEINLINE void  SetCardInHand(int32 InValue) { CardInHand = InValue; }
@@ -168,7 +165,7 @@ private:
 	int32 CardInHand = 8; // 초기 손에든 패 8장
 	int32 CardInDeckNum; // 초기 Deck 52장
 
-	int32 CurrentRoundSumScore = 0;
+	//int32 CurrentRoundSumScore = 0;
 	int32 CurrentScore = 0;
 	int32 MaxScore = 0;
 
