@@ -81,6 +81,12 @@ void UCardAndDeckComponent::FinishHandPlay()
 		// 라운드 끝 로직 실행
 		PS->SetCurrentScore(CurrentSum);
 
+		auto VM_MainWidget = GetVMMainWidget();
+		FName CurName = "CadDeckView";
+		VM_MainWidget->SetCurWidgetName(CurName); // OFF 여기서 끄는 이벤트를 해야 되는데
+												  // OnCardBattleScene 이거를 호출하면됌 
+												  // 상점 뷰 키는 이벤트 하고
+
 	}
 	else
 	{
