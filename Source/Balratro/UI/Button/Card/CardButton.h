@@ -38,6 +38,8 @@ public:
 	FORCEINLINE void SetButtonImage(class UImage* InValue) { Image = InValue; }
 
 
+	void	PlayScoreText();
+
 private:
 	int CardIndex = 0;
 	FDeckCardStat CardInfoData;

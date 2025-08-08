@@ -24,26 +24,6 @@ UMainMenuWidget::UMainMenuWidget()
 	ViewModelName = TEXT("VM_MainMenu");
 }
 
-void UMainMenuWidget::VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotification::FFieldId FieldId)
-{
-	const auto VMInst = TryGetViewModel<UVM_MainMenu>();
-	check(VMInst);
-
-	FName WidgetName = VMInst->GetCurWidgetName();
-
-	UBBUserWidgetBase* CurWidget = WidgetPool->GetWidget(WidgetName);
-	if (CurWidget)
-	{
-		bool CurVisible = CurWidget->IsVisible();
-		WidgetPool->SetWidgetVisible(WidgetName,!CurVisible);
-
-		if (!CurVisible == true)
-		{
-			CanvasSlot->AddChildToCanvas(CurWidget);
-		}
-	}
-}
-
 void UMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -55,8 +35,6 @@ void UMainMenuWidget::NativeConstruct()
 
 	WidgetPool = NewObject<UBBUserWidgetPool>(this);
 	FName CurViewName = "";
-
-	//UCanvasPanel* CanvasSlot = Cast<UCanvasPanel>(this->Slot);
 
 	if (BlindSelectView == nullptr)
 	{
@@ -100,11 +78,25 @@ void UMainMenuWidget::NativeConstruct()
 		CadDeckView = LoadClass<UCardDeckView>(nullptr, TEXT("/Game/UI/View/CardDeck/WBP_CardDeck.WBP_CardDeck_C"));
 		CurViewName = "CadDeckView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(CadDeckView));
-		/*if (BlindWidget)
-		{
-			BlindWidget->AddToViewport(99);
-		}*/
 	}
 
 }
 
+void UMainMenuWidget::VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_MainMenu>();
+	check(VMInst);
+
+	auto WidgetInfo = VMInst->GetCurWidgetName();
+
+
+	UBBUserWidgetBase* CurWidget = WidgetPool->GetWidget(WidgetInfo.CurWidgetName);
+	if (CurWidget)
+	{
+		WidgetPool->SetWidgetVisible(WidgetInfo.CurWidgetName, WidgetInfo.bActive);
+		if (WidgetInfo.bActive)
+		{
+			CanvasSlot->AddChildToCanvas(CurWidget);
+		}
+	}
+}

@@ -14,6 +14,7 @@
 #include "Components/SizeBox.h"
 #include "Components/Border.h"
 
+
 #include "UI/Button/Card/CardButton.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
@@ -21,6 +22,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/Engine.h"
 #include "TimerManager.h"
+
+#include "Components/CanvasPanelSlot.h"
 
 UCardDeckView::UCardDeckView()
 {
@@ -206,10 +209,9 @@ void UCardDeckView::VM_FieldChanged_CurPlayCardData(UObject* Object, UE::FieldNo
 			TestQQQ();
 		});
 
-	CurPlayCardNum = Data.Num();
 	TestQQQ();
 
-	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, TimerDelegate, 0.5f, true, 0.5f * Data.Num());
+	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, TimerDelegate, 0.5f, true, 0.5f * (Data.Num()-1));
 
 }
 
@@ -253,12 +255,62 @@ void UCardDeckView::OnHandPlayButtonClicked()
 
 void UCardDeckView::TestQQQ()
 {
-	if (--CurPlayCardNum < 0)
+	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+	auto& Data = VMInst->GetCurCardsData();
+
+	if (CurPlayCardNum >= Data.Num())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(MyTimerHandle);
 	}
 	else
-		UE_LOG(LogTemp, Log, TEXT("!!! %d "), CurPlayCardNum);
+	{
+		int32 ChipGrade = Data[CurPlayCardNum].BaseChip;
+		int32 DraiageGrade = 0;
+
+		EnforceStatType Type = Data[CurPlayCardNum].EnforceType;
+		switch (Type)
+		{
+		case EnforceStatType::NONE:
+			break;
+		case EnforceStatType::CHIP_PLUS:
+			ChipGrade += 40;
+			break;
+		case EnforceStatType::DRAINAGE:
+			DraiageGrade += 4;
+			break;
+		case EnforceStatType::STEEL:
+			break;
+		case EnforceStatType::GOLD:
+			break;
+		case EnforceStatType::GLASS:
+			break;
+		default:
+			break;
+		}
+
+		UCardButton* CurCardButton = nullptr;
+		for (auto& Card : HandCardButton)
+		{
+			if (Card->GetCardInfoData() == Data[CurPlayCardNum])
+			{
+				CurCardButton = Card;
+				break;
+			}
+		}
+		if (CurCardButton)
+		{
+			CurCardButton->PlayScoreText();
+			UCanvasPanelSlot* HSlot = Cast<UCanvasPanelSlot>(CurCardButton);
+			
+			UTextBlock* myText = NewObject<UTextBlock>();
+			myText->SetText(FText::FromString(TEXT("111111111"));
+
+			
+
+		}
+
+	}
+	++CurPlayCardNum;
 }
 
 bool UCardDeckView::SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum)

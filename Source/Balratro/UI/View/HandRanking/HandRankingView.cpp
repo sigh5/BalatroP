@@ -58,7 +58,6 @@ void UHandRankingView::VM_FieldChanged_WidgetPos(UObject* Object, UE::FieldNotif
 			return;
 		}
 		
-		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(this->Slot);
 	
 		float Scale = UWidgetLayoutLibrary::GetViewportScale(this);
 		ButtonScreenPos /= Scale;

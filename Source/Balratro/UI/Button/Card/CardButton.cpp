@@ -4,6 +4,9 @@
 #include "UI/Button/Card/CardButton.h"
 
 #include "Components/HorizontalBoxSlot.h"
+#include "Components/TextBlock.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/CanvasPanel.h"
 
 #include <Engine/World.h>
 #include <MVVMGameSubsystem.h>
@@ -14,6 +17,7 @@
 #include "Styling/SlateBrush.h"
 #include "Components/Border.h"
 #include "Components/Image.h"
+
 
 void UCardButton::SetClikcedEvent()
 {
@@ -77,4 +81,12 @@ void UCardButton::SetImage()
 
 		Border->SetContent(Image);
 	}
+}
+
+void UCardButton::PlayScoreText()
+{
+	
+
+	UE_LOG(LogTemp, Warning, TEXT("Base Chip : %d"), CardInfoData.BaseChip);
+
 }

@@ -9,22 +9,47 @@
 /**
  * 
  */
+
+USTRUCT(BlueprintType)
+struct FWidgetFlag_Info
+{
+	GENERATED_BODY()
+
+	FName CurWidgetName;
+
+	bool bActive = false;
+
+	bool operator==(const FWidgetFlag_Info& Other) const
+	{
+		return CurWidgetName == Other.CurWidgetName
+			&& bActive == Other.bActive;
+	}
+
+
+	bool operator!=(const FWidgetFlag_Info& Other) const
+	{
+		return !(*this == Other);
+	}
+};
+
 UCLASS()
 class BALRATRO_API UVM_MainMenu : public UMVVMViewModelBase
 {
 	GENERATED_BODY()
 
 public:
-	void SetCurWidgetName(const FName&  _InValue)
+	void SetCurWidgetName(const FWidgetFlag_Info&  _InValue)
 	{
 		UE_MVVM_SET_PROPERTY_VALUE(CurWidgetName, _InValue);
 	}
 
-	const FName GetCurWidgetName() const {return CurWidgetName;}
+	const FWidgetFlag_Info GetCurWidgetName() const {return CurWidgetName;}
+
+
 
 private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	FName CurWidgetName;
+	FWidgetFlag_Info CurWidgetName;
 
 };

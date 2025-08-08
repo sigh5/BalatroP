@@ -47,8 +47,7 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND
 		|| InValue == EPlayerStateType::SMALL_BLIND)
 	{
-		FName CurName = "SelectBlindView";
-		VM_MainWidget->SetCurWidgetName(CurName);
+		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView",false));
 		PS->SetPlayerState(InValue);
 		
 		auto BlindStatTable = UBBGameSingleton::Get().GetBlindStat();

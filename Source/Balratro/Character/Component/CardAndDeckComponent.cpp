@@ -62,8 +62,7 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 		|| InValue == EPlayerStateType::SMALL_BLIND)
 	{
 		auto VM_MainMenu = GetVMMainWidget();
-		FName CurName = "CadDeckView";
-		VM_MainMenu->SetCurWidgetName(CurName);
+		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CadDeckView",true));
 		InitDeck();
 	}
 }
@@ -78,14 +77,17 @@ void UCardAndDeckComponent::FinishHandPlay()
 	if (CurrentSum >= PS->GetCurrentRoundBlindGrade() )
 	{
 		PS->SetMaxScore(CurrentSum);
-		// 라운드 끝 로직 실행
 		PS->SetCurrentScore(CurrentSum);
 
+		// 라운드 끝 로직 실행
+		// 한 2초까지 점수 보여주고 그 뒤에 상점 뷰가게 만들어야함 
+
 		auto VM_MainWidget = GetVMMainWidget();
-		FName CurName = "CadDeckView";
-		VM_MainWidget->SetCurWidgetName(CurName); // OFF 여기서 끄는 이벤트를 해야 되는데
-												  // OnCardBattleScene 이거를 호출하면됌 
-												  // 상점 뷰 키는 이벤트 하고
+		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("CadDeckView", false)); 										  
+		// 상점 뷰 키는 이벤트 만들기
+
+		
+
 
 	}
 	else
