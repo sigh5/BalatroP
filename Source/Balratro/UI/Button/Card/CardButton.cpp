@@ -83,10 +83,20 @@ void UCardButton::SetImage()
 	}
 }
 
-void UCardButton::PlayScoreText()
+FVector2D UCardButton::PlayScoreText()
 {
-	
-
 	UE_LOG(LogTemp, Warning, TEXT("Base Chip : %d"), CardInfoData.BaseChip);
 
+	UHorizontalBoxSlot* HSlot = Cast<UHorizontalBoxSlot>(Slot);
+	if (HSlot)
+	{
+		FVector2D CurCardPos = FVector2D::Zero(); 
+
+		//return CurCardPos;
+
+	}
+	FVector2D ScreenPos = GetCachedGeometry().GetAbsolutePosition();
+
+
+	return ScreenPos;
 }

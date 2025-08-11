@@ -44,6 +44,9 @@ private:
     UPROPERTY()
     TSubclassOf<class UCardDeckView> CadDeckView;
 
+    UPROPERTY()
+    TSubclassOf<class UStoreView> StoreView;
+
 
     UPROPERTY()
     TObjectPtr<class UBBUserWidgetPool> WidgetPool;

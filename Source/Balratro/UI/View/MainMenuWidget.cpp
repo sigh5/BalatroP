@@ -16,6 +16,7 @@
 #include "UI/View/PlayerInfoView/PlayerInfoWidget.h"
 #include "UI/View/JokerView/JokerSlotWidget.h"
 #include "UI/View/CardDeck/CardDeckView.h"
+#include "UI/View/Store/StoreView.h"
 
 
 UMainMenuWidget::UMainMenuWidget()
@@ -79,6 +80,14 @@ void UMainMenuWidget::NativeConstruct()
 		CurViewName = "CadDeckView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(CadDeckView));
 	}
+
+	if (StoreView == nullptr)
+	{
+		StoreView = LoadClass<UStoreView>(nullptr, TEXT("/Game/UI/View/StoreView/WBP_Stroe.WBP_Stroe_C"));
+		CurViewName = "StoreView";
+		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(StoreView));
+	}
+
 
 }
 

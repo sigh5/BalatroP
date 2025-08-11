@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI/View/CardDeck/CardDeckView.h"
 
 #include "PaperSprite.h"
@@ -13,7 +10,7 @@
 #include "Components/Overlay.h"
 #include "Components/SizeBox.h"
 #include "Components/Border.h"
-
+#include "Components/CanvasPanelSlot.h"
 
 #include "UI/Button/Card/CardButton.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
@@ -23,7 +20,6 @@
 #include "Engine/Engine.h"
 #include "TimerManager.h"
 
-#include "Components/CanvasPanelSlot.h"
 
 UCardDeckView::UCardDeckView()
 {
@@ -131,12 +127,10 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 		FMargin Padding0;
 		if (i == 0)
 			Padding0 = FMargin(PaddingX * 2, 0.f, PaddingX, 0.f);
-		//else if (i == CurHandNum - 1)
-			//Padding0 = FMargin(PaddingX, 0.f, PaddingX, 0.f);
 		else
 			Padding0 = FMargin(PaddingX, 0.f, PaddingX, 0.f);
+		
 		BoxSlot->SetPadding(Padding0);
-
 		BoxSlot->SetHorizontalAlignment(HAlign_Center);
 		BoxSlot->SetVerticalAlignment(VAlign_Center);
 	}
@@ -167,52 +161,18 @@ void UCardDeckView::VM_FieldChanged_CurPlayCardData(UObject* Object, UE::FieldNo
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
 	auto& Data = VMInst->GetCurCardsData();
-	/*
-	int32 ChipGrade = Data.BaseChip;
-	int32 DraiageGrade = 0;
 	
-	EnforceStatType Type = Data.EnforceType;
-	switch (Type)
-	{
-	case EnforceStatType::NONE:
-		break;
-	case EnforceStatType::CHIP_PLUS:
-		ChipGrade += 40;
-		break;
-	case EnforceStatType::DRAINAGE:
-		DraiageGrade += 4;
-		break;
-	case EnforceStatType::STEEL:
-		break;
-	case EnforceStatType::GOLD:
-		break;
-	case EnforceStatType::GLASS:
-		break;
-	default:
-		break;
-	}
-
-	UCardButton* CurCardButton;
-
-	for (auto& Card : HandCardButton)
-	{
-		if (Card->GetCardInfoData() == Data)
-		{
-			CurCardButton = Card;
-			break;
-		}
-	}*/
+	CurPlayCardNum = 0;
 	
+	ChipText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([&]()
 		{
-			TestQQQ();
+			CardChipScoreText();
 		});
-
-	TestQQQ();
-
-	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, TimerDelegate, 0.5f, true, 0.5f * (Data.Num()-1));
-
+	
+	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, TimerDelegate, 0.5f, true, 0.f);
 }
 
 void UCardDeckView::OnSuitSortButtonClicked()
@@ -253,13 +213,14 @@ void UCardDeckView::OnHandPlayButtonClicked()
 	VMInst->UseHandPlay(SelectedNum, CardStatInfo);
 }
 
-void UCardDeckView::TestQQQ()
+void UCardDeckView::CardChipScoreText()
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	auto& Data = VMInst->GetCurCardsData();
 
 	if (CurPlayCardNum >= Data.Num())
 	{
+		ChipText->SetVisibility(ESlateVisibility::Collapsed);
 		GetWorld()->GetTimerManager().ClearTimer(MyTimerHandle);
 	}
 	else
@@ -297,18 +258,29 @@ void UCardDeckView::TestQQQ()
 				break;
 			}
 		}
+		
 		if (CurCardButton)
 		{
-			CurCardButton->PlayScoreText();
-			UCanvasPanelSlot* HSlot = Cast<UCanvasPanelSlot>(CurCardButton);
+			ChipText->SetText(FText::AsNumber(Data[CurPlayCardNum].BaseChip));
 			
-			UTextBlock* myText = NewObject<UTextBlock>();
-			myText->SetText(FText::FromString(TEXT("111111111"));
+			FGeometry CardGeo = CurCardButton->GetCachedGeometry();
+			FVector2D AbsPos = CardGeo.GetAbsolutePosition();
+			FVector2D Size = CardGeo.GetLocalSize();
 
-			
-
+			if (UWidget* CanvasParent = ChipText->GetParent())
+			{
+				FGeometry ParentGeo = CanvasParent->GetCachedGeometry();
+				FVector2D LocalCenter = ParentGeo.AbsoluteToLocal(AbsPos);
+				
+				LocalCenter.Y -= 55.f;
+				LocalCenter.X -= (Size.X * 0.39f);
+				
+				if (UCanvasPanelSlot* ChipSlot = Cast<UCanvasPanelSlot>(ChipText->Slot))
+				{
+					ChipSlot->SetPosition(LocalCenter);
+				}
+			}
 		}
-
 	}
 	++CurPlayCardNum;
 }

@@ -39,7 +39,7 @@ protected:
 	void OnHandPlayButtonClicked();
 
 private:
-	void  TestQQQ();
+	void  CardChipScoreText();
 
 
 private:
@@ -61,6 +61,13 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UHorizontalBox> CardPanel;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> ChipText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> DraiageText;
+
 
 	UPROPERTY()
 	TArray<TObjectPtr<class UCardButton>> HandCardButton;

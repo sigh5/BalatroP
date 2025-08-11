@@ -21,7 +21,7 @@ enum class EHandInCardSortType : uint8
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseChuck, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseHandPlay, int32);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnCardBattleScene, EPlayerStateType);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectNextScene, EPlayerStateType);
 
 
 DECLARE_MULTICAST_DELEGATE(FOnDeckCardNum);
@@ -31,6 +31,9 @@ DECLARE_MULTICAST_DELEGATE(FOnSetCurrentScore);
 DECLARE_MULTICAST_DELEGATE(FOnSetRoundCount);
 DECLARE_MULTICAST_DELEGATE(FOnSetCurrentGold);
 DECLARE_MULTICAST_DELEGATE(FOnSetEntiCount);
+DECLARE_MULTICAST_DELEGATE(FOnShowUIChip);  //FOnPlayerInfoShowBaseChip
+DECLARE_MULTICAST_DELEGATE(FOnShowUIDrainage);
+
 //DECLARE_MULTICAST_DELEGATE(FOnScoreEffectStart);
 
 /**
@@ -50,10 +53,12 @@ public:
 	FOnPlayerUseHandPlay		OnPlayerUseHandPlay;
 	FOnPlayerUseChuck			OnPlayerUseChuck;
 	FOnCurrentPlayerHandRanking OnCurrentPlayerHandRanking;
-	FOnCardBattleScene			OnCardBattleScene;
+	FOnSelectNextScene			OnSelectNextScene;
 	FOnSetCurrentScore			OnSetCurrentScore;
 	
 	FOnDeckCardNum				OnDeckCardNum;
+	FOnShowUIChip				OnShowUIChip;
+	FOnShowUIDrainage			OnShowUIDrainage;
 	//FOnScoreEffectStart			OnScoreEffectStart;
 
 public:
@@ -123,7 +128,7 @@ public:
 	void  SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue);
 
 	FORCEINLINE const EPlayerStateType GetPlayerState() const { return CurPlayerState; }
-	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { CurPlayerState = InType; OnCardBattleScene.Broadcast(CurPlayerState); }
+	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { CurPlayerState = InType; OnSelectNextScene.Broadcast(CurPlayerState); }
 
 
 	FORCEINLINE TArray<class UJokerCard_Info*>& GetCurrentJokerCardsModify() { return CurJokerCardInfo; }
@@ -139,14 +144,16 @@ public:
 
 
 	FORCEINLINE int32 GetCurrentShowChip() { return CurrentShowChip; }
-	FORCEINLINE void  SetCurrentShowChip(int32 InValue) { CurrentShowChip = InValue; }
+	FORCEINLINE void  SetCurrentShowChip(int32 InValue) { CurrentShowChip = InValue;  OnShowUIChip.Broadcast(); }
 
 	FORCEINLINE int32 GetCurrentShowDrainage() { return CurrentShowDrainage; }
-	FORCEINLINE void  SetCurrentShowDrainage(int32 InValue) { CurrentShowDrainage = InValue; }
+	FORCEINLINE void  SetCurrentShowDrainage(int32 InValue) { CurrentShowDrainage = InValue; OnShowUIDrainage.Broadcast(); }
 
 	FORCEINLINE int32 GetCurrentRoundBlindGrade() { return CurrentRoundBlindGrade; }
 	FORCEINLINE void  SetCurrentRoundBlindGrade(int32 InValue) { CurrentRoundBlindGrade = InValue; }
 
+	void ReStart();  // 죽었을때 다시 하는거
+	void SetNextRound(); // 시작하는 값들 초기화
 
 private:
 	int32 RoundCount;
@@ -166,11 +173,11 @@ private:
 	int32 CardInDeckNum; // 초기 Deck 52장
 
 	//int32 CurrentRoundSumScore = 0;
-	int32 CurrentScore = 0;
-	int32 MaxScore = 0;
+	int32 CurrentScore;
+	int32 MaxScore;
 
-	int32		CurrentShowChip;
-	int32		CurrentShowDrainage;
+	int32		CurrentShowChip; // 핸드랭킹에 있는 레벨업에 따른 기본 칩
+	int32		CurrentShowDrainage; // 핸드랭킹에 있는 레벨업에 따른 기본 배수
 
 
 

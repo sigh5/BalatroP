@@ -27,8 +27,12 @@ void UPlayerInfoComponent::BeginPlay()
 	PS->OnPlayerUseChuck.AddUObject(this, &UPlayerInfoComponent::UpdateUseChuckCount);
 	PS->OnCurrentPlayerHandRanking.AddUObject(this, &UPlayerInfoComponent::UpdateHandRanking);
 	PS->OnDeckCardNum.AddUObject(this, &UPlayerInfoComponent::UpdateCardInDeck);
-	PS->OnCardBattleScene.AddUObject(this, &UPlayerInfoComponent::UpdateBlindInfo);
+	PS->OnSelectNextScene.AddUObject(this, &UPlayerInfoComponent::UpdateBlindInfo);
 	PS->OnSetCurrentScore.AddUObject(this, &UPlayerInfoComponent::UpdateCurrentScore);
+
+	PS->OnShowUIChip.AddUObject(this, &UPlayerInfoComponent::UpdateCalculatorChip);
+	PS->OnShowUIDrainage.AddUObject(this, &UPlayerInfoComponent::UpdateCalculatorDrainage);
+
 
 	Init_PlayerInfo();
 }
@@ -216,8 +220,8 @@ void UPlayerInfoComponent::UpdateHandRanking()
 	PS->SetCurrentShowChip(BaseChip);
 	PS->SetCurrentShowDrainage(BaseDrainage);
 
-	VM_PI->SetCurChip(BaseChip);
-	VM_PI->SetCurDrainage(BaseDrainage);
+	//VM_PI->SetCurChip(BaseChip);
+	//VM_PI->SetCurDrainage(BaseDrainage);
 }
 
 void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
@@ -229,7 +233,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	int32 RoundCnt = PS->GetRoundCount();
 	int32 BlindGrade = -1;
 	int32 Reward = -1;
-	
+	int32 BlindImageIndex = -1;
 	FLinearColor LinearColor(0.0f, 0.f, 0.0f, 1.0f);
 	FName MainOrder = "";
 	bool  BlindInfoActive = false;
@@ -250,6 +254,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		BlindGrade = Sigleton.GetBlindStat()[RoundCnt]->SMallGrade;
 		++RoundCnt;
 		LinearColor = FLinearColor(0.000000, 0.289068, 1.000000, 1.000000);
+		BlindImageIndex = 0;
 		break;
 	case EPlayerStateType::SMALL_BLIND_SKIP:
 		MainOrder = "Choose Your \n Next Blind";
@@ -262,6 +267,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		BlindGrade = Sigleton.GetBlindStat()[RoundCnt]->BigGrade;
 		++RoundCnt;
 		LinearColor = FLinearColor(1.000000, 0.928203, 0.000000, 1.000000);
+		BlindImageIndex = 1;
 		break;
 	case EPlayerStateType::BIG_BLIND_SKIP:
 		MainOrder = "Choose Your \n Next Blind";
@@ -273,6 +279,11 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		Reward = Sigleton.GetBlindStat()[RoundCnt]->BossReward;
 		BlindGrade = Sigleton.GetBlindStat()[RoundCnt]->BossGrade;
 		++RoundCnt;
+		break;
+	case EPlayerStateType::SHOP:
+		MainOrder = "UPGRADE RUN!!";
+		BlindInfoActive = false;
+		BlindImageIndex = 2;
 		break;
 	default:
 		break;
@@ -286,7 +297,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	VM_PI->SetBlindReward(Reward);
 	VM_PI->SetMainOrder(MainOrder);
 	VM_PI->SetBlindBorderColor(LinearColor);
-	VM_PI->SetBlindImageIndex(0);
+	VM_PI->SetBlindImageIndex(BlindImageIndex);
 }
 
 void UPlayerInfoComponent::UpdateCalculatorChip()

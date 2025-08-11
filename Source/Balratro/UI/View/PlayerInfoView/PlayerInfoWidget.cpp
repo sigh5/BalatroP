@@ -321,6 +321,10 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 	{
 
 	}
+	else if (Index == 3) // 상점 이미지
+	{
+		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Shop/ShopSignAnimation_Sprite_3.ShopSignAnimation_Sprite_3"));
+	}
 	
 	MyAsset = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
 	if (MyAsset.IsValid())

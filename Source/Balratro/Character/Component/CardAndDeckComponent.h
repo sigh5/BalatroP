@@ -34,7 +34,6 @@ private:
 	void	SortHandInCard(const EHandInCardSortType& InType);
 
 	// 핸드플레이, 버리기 등 현재 손패에 있는 카드 데이터 제거 후 모델에 전달
-	// 여기서 VM 사용 하지말기
 	void	UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardStat);
 
 	void	SetVisibleCardDeckView(EPlayerStateType InValue);
@@ -47,11 +46,10 @@ private:
 	class UVM_MainMenu*		GetVMMainWidget();
 
 	int32  CurDrawIndex = 0;
-
-	FTimerHandle TotalScoreHandle;
-
 	TArray<FDeckCardStat> _CurData;
 	int32 _CardNum = 0;
-	float _Delay = 0.f;
+	float _DelayTime = 0.f;
 	int32 ResultScore = 0;
+
+	FTimerHandle TotalScoreHandle;
 };

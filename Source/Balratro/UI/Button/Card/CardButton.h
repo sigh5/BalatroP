@@ -37,8 +37,7 @@ public:
 	FORCEINLINE void SetButtonBorder(class UBorder* InValue) { Border = InValue; }
 	FORCEINLINE void SetButtonImage(class UImage* InValue) { Image = InValue; }
 
-
-	void	PlayScoreText();
+	FVector2D	PlayScoreText();
 
 private:
 	int CardIndex = 0;

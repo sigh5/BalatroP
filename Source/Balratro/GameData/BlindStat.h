@@ -34,7 +34,8 @@ enum class EPlayerStateType :uint8
 	SMALL_BLIND_SKIP,
 	BIG_BLIND,
 	BIG_BLIND_SKIP,
-	BOSS_BLIND
+	BOSS_BLIND,
+	SHOP
 };
 
 
