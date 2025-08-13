@@ -25,7 +25,6 @@ protected:
 	UFUNCTION()
 	void OnCashOutButton();
 
-	void RunNextTask();
 
 protected:
 	void VM_FieldChanged_BlindRewardText(UObject* Object, UE::FieldNotification::FFieldId FieldId);
@@ -37,7 +36,7 @@ protected:
 
 	void VM_FieldChanged_EarnGold(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
-	void UpdateDollarAnimation();
+	void UpdateDollarAnimation(class UTextBlock* myText, int32 MaxNum);
 
 private:
 	UPROPERTY(meta = (BindWidget))
