@@ -9,6 +9,7 @@
 #include "Character/Component/BlindComponent.h"
 #include "Character/Component/JokerCardComponent.h"
 #include "Character/Component/StoreComponent.h"
+#include "Character/Component/RewardComponent.h"
 
 // Sets default values
 AMyPawn::AMyPawn()
@@ -20,4 +21,5 @@ AMyPawn::AMyPawn()
 	const auto BlindComponent = CreateDefaultSubobject<UBlindComponent>("BlindComponent");
 	const auto JokerCardComponent = CreateDefaultSubobject<UJokerCardComponent>("JokerCardComponent");
 	const auto StoreComponent = CreateDefaultSubobject<UStoreComponent>("StoreComponent");
+	const auto RewardComponent = CreateDefaultSubobject<URewardComponent>("RewardComponent");
 }

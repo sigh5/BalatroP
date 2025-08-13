@@ -263,6 +263,14 @@ void UCardDeckView::CardChipScoreText()
 		{
 			ChipText->SetText(FText::AsNumber(Data[CurPlayCardNum].BaseChip));
 			
+			auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+			check(VM_PlayerInfo);
+
+			int32 CurChip =  VM_PlayerInfo->GetCurChip();
+			CurChip += Data[CurPlayCardNum].BaseChip;
+			VM_PlayerInfo->SetCurChip(CurChip);
+
+
 			FGeometry CardGeo = CurCardButton->GetCachedGeometry();
 			FVector2D AbsPos = CardGeo.GetAbsolutePosition();
 			FVector2D Size = CardGeo.GetLocalSize();

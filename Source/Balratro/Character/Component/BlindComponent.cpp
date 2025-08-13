@@ -11,6 +11,7 @@
 
 #include "UI/MVVM/ViewModel/VM_BlindSelect.h"
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
+#include "UI/MVVM/ViewModel/VM_Store.h"
 
 #include "Core/MyPlayerState.h"
 
@@ -22,6 +23,9 @@ void UBlindComponent::BeginPlay()
 	auto VM_SelectBlind = GetVMBlindSelect();
 	VM_SelectBlind->OnSelectBlind.AddUObject(this, &UBlindComponent::BlindSelectEvent);
 
+	auto VM_Store = GetVMStore();
+	VM_Store->OnNextButton.AddUObject(this, &UBlindComponent::BlindViewActive);
+
 	InitBlindSelectView();
 }
 
@@ -32,11 +36,11 @@ void UBlindComponent::InitBlindSelectView()
 
 	auto BlindStatTable = UBBGameSingleton::Get().GetBlindStat();
 
-	int RoundCnt = PS->GetRoundCount();
+	int EntiCnt = PS->GetEntiCount();
 
-	VM->SetSmallGrade(BlindStatTable[RoundCnt]->SMallGrade);
-	VM->SetBigGrade(BlindStatTable[RoundCnt]->BigGrade);
-	VM->SetBossGrade(BlindStatTable[RoundCnt]->BossGrade);
+	VM->SetSmallGrade(BlindStatTable[EntiCnt]->SMallGrade);
+	VM->SetBigGrade(BlindStatTable[EntiCnt]->BigGrade);
+	VM->SetBossGrade(BlindStatTable[EntiCnt]->BossGrade);
 }
 
 void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
@@ -51,19 +55,19 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 		PS->SetPlayerState(InValue);
 		
 		auto BlindStatTable = UBBGameSingleton::Get().GetBlindStat();
-		int RoundCnt = PS->GetRoundCount();
+		int EntiCnt = PS->GetEntiCount();
 		
 		if (InValue == EPlayerStateType::SMALL_BLIND)
 		{
-			PS->SetCurrentRoundBlindGrade(BlindStatTable[RoundCnt]->SMallGrade);
+			PS->SetCurrentRoundBlindGrade(BlindStatTable[EntiCnt]->SMallGrade);
 		}
 		else if (InValue == EPlayerStateType::BIG_BLIND)
 		{
-			PS->SetCurrentRoundBlindGrade(BlindStatTable[RoundCnt]->BigGrade);
+			PS->SetCurrentRoundBlindGrade(BlindStatTable[EntiCnt]->BigGrade);
 		}
 		else
 		{
-			PS->SetCurrentRoundBlindGrade(BlindStatTable[RoundCnt]->BossGrade);
+			PS->SetCurrentRoundBlindGrade(BlindStatTable[EntiCnt]->BossGrade);
 		}
 		
 	}
@@ -72,6 +76,15 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 		// 스킵 보상 수령하기
 		return;
 	}
+}
+
+void UBlindComponent::BlindViewActive()
+{
+	auto VM_MainWidget = GetVMMainWidget();
+	auto PS = GetPlayerState();
+	
+	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("StoreView", false));
+	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", true));
 }
 
 UVM_BlindSelect* UBlindComponent::GetVMBlindSelect()
@@ -103,4 +116,16 @@ AMyPlayerState* UBlindComponent::GetPlayerState()
 	const auto Pawn = Cast<APawn>(GetOwner());
 	auto PlayerState = Pawn->GetController()->GetPlayerState<AMyPlayerState>();
 	return PlayerState;
+}
+
+UVM_Store* UBlindComponent::GetVMStore()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_Store");
+	Context.ContextClass = UVM_Store::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_Store>(Found);
 }

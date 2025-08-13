@@ -11,6 +11,8 @@
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 #include "UI/MVVM/ViewModel/VM_BlindSelect.h"
+#include "UI/MVVM/ViewModel/VM_Store.h"
+#include "UI/MVVM/ViewModel/VM_Reward.h"
 
 void UUMVVM_VMRegistrySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -31,6 +33,8 @@ void UUMVVM_VMRegistrySubsystem::RegisterViewModels()
 	AddViewModel(MVVMCollection, UVM_PlayerInfo::StaticClass(), FName("VM_PlayerInfo"));
 	AddViewModel(MVVMCollection, UVM_CardDeck::StaticClass(), FName("VM_CardDeck"));
 	AddViewModel(MVVMCollection, UVM_BlindSelect::StaticClass(), FName("VM_BlindSelect"));
+	AddViewModel(MVVMCollection, UVM_Store::StaticClass(), FName("VM_Store"));
+	AddViewModel(MVVMCollection, UVM_Reward::StaticClass(), FName("VM_Reward"));
 }
 
 void UUMVVM_VMRegistrySubsystem::AddViewModel(UMVVMViewModelCollectionObject* VMCollection, const TSubclassOf<UMVVMViewModelBase>& ViewModelClass,

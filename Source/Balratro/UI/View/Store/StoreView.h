@@ -22,6 +22,10 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 private:
+	UFUNCTION()
+	void OnNextButton();
+
+private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> NextButton;
 

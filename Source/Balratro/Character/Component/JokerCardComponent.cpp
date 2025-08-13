@@ -41,7 +41,6 @@ void UJokerCardComponent::CalculatorJoker(UJokerCard_Info* JokerCard)
 	{
 		VM_PlayerInfo->SetCurDrainage(CurrentDrainage * 4);
 	}
-
 }
 
 UVM_JockerSlot* UJokerCardComponent::GetVMJockerSlot()

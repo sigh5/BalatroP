@@ -59,7 +59,6 @@ public:
 	FOnDeckCardNum				OnDeckCardNum;
 	FOnShowUIChip				OnShowUIChip;
 	FOnShowUIDrainage			OnShowUIDrainage;
-	//FOnScoreEffectStart			OnScoreEffectStart;
 
 public:
 	FORCEINLINE int32 GetRoundCount() { return RoundCount; }
@@ -128,8 +127,12 @@ public:
 	void  SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue);
 
 	FORCEINLINE const EPlayerStateType GetPlayerState() const { return CurPlayerState; }
-	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { CurPlayerState = InType; OnSelectNextScene.Broadcast(CurPlayerState); }
+	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { 
+		PrevPlayerState = CurPlayerState;
+		CurPlayerState = InType; OnSelectNextScene.Broadcast(CurPlayerState); 
+	}
 
+	FORCEINLINE const EPlayerStateType GetPrevPlayerState() const { return PrevPlayerState; }
 
 	FORCEINLINE TArray<class UJokerCard_Info*>& GetCurrentJokerCardsModify() { return CurJokerCardInfo; }
 	FORCEINLINE const TArray<class UJokerCard_Info*>& GetCurrentJokerCards() const { return CurJokerCardInfo; }
@@ -154,6 +157,7 @@ public:
 
 	void ReStart();  // 죽었을때 다시 하는거
 	void SetNextRound(); // 시작하는 값들 초기화
+
 
 private:
 	int32 RoundCount;
@@ -180,7 +184,7 @@ private:
 	int32		CurrentShowDrainage; // 핸드랭킹에 있는 레벨업에 따른 기본 배수
 
 
-
+	EPlayerStateType		PrevPlayerState;
 	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;
 	EPokerHand				CurHandCard_Type;

@@ -47,6 +47,9 @@ private:
     UPROPERTY()
     TSubclassOf<class UStoreView> StoreView;
 
+    UPROPERTY()
+    TSubclassOf<class URewardView> RewardView;
+
 
     UPROPERTY()
     TObjectPtr<class UBBUserWidgetPool> WidgetPool;

@@ -317,13 +317,13 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 	{
 		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_21.BlindChips_Sprite_21"));
 	}
-	else if (Index == 2) /// 보스 블라인드 이미지가 달라서
-	{
-
-	}
-	else if (Index == 3) // 상점 이미지
+	else if (Index == 2) // 상점 이미지
 	{
 		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Shop/ShopSignAnimation_Sprite_3.ShopSignAnimation_Sprite_3"));
+	}
+	else if (Index == 3) /// 보스 블라인드 이미지가 달라서
+	{
+		
 	}
 	
 	MyAsset = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));

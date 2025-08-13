@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameData/BlindStat.h"
 #include "StoreComponent.generated.h"
 
 
@@ -15,6 +16,11 @@ class BALRATRO_API UStoreComponent : public UActorComponent
 protected:
 	virtual void BeginPlay() override;
 
+private:
+	void	SetStoreView(EPlayerStateType _InType);
 
-		
+private:
+	class UVM_PlayerInfo* GetVMPlayerInfo();
+	class AMyPlayerState* GetPlayerState();
+	class UVM_MainMenu* GetVMMainWidget();
 };

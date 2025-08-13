@@ -18,7 +18,6 @@
 #include "Interface/CalculatorScoreInterface.h"
 
 
-
 void UCardAndDeckComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -74,8 +73,9 @@ void UCardAndDeckComponent::FinishHandPlay()
 	int32 SumScore = PS->GetCurrentScore();
 	int32 CurrentSum = ResultScore + SumScore;
 
-	if (CurrentSum >= PS->GetCurrentRoundBlindGrade() )
+	if (CurrentSum >= PS->GetCurrentRoundBlindGrade())
 	{
+		ResultScore = 0;
 		PS->SetMaxScore(CurrentSum);
 		PS->SetCurrentScore(CurrentSum);
 
@@ -83,13 +83,10 @@ void UCardAndDeckComponent::FinishHandPlay()
 		// 한 2초까지 점수 보여주고 그 뒤에 상점 뷰가게 만들어야함 
 		GetWorld()->GetTimerManager().ClearTimer(TotalScoreHandle);
 
-		PS->SetNextRound();
+		auto VM_MainWidget = GetVMMainWidget();
+		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("CadDeckView", false));
 
-		//auto VM_MainWidget = GetVMMainWidget();
-		//VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("CadDeckView", false)); 										  
-		//// 상점 뷰 키는 이벤트 만들기
-
-		//VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("StoreView", true));
+		PS->SetPlayerState(EPlayerStateType::REWARD);
 	}
 	else
 	{

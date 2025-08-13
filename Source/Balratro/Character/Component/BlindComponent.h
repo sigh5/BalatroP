@@ -20,14 +20,14 @@ protected:
 	
 	void	BlindSelectEvent(EPlayerStateType InValue);
 
+	void	BlindViewActive();
+
 private:
 	class UVM_BlindSelect* GetVMBlindSelect();
 	class UVM_MainMenu* GetVMMainWidget();
 	class AMyPlayerState* GetPlayerState();
+	class UVM_Store* GetVMStore();
 
 private:
-	
-
-
 
 };

@@ -219,9 +219,6 @@ void UPlayerInfoComponent::UpdateHandRanking()
 
 	PS->SetCurrentShowChip(BaseChip);
 	PS->SetCurrentShowDrainage(BaseDrainage);
-
-	//VM_PI->SetCurChip(BaseChip);
-	//VM_PI->SetCurDrainage(BaseDrainage);
 }
 
 void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
@@ -230,6 +227,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	auto PS = GetPlayerState();
 	auto& Sigleton = UBBGameSingleton::Get();
 
+	int32 EntiCnt = PS->GetEntiCount();
 	int32 RoundCnt = PS->GetRoundCount();
 	int32 BlindGrade = -1;
 	int32 Reward = -1;
@@ -244,14 +242,15 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		BlindInfoActive = false;
 		break;
 	case EPlayerStateType::STORE:
-		MainOrder = "-";
+		MainOrder = "UPGRADE RUN!!";
 		BlindInfoActive = false;
+		BlindImageIndex = 2;
 		break;
 	case EPlayerStateType::SMALL_BLIND:
 		MainOrder = "Small Blind";
 		BlindInfoActive = true;
-		Reward = Sigleton.GetBlindStat()[RoundCnt]->SMallReward;
-		BlindGrade = Sigleton.GetBlindStat()[RoundCnt]->SMallGrade;
+		Reward = Sigleton.GetBlindStat()[EntiCnt]->SMallReward;
+		BlindGrade = Sigleton.GetBlindStat()[EntiCnt]->SMallGrade;
 		++RoundCnt;
 		LinearColor = FLinearColor(0.000000, 0.289068, 1.000000, 1.000000);
 		BlindImageIndex = 0;
@@ -263,8 +262,8 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	case EPlayerStateType::BIG_BLIND:
 		MainOrder = "Big Blind";
 		BlindInfoActive = true;
-		Reward = Sigleton.GetBlindStat()[RoundCnt]->BigReward;
-		BlindGrade = Sigleton.GetBlindStat()[RoundCnt]->BigGrade;
+		Reward = Sigleton.GetBlindStat()[EntiCnt]->BigReward;
+		BlindGrade = Sigleton.GetBlindStat()[EntiCnt]->BigGrade;
 		++RoundCnt;
 		LinearColor = FLinearColor(1.000000, 0.928203, 0.000000, 1.000000);
 		BlindImageIndex = 1;
@@ -276,21 +275,14 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	case EPlayerStateType::BOSS_BLIND:
 		MainOrder = "Boss Blind";
 		BlindInfoActive = true;
-		Reward = Sigleton.GetBlindStat()[RoundCnt]->BossReward;
-		BlindGrade = Sigleton.GetBlindStat()[RoundCnt]->BossGrade;
+		Reward = Sigleton.GetBlindStat()[EntiCnt]->BossReward;
+		BlindGrade = Sigleton.GetBlindStat()[EntiCnt]->BossGrade;
 		++RoundCnt;
-		break;
-	case EPlayerStateType::SHOP:
-		MainOrder = "UPGRADE RUN!!";
-		BlindInfoActive = false;
-		BlindImageIndex = 2;
 		break;
 	default:
 		break;
 	}
 	
-	
-
 	PS->SetRoundCount(RoundCnt);
 	VM_PI->SetBlindInfoActive(BlindInfoActive); // Active가 가장 먼저와야됌
 	VM_PI->SetBlindGrade(BlindGrade);

@@ -17,7 +17,7 @@
 #include "UI/View/JokerView/JokerSlotWidget.h"
 #include "UI/View/CardDeck/CardDeckView.h"
 #include "UI/View/Store/StoreView.h"
-
+#include "UI/View/Reward/RewardView.h"
 
 UMainMenuWidget::UMainMenuWidget()
 {
@@ -88,6 +88,12 @@ void UMainMenuWidget::NativeConstruct()
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(StoreView));
 	}
 
+	if (RewardView == nullptr)
+	{
+		RewardView = LoadClass<URewardView>(nullptr, TEXT("/Game/UI/View/Reward/WBP_Reward.WBP_Reward_C"));
+		CurViewName = "RewardView";
+		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(RewardView));
+	}
 
 }
 
@@ -106,6 +112,10 @@ void UMainMenuWidget::VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotif
 		if (WidgetInfo.bActive)
 		{
 			CanvasSlot->AddChildToCanvas(CurWidget);
+		}
+		else
+		{
+			CurWidget->RemoveFromParent();
 		}
 	}
 }
