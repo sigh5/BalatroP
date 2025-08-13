@@ -48,7 +48,6 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 	int32 BlindGrade = VM_PI->GetBlindGrade();
 	int32 BlindReward = VM_PI->GetBlindReward();
 	int32 BlindImageIndex = VM_PI->GetBlindImageIndex();
-	UE_LOG(LogTemp, Warning, TEXT("!! %d"), BlindImageIndex);
 
 	VM_Reward->SetRestHands(RestHands);
 	VM_Reward->SetBlindReward(BlindReward);

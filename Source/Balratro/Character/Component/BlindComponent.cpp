@@ -33,10 +33,9 @@ void UBlindComponent::InitBlindSelectView()
 {
 	auto PS = GetPlayerState();
 	auto VM = GetVMBlindSelect();
-
 	auto BlindStatTable = UBBGameSingleton::Get().GetBlindStat();
 
-	int EntiCnt = PS->GetEntiCount();
+	int32 EntiCnt = PS->GetEntiCount();
 
 	VM->SetSmallGrade(BlindStatTable[EntiCnt]->SMallGrade);
 	VM->SetBigGrade(BlindStatTable[EntiCnt]->BigGrade);

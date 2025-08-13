@@ -60,6 +60,22 @@ void URewardView::OnCashOutButton()
 	VMInst->SetNextButtonClicked();
 }
 
+void URewardView::RunNextTask()
+{
+	TFunction<void()> Task;
+	if (TaskQueue.Dequeue(Task))
+	{
+		Task(); // 현재 작업 실행
+		GetWorld()->GetTimerManager().SetTimer(
+			DollarAnimTimer,
+			this,
+			&URewardView::RunNextTask,
+			0.5f, // 다음 작업까지 대기시간
+			false
+		);
+	}
+}
+
 void URewardView::VM_FieldChanged_BlindRewardText(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInst = TryGetViewModel<UVM_Reward>();
@@ -69,13 +85,8 @@ void URewardView::VM_FieldChanged_BlindRewardText(UObject* Object, UE::FieldNoti
 	if (Reward == -1)
 		return;
 
-	FString str ="";
-	for (int i = 0; i < Reward; ++i)
-	{
-		str += "$";
-	}
-
-	BlindReward->SetText(FText::FromString(str));
+	AnimStep = 0; // 시작
+	GetWorld()->GetTimerManager().SetTimer(DollarAnimTimer, this, &URewardView::UpdateDollarAnimation, 0.2f, true);
 }
 
 void URewardView::VM_FieldChanged_RestHands(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -175,4 +186,25 @@ void URewardView::VM_FieldChanged_EarnGold(UObject* Object, UE::FieldNotificatio
 	
 	FString str = FString::Printf(TEXT("Cash Out : $%d"),EarnGold);
 	GoldText->SetText(FText::FromString(str));
+}
+
+void URewardView::UpdateDollarAnimation()
+{
+	const auto VMInst = TryGetViewModel<UVM_Reward>();
+
+	if (AnimStep > VMInst->GetBlindReward()) // 1~3 반복
+	{
+		GetWorld()->GetTimerManager().ClearTimer(DollarAnimTimer);
+		AnimStep = 0;
+	}
+
+	FString Text = BlindReward->GetText().ToString();
+	for (int i = 0; i < 1; i++)
+	{
+		Text += TEXT("$");
+	}
+	BlindReward->SetText(FText::FromString(Text));
+
+	AnimStep++;
+	
 }

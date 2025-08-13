@@ -25,6 +25,8 @@ protected:
 	UFUNCTION()
 	void OnCashOutButton();
 
+	void RunNextTask();
+
 protected:
 	void VM_FieldChanged_BlindRewardText(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_RestHands(UObject* Object, UE::FieldNotification::FFieldId FieldId);
@@ -34,6 +36,8 @@ protected:
 	void VM_FieldChanged_BlindImageIndex(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 	void VM_FieldChanged_EarnGold(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
+	void UpdateDollarAnimation();
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -63,6 +67,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> InterestReward;  // $
 	
+	FTimerHandle DollarAnimTimer;
+	int32 AnimStep = 0;
 
-
+	TQueue<TFunction<void()>> TaskQueue;
 };
