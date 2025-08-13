@@ -42,7 +42,6 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 	VM_Reward->SetBlindReward(0);
 	VM_Reward->SetInterest(0);
 
-
 	int32 RestHands = PS->GetMaxHandCount() - PS->GetUseHandCount();
 	int32 RestChucks = PS->GetMaxChuckCount() - PS->GetUseChuckCount();
 	int32 CurGold = PS->GetGold();
@@ -58,9 +57,7 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 	VM_Reward->SetBlindImageIndex(BlindImageIndex);
 
 	EarnGold = RestHands + BlindReward + (CurGold / 5);
-
 	VM_Reward->SetEarnGold(EarnGold);
-
 
 	PS->SetNextRound();
 }

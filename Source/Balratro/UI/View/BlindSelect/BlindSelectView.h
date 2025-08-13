@@ -26,11 +26,18 @@ protected:
 	UFUNCTION()
 	void OnSmallBlindButtonClicked();
 
+	UFUNCTION()
+	void OnBigBlindButtonClicked();
+
+	UFUNCTION()
+	void OnBossBlindButtonClicked();
+
 private:
 	void VM_FieldChanged_SmallBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_BigBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_BossBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+	void VM_FieldChanged_BlindVisibleActive(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 private:
 	UPROPERTY(meta = (BindWidget))

@@ -64,7 +64,5 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32  BossReward;
-
-	
 };
 

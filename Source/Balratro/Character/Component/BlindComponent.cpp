@@ -47,6 +47,7 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 {
 	auto VM_MainWidget = GetVMMainWidget();
 	auto PS = GetPlayerState();
+	auto VM_BlindSelect = GetVMBlindSelect();
 
 	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND
 		|| InValue == EPlayerStateType::SMALL_BLIND)

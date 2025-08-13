@@ -78,6 +78,16 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(Reward, InValue);
 	}
 
+	const bool GetSelectButtonActive() const
+	{
+		return SelectButtonActive;
+	}
+
+	void SetSelectButtonActive(bool InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(SelectButtonActive, InValue);
+	}
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 SmallGrade = 0;
@@ -94,6 +104,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 Reward = 0;
 	
-
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool  SelectButtonActive = false; // 보스블라인드 끝내면 이거 호출해야됌
 
 };
