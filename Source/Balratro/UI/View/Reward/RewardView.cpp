@@ -60,24 +60,47 @@ void URewardView::OnCashOutButton()
 	VMInst->SetNextButtonClicked();
 }
 
+void URewardView::StartQueueAnimation()
+{
+	if (StartQueue.IsEmpty())
+	{
+		GoldText->SetVisibility(ESlateVisibility::Visible);
+		PlayAnimation(GoldTextAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
+		return;
+	}
+	if (GetWorld()->GetTimerManager().IsTimerActive(DollarAnimTimer))
+	{
+		return;
+	}
+	else
+	{
+		FTimerDelegate CurDelegator;
+		StartQueue.Peek(CurDelegator);
+		GetWorld()->GetTimerManager().SetTimer(DollarAnimTimer, CurDelegator, 0.3f, true);
+
+		StartQueue.Pop();
+	}	
+}
+
 void URewardView::VM_FieldChanged_BlindRewardText(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInst = TryGetViewModel<UVM_Reward>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
-	int32 Reward = VMInst->GetBlindReward();
-	if (Reward == -1)
+	RewardStep = VMInst->GetBlindReward();
+	if (RewardStep == -1)
 		return;
+	BlindReward->SetText(FText::FromString(""));
+
 
 	AnimStep = 0; // 시작
 	FTimerDelegate TimerDel;
 	TimerDel.BindLambda([&]()
 		{
-			UpdateDollarAnimation(BlindReward, VMInst->GetBlindReward()); // MyValue를 함수에 전달
+			UpdateDollarAnimation(nullptr, BlindReward, &RewardStep);
 		});
 
-	//GetWorld()->GetTimerManager().SetTimer(DollarAnimTimer, this, &URewardView::UpdateDollarAnimation, 0.2f, true);
-	GetWorld()->GetTimerManager().SetTimer(DollarAnimTimer, TimerDel, 0.2f, true);
+	StartQueue.Enqueue(TimerDel);
 }
 
 void URewardView::VM_FieldChanged_RestHands(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -85,18 +108,19 @@ void URewardView::VM_FieldChanged_RestHands(UObject* Object, UE::FieldNotificati
 	const auto VMInst = TryGetViewModel<UVM_Reward>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
-	int32 RestHands = VMInst->GetRestHands();
-	if (RestHands == -1)
+	RestHandStep = VMInst->GetRestHands();
+	if (RestHandStep == -1)
 		return;
+	RestHand->SetText(FText::FromString(""));
+	HandReward->SetText(FText::FromString(""));
 
-	FString str ="";
-	for (int i = 0; i < RestHands; ++i)
-	{
-		str += "$";
-	}
+	FTimerDelegate TimerDel;
+	TimerDel.BindLambda([&]()
+		{
+			UpdateDollarAnimation(RestHand,HandReward, &RestHandStep);
+		});
 
-	HandReward->SetText(FText::FromString(str));
-	RestHand->SetText(FText::AsNumber(RestHands));
+	StartQueue.Enqueue(TimerDel);
 }
 
 void URewardView::VM_FieldChanged_Interest(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -104,19 +128,24 @@ void URewardView::VM_FieldChanged_Interest(UObject* Object, UE::FieldNotificatio
 	const auto VMInst = TryGetViewModel<UVM_Reward>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
-	int32 interest = VMInst->GetInterest();
+	interestStep = VMInst->GetInterest();
 
-	if (interest == -1)
+	if (interestStep == -1)
 		return;
+	
+	Interrest->SetText(FText::FromString(""));
+	InterestReward->SetText(FText::FromString(""));
 
-	FString str = "";
-	for (int i = 0; i < interest; ++i)
-	{
-		str += "$";
-	}
 
-	InterestReward->SetText(FText::FromString(str));
-	Interrest->SetText(FText::AsNumber(interest));
+	FTimerDelegate TimerDel;
+	TimerDel.BindLambda([&]()
+		{
+			UpdateDollarAnimation(Interrest,InterestReward, &interestStep);
+		});
+
+	StartQueue.Enqueue(TimerDel);
+
+	StartQueueAnimation();
 }
 
 void URewardView::VM_FieldChanged_BlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -177,23 +206,32 @@ void URewardView::VM_FieldChanged_EarnGold(UObject* Object, UE::FieldNotificatio
 	
 	FString str = FString::Printf(TEXT("Cash Out : $%d"),EarnGold);
 	GoldText->SetText(FText::FromString(str));
+
+	GoldText->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void URewardView::UpdateDollarAnimation(UTextBlock* myText,int32 MaxNum)
+void URewardView::UpdateDollarAnimation(class UTextBlock* numberText, class UTextBlock* strText, int32* MaxNum)
 {
-	if (AnimStep >= MaxNum) // 1~3 반복
+	if (AnimStep >= *MaxNum) // 1~3 반복
 	{
 		GetWorld()->GetTimerManager().ClearTimer(DollarAnimTimer);
 		AnimStep = 0;
+		
+		if (numberText)
+		{
+			numberText->SetText(FText::AsNumber(*MaxNum));
+		}
+
+		StartQueueAnimation();
 		return;
 	}
 
-	FString Text = BlindReward->GetText().ToString();
+	FString Text = strText->GetText().ToString();
 	for (int i = 0; i < 1; i++)
 	{
 		Text += TEXT("$");
 	}
-	myText->SetText(FText::FromString(Text));
+	strText->SetText(FText::FromString(Text));
 
 	AnimStep++;
 	

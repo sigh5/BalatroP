@@ -17,10 +17,21 @@
 
 #include "Animation/WidgetAnimation.h"
 
+
+
 UPlayerInfoWidget::UPlayerInfoWidget()
 {
 	ViewModelClass = UVM_PlayerInfo::StaticClass();
 	ViewModelName = TEXT("VM_PlayerInfo");
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> WaveMaterialObj(
+		TEXT("/Game/UI/View/PlayerInfo/M_AdjustGrade.M_AdjustGrade")
+	);
+
+	if (WaveMaterialObj.Succeeded())
+	{
+		WaveMaterial = WaveMaterialObj.Object;
+	}
 }
 
 void UPlayerInfoWidget::NativeConstruct()
@@ -90,6 +101,9 @@ void UPlayerInfoWidget::NativeConstruct()
 void UPlayerInfoWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	DynMat = UMaterialInstanceDynamic::Create(WaveMaterial, this);
+	check(DynMat);
 }
 
 void UPlayerInfoWidget::VM_FieldChanged_Score(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -147,6 +161,21 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE:
 		PlayAnimation(Anim);
 	}
 
+	int32 Driangle = VMInstance->GetCurDrainage();
+
+	if (Value == 0)
+	{
+		ChipBorder->SetBrushFromMaterial(nullptr);
+	}
+	else if((Value* Driangle) >= VMInstance->GetBlindGrade())
+	{ 
+		ChipBorder->SetBrushFromMaterial(DynMat);
+	}
+	else
+	{
+		ChipBorder->SetBrushFromMaterial(nullptr);
+	}
+
 }
 
 void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -169,6 +198,21 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object,
 		FName CurAnimNaim = TEXT("DrainageChangeEvent_INST");
 		UWidgetAnimation* Anim = GetAnimationByName(CurAnimNaim);
 		PlayAnimation(Anim);
+	}
+
+	int32 Driangle = VMInstance->GetCurChip();
+
+	if (Value == 0)
+	{
+		drainageBorder->SetBrushFromMaterial(nullptr);
+	}
+	else if ((Value * Driangle) >= VMInstance->GetBlindGrade())
+	{
+		drainageBorder->SetBrushFromMaterial(DynMat);
+	}
+	else
+	{
+		drainageBorder->SetBrushFromMaterial(nullptr);
 	}
 }
 
@@ -319,7 +363,15 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 	}
 	else if (Index == 2) // 상점 이미지
 	{
-		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Shop/ShopSignAnimation_Sprite_3.ShopSignAnimation_Sprite_3"));
+		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Shop/ShopSignAnimation_Sprite_1.ShopSignAnimation_Sprite_1"));
+		CurBlindNameBorder->SetVisibility(ESlateVisibility::Collapsed);
+		CurBlindChipImage->SetVisibility(ESlateVisibility::Collapsed);
+		BlindScoreBorder->SetVisibility(ESlateVisibility::Collapsed);
+		CurBlindGrade->SetVisibility(ESlateVisibility::Collapsed);
+		CurBlindNoneText->SetVisibility(ESlateVisibility::Collapsed);
+		RewardText->SetVisibility(ESlateVisibility::Collapsed);
+		RewardResultText->SetVisibility(ESlateVisibility::Collapsed);
+		MainOrderText->SetColorAndOpacity(FSlateColor(FLinearColor::White));
 	}
 	else if (Index == 3) /// 보스 블라인드 이미지가 달라서
 	{
@@ -327,7 +379,7 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 	}
 	
 	MyAsset = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-	if (MyAsset.IsValid())
+	if (!MyAsset.IsValid())
 	{
 		MyAsset.LoadSynchronous();
 	}

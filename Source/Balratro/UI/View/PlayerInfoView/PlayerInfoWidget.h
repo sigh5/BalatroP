@@ -80,6 +80,12 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> CurrentDeckNumText;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UBorder> ChipBorder;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UBorder> drainageBorder;
+
 
 	/* 블라인드 이미지 */
 	UPROPERTY(meta = (BindWidget))
@@ -105,6 +111,14 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> RewardResultText;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TObjectPtr<class UMaterialInterface> WaveMaterial;
+
+
+	UPROPERTY()
+	TObjectPtr<class UMaterialInstanceDynamic> DynMat;
+
 
 	FVector2D		MainOrderPos;
 

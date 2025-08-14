@@ -45,7 +45,7 @@ public:
 		BlindReward = 0;
 		RestHands = -1;
 		RestChuck = 0;
-		Interest = 0;
+		Interest = -1;
 		BlindGrade = 0;
 		BlindImageIndex = -1;
 	}
@@ -61,7 +61,7 @@ private:
 	int32 RestChuck = 0;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	int32 Interest = 0;
+	int32 Interest = -1;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 BlindGrade = 0;

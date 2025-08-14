@@ -243,7 +243,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		break;
 	case EPlayerStateType::STORE:
 		MainOrder = "UPGRADE RUN!!";
-		BlindInfoActive = false;
+		BlindInfoActive = true;
 		BlindImageIndex = 2;
 		break;
 	case EPlayerStateType::SMALL_BLIND:
@@ -278,6 +278,10 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		Reward = Sigleton.GetBlindStat()[EntiCnt]->BossReward;
 		BlindGrade = Sigleton.GetBlindStat()[EntiCnt]->BossGrade;
 		++RoundCnt;
+		break;
+	case EPlayerStateType::REWARD:
+		MainOrder = "REWARD";
+		BlindInfoActive = false;
 		break;
 	default:
 		break;
