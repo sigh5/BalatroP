@@ -40,6 +40,7 @@ void UPlayerInfoComponent::BeginPlay()
 void UPlayerInfoComponent::Init_PlayerInfo()
 {
 	auto PS = GetPlayerState();
+	
 	UpdateRoundCount();;
 	UpdateEntiCount();
 	UpdateGold();

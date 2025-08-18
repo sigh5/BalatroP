@@ -19,7 +19,7 @@ void URewardComponent::BeginPlay()
 	auto VM_Reward = GetVMReward();
 
 	PS->OnSelectNextScene.AddUObject(this, &URewardComponent::SetRewardViewData);
-	PS->OnSelectNextScene.AddUObject(this, &URewardComponent::AddEarnGold);
+	//PS->OnSelectNextScene.AddUObject(this, &URewardComponent::AddEarnGold);
 
 	VM_Reward->OnCashButtonClicked.AddUObject(this, &URewardComponent::StartStoreView);
 }
@@ -61,19 +61,12 @@ void URewardComponent::StartStoreView()
 	auto PS = GetPlayerState();
 	auto VM_MainWidget = GetVMMainWidget();
 
-	PS->SetNextRound();
+	int32 Gold = PS->GetGold();
+	PS->SetGold(Gold + EarnGold); // 플레이어에 얻은 골드 추가
 
+	PS->SetNextRound();
 	PS->SetPlayerState(EPlayerStateType::STORE);
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("RewardView", false));
-}
-
-void URewardComponent::AddEarnGold(EPlayerStateType _InType)
-{
-	auto PS = GetPlayerState();
-
-	int32 Gold = PS->GetGold();
-	PS->SetGold(Gold + EarnGold);
-	EarnGold = 0;
 }
 
 UVM_MainMenu* URewardComponent::GetVMMainWidget()

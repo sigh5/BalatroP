@@ -85,6 +85,10 @@ void UBlindComponent::BlindViewActive()
 	
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("StoreView", false));
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", true));
+
+	PS->SetPlayerState(EPlayerStateType::NONE);
+
+	InitBlindSelectView();
 }
 
 UVM_BlindSelect* UBlindComponent::GetVMBlindSelect()

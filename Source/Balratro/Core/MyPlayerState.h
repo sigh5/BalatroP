@@ -128,11 +128,11 @@ public:
 
 	FORCEINLINE const EPlayerStateType GetPlayerState() const { return CurPlayerState; }
 	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { 
-		PrevPlayerState = CurPlayerState;
+		//PrevPlayerState = CurPlayerState;
 		CurPlayerState = InType; OnSelectNextScene.Broadcast(CurPlayerState); 
 	}
 
-	FORCEINLINE const EPlayerStateType GetPrevPlayerState() const { return PrevPlayerState; }
+	//FORCEINLINE const EPlayerStateType GetPrevPlayerState() const { return PrevPlayerState; }
 
 	FORCEINLINE TArray<class UJokerCard_Info*>& GetCurrentJokerCardsModify() { return CurJokerCardInfo; }
 	FORCEINLINE const TArray<class UJokerCard_Info*>& GetCurrentJokerCards() const { return CurJokerCardInfo; }
@@ -180,11 +180,11 @@ private:
 	int32 CurrentScore;
 	int32 MaxScore;
 
-	int32		CurrentShowChip; // 핸드랭킹에 있는 레벨업에 따른 기본 칩
-	int32		CurrentShowDrainage; // 핸드랭킹에 있는 레벨업에 따른 기본 배수
+	int32		CurrentShowChip;	 // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 칩
+	int32		CurrentShowDrainage; // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 배수
 
 
-	EPlayerStateType		PrevPlayerState;
+	//EPlayerStateType		PrevPlayerState; // 나중에 삭제하기 필요없음
 	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;
 	EPokerHand				CurHandCard_Type;
@@ -194,18 +194,18 @@ private:
 
 
 	UPROPERTY()
-	TArray<class UHandRanking_Info*> MyHandRankingInfo;  // 플레이시 초기화 필수 및 플레이시 내 핸드랭킹
+	TArray<class UHandRanking_Info*> MyHandRankingInfo;  // 내 핸드랭킹을 사용한 정보들
 
-	TArray<FDeckCardStat> Deck_Stat;
-
-	UPROPERTY()
-	TArray<class UHandInCard_Info*> CurrentAllHands;
+	TArray<FDeckCardStat> Deck_Stat;				// 현재 내 덱에 있는 카드들
 
 	UPROPERTY()
-	TArray<FDeckCardStat> CurCalculatorCardInHands;
+	TArray<class UHandInCard_Info*> CurrentAllHands;  // 플레이시 들고 있는 카드들
 
 	UPROPERTY()
-	TArray<class UJokerCard_Info*> CurJokerCardInfo;
+	TArray<FDeckCardStat> CurCalculatorCardInHands;  // Play시에 점수 계산할 카드들
+
+	UPROPERTY()
+	TArray<class UJokerCard_Info*> CurJokerCardInfo;  // 내가 가지고 있는 조커
 
 	
 

@@ -247,7 +247,6 @@ void UCardAndDeckComponent::InitDeck()
 	_DelayTime = 0.f;
 	ResultScore = 0;
 
-
 	ShuffleDeck();
 	DrawCard(8);
 }

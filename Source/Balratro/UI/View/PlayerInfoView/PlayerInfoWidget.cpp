@@ -350,11 +350,8 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindNameBorderColor(UObject* Object, UE
 
 void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
-	// 코드 수정 필요
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
 	int Index = VMInstance->GetBlindImageIndex();
-
-	bool IsStoreView = false;
 
 	FString AssetPath = "";
 	TSoftObjectPtr<UPaperSprite> MyAsset;
@@ -368,13 +365,16 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 	}
 	else if (Index == 2) // 상점 이미지
 	{
-		//AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Shop/ShopSignAnimation_Sprite_1.ShopSignAnimation_Sprite_1"));
 		ShopImage->SetVisibility(ESlateVisibility::Visible);
-		IsStoreView = true;
+		return;
 	}
 	else if (Index == 3) /// 보스 블라인드 이미지가 달라서
 	{
 		
+	}
+	else
+	{
+		return;
 	}
 	
 	MyAsset = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
@@ -388,11 +388,7 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 	SpriteBrush.SetResourceObject(Sprite);
 	SpriteBrush.ImageSize = FVector2D(100.f, 150.f);
 	SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
-	
-	if (IsStoreView == false)
-	{
-		CurBlindPresentImage->SetBrush(SpriteBrush);
-	}
+	CurBlindPresentImage->SetBrush(SpriteBrush);
 }
 
 UWidgetAnimation* UPlayerInfoWidget::GetAnimationByName(FName& AnimName) const

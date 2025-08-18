@@ -144,7 +144,9 @@ public:
 
 	void SetBlindInfoActive(const bool& InValue)
 	{
-		UE_MVVM_SET_PROPERTY_VALUE(BlindInfoActive, InValue);
+		//UE_MVVM_SET_PROPERTY_VALUE(BlindInfoActive, InValue); // 바꼈을떄만 올리고 싶다 -> 
+		BlindInfoActive = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BlindInfoActive); // 이거는 flag 쓸떄 사용
 	}
 
 

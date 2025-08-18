@@ -21,7 +21,6 @@ private:
 
 	void	StartStoreView();
 
-	void	AddEarnGold(EPlayerStateType _InType);
 private:
 	class AMyPlayerState* GetPlayerState();
 	class UVM_MainMenu* GetVMMainWidget();

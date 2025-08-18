@@ -75,4 +75,6 @@ void AMyPlayerState::SetNextRound()
 	SetCurrentShowDrainage(0);
 	SetCurrentRoundBlindGrade(0);
 	SetCurHandCard_Type(EPokerHand::NONE);
+	
+	CurrentAllHands.Empty();
 }
