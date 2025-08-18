@@ -112,9 +112,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> RewardResultText;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> ShopImage;
+
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TObjectPtr<class UMaterialInterface> WaveMaterial;
-
 
 	UPROPERTY()
 	TObjectPtr<class UMaterialInstanceDynamic> DynMat;

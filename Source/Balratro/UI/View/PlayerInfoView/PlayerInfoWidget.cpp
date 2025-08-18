@@ -289,6 +289,7 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindInfoActive(UObject* Object, UE::Fie
 		CurBlindPresentImage->SetVisibility(ESlateVisibility::Visible);
 		RewardText->SetVisibility(ESlateVisibility::Visible);
 		RewardResultText->SetVisibility(ESlateVisibility::Visible);
+		ShopImage->SetVisibility(ESlateVisibility::Collapsed); // 이건 다 꺼줄거임
 	}
 	else
 	{
@@ -300,6 +301,7 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindInfoActive(UObject* Object, UE::Fie
 		CurBlindPresentImage->SetVisibility(ESlateVisibility::Collapsed);
 		RewardText->SetVisibility(ESlateVisibility::Collapsed);
 		RewardResultText->SetVisibility(ESlateVisibility::Collapsed);
+		ShopImage->SetVisibility(ESlateVisibility::Collapsed); // 이건 다 꺼줄거임
 	}
 }
 
@@ -348,8 +350,11 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindNameBorderColor(UObject* Object, UE
 
 void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
+	// 코드 수정 필요
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
 	int Index = VMInstance->GetBlindImageIndex();
+
+	bool IsStoreView = false;
 
 	FString AssetPath = "";
 	TSoftObjectPtr<UPaperSprite> MyAsset;
@@ -363,15 +368,9 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 	}
 	else if (Index == 2) // 상점 이미지
 	{
-		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Shop/ShopSignAnimation_Sprite_1.ShopSignAnimation_Sprite_1"));
-		CurBlindNameBorder->SetVisibility(ESlateVisibility::Collapsed);
-		CurBlindChipImage->SetVisibility(ESlateVisibility::Collapsed);
-		BlindScoreBorder->SetVisibility(ESlateVisibility::Collapsed);
-		CurBlindGrade->SetVisibility(ESlateVisibility::Collapsed);
-		CurBlindNoneText->SetVisibility(ESlateVisibility::Collapsed);
-		RewardText->SetVisibility(ESlateVisibility::Collapsed);
-		RewardResultText->SetVisibility(ESlateVisibility::Collapsed);
-		MainOrderText->SetColorAndOpacity(FSlateColor(FLinearColor::White));
+		//AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Shop/ShopSignAnimation_Sprite_1.ShopSignAnimation_Sprite_1"));
+		ShopImage->SetVisibility(ESlateVisibility::Visible);
+		IsStoreView = true;
 	}
 	else if (Index == 3) /// 보스 블라인드 이미지가 달라서
 	{
@@ -389,7 +388,11 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 	SpriteBrush.SetResourceObject(Sprite);
 	SpriteBrush.ImageSize = FVector2D(100.f, 150.f);
 	SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
-	CurBlindPresentImage->SetBrush(SpriteBrush);
+	
+	if (IsStoreView == false)
+	{
+		CurBlindPresentImage->SetBrush(SpriteBrush);
+	}
 }
 
 UWidgetAnimation* UPlayerInfoWidget::GetAnimationByName(FName& AnimName) const

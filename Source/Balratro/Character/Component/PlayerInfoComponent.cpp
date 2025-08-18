@@ -243,7 +243,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		break;
 	case EPlayerStateType::STORE:
 		MainOrder = "UPGRADE RUN!!";
-		BlindInfoActive = true;
+		BlindInfoActive = false;
 		BlindImageIndex = 2;
 		break;
 	case EPlayerStateType::SMALL_BLIND:
