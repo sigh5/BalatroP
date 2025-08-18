@@ -10,13 +10,18 @@
 UENUM(BlueprintType)
 enum class EBoosterPackType : uint8
 {
-	TARO = 0,
-	CARD,
-	ORB,  // ÃµÃ¼ ÆÑ
-	JOKER,
-	GHOST
+	NONE = 0,
+	TARO_BASE,
+	TARO_MEGA,
+	CARD_BASE,  // 2,3 
+	CARD_MEGA,
+	ORB_BASE,  // ÃµÃ¼ ÆÑ
+	ORB_MEGA,
+	JOKER_BASE,
+	JOKER_MEGA,
+	GHOST_BASE,
+	GHOST_MEGA
 };
-
 
 /**
  * 
@@ -32,10 +37,14 @@ class BALRATRO_API UBoosterPackData : public UPrimaryDataAsset
 	}
 
 public:
-	//UBoosterPackData();
+	FORCEINLINE void SetType(EBoosterPackType _inType) { Type = _inType; }
 
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Type)
 	EBoosterPackType Type;
+
+private:
+	UPROPERTY(EditAnywhere, Category = TaroPack)
+	TSoftObjectPtr<class UPaperSprite> MegaPackMesh;
 };

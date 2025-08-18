@@ -15,6 +15,13 @@ UStoreView::UStoreView()
 void UStoreView::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	const auto VMInst = TryGetViewModel<UVM_Store>();
+	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_Store::FFieldNotificationClassDescriptor::BoosterPackIndexs,
+		FFieldValueChangedDelegate::CreateUObject(this, &UStoreView::VM_FieldChanged_BoosterPacks));
+
 }
 
 void UStoreView::NativeOnInitialized()
@@ -22,6 +29,15 @@ void UStoreView::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	NextButton->OnClicked.AddDynamic(this, &UStoreView::OnNextButton);
+}
+
+void UStoreView::VM_FieldChanged_BoosterPacks(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_Store>();
+	check(VMInst);
+
+
+
 }
 
 void UStoreView::OnNextButton()

@@ -5,8 +5,17 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameData/BlindStat.h"
+#include "Item/TaroPack.h"
 #include "StoreComponent.generated.h"
 
+USTRUCT()
+struct FItemWeight
+{
+	GENERATED_BODY()
+
+	EBoosterPackType Type;
+	int32 Weight;
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BALRATRO_API UStoreComponent : public UActorComponent
@@ -18,9 +27,24 @@ protected:
 
 private:
 	void	SetStoreView(EPlayerStateType _InType);
+	void	ReRollCostUp();
+
+	void	SetUpStoreItem();
+	void	SetBoucherItem();
+	void	SetDownStoreItem();
+
+	EBoosterPackType	SetItemType();
 
 private:
 	class UVM_PlayerInfo* GetVMPlayerInfo();
+	class UVM_Store*	  GetVMPStore();
 	class AMyPlayerState* GetPlayerState();
 	class UVM_MainMenu* GetVMMainWidget();
+
+private:
+	TArray<FItemWeight> ItemWeights;  
+
+	UPROPERTY()
+	TArray<class UBoosterPackData*> BoosterPacks;
+
 };

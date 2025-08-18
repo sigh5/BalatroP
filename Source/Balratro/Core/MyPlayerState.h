@@ -100,6 +100,9 @@ public:
 	FORCEINLINE const TArray<class UHandRanking_Info*>& GetHandRankingInfo() const {return MyHandRankingInfo;}
 	void ResetMyHandRankingInfo(const TMap<const FName, FHandRankingStat*>& InHandRanking);
 
+	FORCEINLINE int32 GetRerollCost() { return RerollCost; }
+	FORCEINLINE void  SetRerollCost(int32 InValue) { RerollCost = InValue;   }
+
 
 	FORCEINLINE TArray<FDeckCardStat>& GetDeckStatTableModify()  { return Deck_Stat; }
 	FORCEINLINE const TArray<FDeckCardStat>& GetDeckStatTable() const { return Deck_Stat; }
@@ -183,6 +186,7 @@ private:
 	int32		CurrentShowChip;	 // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 칩
 	int32		CurrentShowDrainage; // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 배수
 
+	int32		RerollCost = 5;
 
 	//EPlayerStateType		PrevPlayerState; // 나중에 삭제하기 필요없음
 	EPlayerStateType		CurPlayerState;
