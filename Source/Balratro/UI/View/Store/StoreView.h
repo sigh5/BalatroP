@@ -28,6 +28,10 @@ private:
 	UFUNCTION()
 	void OnNextButton();
 
+	UFUNCTION()
+	void OnReRollButton();
+
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> NextButton;
@@ -46,5 +50,13 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UHorizontalBox> PackHorizontalBox;
+
+	UPROPERTY()
+	TSubclassOf<class UBoosterPackWidget> BoosterPackWidgetSubClass;
+
+private:
+	UPROPERTY()
+	TArray<class UBoosterPackWidget*> BoosterPackWidget;
+
 
 };

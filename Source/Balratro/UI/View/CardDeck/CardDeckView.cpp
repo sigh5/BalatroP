@@ -62,39 +62,6 @@ UCardButton* UCardDeckView::ReuseCardButton(int32 CurAllCardNum ,int32 CurNum, U
 		NewButton = NewObject<UCardButton>(this);
 		NewButton->SetCardInfoData(CardInfo->Info);
 		NewButton->SetCardIndex(CardIndex++);
-
-		USizeBox* SizeBox = NewObject<USizeBox>(NewButton);
-		SizeBox->SetWidthOverride(100.f);
-		SizeBox->SetHeightOverride(150.f);
-		NewButton->SetContent(SizeBox);
-
-		UBorder* BackgroundBorder = NewObject<UBorder>(SizeBox);
-		BackgroundBorder->SetBrushColor(FLinearColor::White);
-		BackgroundBorder->SetHorizontalAlignment(HAlign_Fill);
-		BackgroundBorder->SetVerticalAlignment(VAlign_Fill);
-		SizeBox->SetContent(BackgroundBorder);
-
-		if (UPaperSprite* Sprite = CardInfo->Info.CardSprite.Get())
-		{
-			UImage* CardImage = NewObject<UImage>(BackgroundBorder);
-			FSlateBrush SpriteBrush;
-			SpriteBrush.SetResourceObject(Sprite);
-			SpriteBrush.ImageSize = FVector2D(100.f, 150.f);
-			SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
-			CardImage->SetBrush(SpriteBrush);
-			BackgroundBorder->SetContent(CardImage);
-
-			NewButton->SetButtonImage(CardImage);
-			NewButton->SetButtonBorder(BackgroundBorder);
-		}
-		// 버튼 기본 배경 제거(투명)
-		FButtonStyle EmptyStyle;
-		EmptyStyle.SetNormal(FSlateNoResource());
-		EmptyStyle.SetHovered(FSlateNoResource());
-		EmptyStyle.SetPressed(FSlateNoResource());
-		NewButton->SetStyle(EmptyStyle);
-		NewButton->SetClikcedEvent();
-
 		HandCardButton.Add(NewButton);
 	}
 	else
@@ -104,7 +71,6 @@ UCardButton* UCardDeckView::ReuseCardButton(int32 CurAllCardNum ,int32 CurNum, U
 		NewButton->SetSelected(false);
 		NewButton->SetCardInfoData(CardInfo->Info);
 		NewButton->SetCardIndex(CardIndex++);
-		NewButton->SetImage();
 	}
 	return NewButton;
 }

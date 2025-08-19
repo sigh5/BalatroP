@@ -9,6 +9,8 @@
 DECLARE_MULTICAST_DELEGATE(FOnNextButton);
 DECLARE_MULTICAST_DELEGATE(FOnReRollButton);
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuyBoosterPack, UBoosterPackData*);
+
 /**
  *
  */
@@ -21,7 +23,7 @@ class BALRATRO_API UVM_Store : public UMVVMViewModelBase
 public:
 	FOnNextButton	OnNextButton;
 	FOnReRollButton OnReRollButton;
-
+	FOnBuyBoosterPack OnBuyBoosterPack;
 public:
 	const int32 GetMainItemNum()  const { return MainItemNum; }
 	void SetMainItemNum(int32 InValue) {
@@ -41,17 +43,24 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(ReRollCost);
 	}
 
-	const TArray<EBoosterPackType> GetBoosterPackIndexs() const { return BoosterPackIndexs; }
-	void  SetBoosterPackIndexs(TArray<EBoosterPackType>& InValue) {
-		BoosterPackIndexs = InValue;
-		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BoosterPackIndexs);
+	const TArray<UBoosterPackData*> GetBoosterPackTypes() const { return BoosterPackTypes; }
+	void  SetBoosterPackTypes(TArray<UBoosterPackData*>& InValue) {
+		BoosterPackTypes = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BoosterPackTypes);
 	}
 
 	void	NextButtonClicked() { 
-		BoosterPackIndexs.Empty();
+		BoosterPackTypes.Empty();
 		OnNextButton.Broadcast(); }
 
 	void	ReRollButtonClicked() { OnReRollButton.Broadcast(); }
+
+
+	void	OnClickedBuyBoosterPackButton(UBoosterPackData* InData)
+	{
+		OnBuyBoosterPack.Broadcast(InData);
+	}
+
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -64,5 +73,5 @@ private:
 	int32 ReRollCost = 0;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	TArray<EBoosterPackType> BoosterPackIndexs;
+	TArray<UBoosterPackData*> BoosterPackTypes;
 };

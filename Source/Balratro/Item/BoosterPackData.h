@@ -38,13 +38,21 @@ class BALRATRO_API UBoosterPackData : public UPrimaryDataAsset
 
 public:
 	FORCEINLINE void SetType(EBoosterPackType _inType) { Type = _inType; }
+	FORCEINLINE const EBoosterPackType GetType() const { return  Type; }
+
+	FORCEINLINE void SetIndex(int32 _inType) { Index = _inType; }
+	FORCEINLINE const int32 GetIndex() const { return  Index; }
+
 
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Type)
 	EBoosterPackType Type;
 
-private:
+	int32 Index = 0;
+
+public:
 	UPROPERTY(EditAnywhere, Category = TaroPack)
-	TSoftObjectPtr<class UPaperSprite> MegaPackMesh;
+	TSoftObjectPtr<class UPaperSprite> PackMesh;
+	
 };

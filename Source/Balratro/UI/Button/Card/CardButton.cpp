@@ -18,6 +18,21 @@
 #include "Components/Border.h"
 #include "Components/Image.h"
 
+#include "Components/SizeBox.h"
+
+void UCardButton::SetCardInfoData(FDeckCardStat& InValue)
+{
+	CardInfoData = InValue;
+
+	if (Image)
+	{
+		ChangeImage();
+	}
+	else
+	{
+		CreateImage();
+	}
+}
 
 void UCardButton::SetClikcedEvent()
 {
@@ -69,7 +84,7 @@ UVM_CardDeck* UCardButton::GetVMCardDeck()
 	return Cast<UVM_CardDeck>(Found);
 }
 
-void UCardButton::SetImage()
+void UCardButton::ChangeImage()
 {
 	if (UPaperSprite* Sprite = CardInfoData.CardSprite.Get())
 	{
@@ -83,20 +98,34 @@ void UCardButton::SetImage()
 	}
 }
 
-FVector2D UCardButton::PlayScoreText()
+void UCardButton::CreateImage()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Base Chip : %d"), CardInfoData.BaseChip);
+	USizeBox* SizeBox = NewObject<USizeBox>(this);
+	SizeBox->SetWidthOverride(100.f);
+	SizeBox->SetHeightOverride(150.f);
+	SetContent(SizeBox);
 
-	UHorizontalBoxSlot* HSlot = Cast<UHorizontalBoxSlot>(Slot);
-	if (HSlot)
+	Border = NewObject<UBorder>(SizeBox);
+	Border->SetBrushColor(FLinearColor::White);
+	Border->SetHorizontalAlignment(HAlign_Fill);
+	Border->SetVerticalAlignment(VAlign_Fill);
+	SizeBox->SetContent(Border);
+
+	if (UPaperSprite* Sprite = CardInfoData.CardSprite.Get())
 	{
-		FVector2D CurCardPos = FVector2D::Zero(); 
+		Image = NewObject<UImage>(Border);
+		FSlateBrush SpriteBrush;
+		SpriteBrush.SetResourceObject(Sprite);
+		SpriteBrush.ImageSize = FVector2D(100.f, 150.f);
+		SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
+		Image->SetBrush(SpriteBrush);
+		Border->SetContent(Image);
 
-		//return CurCardPos;
-
+		FButtonStyle EmptyStyle;
+		EmptyStyle.SetNormal(FSlateNoResource());
+		EmptyStyle.SetHovered(FSlateNoResource());
+		EmptyStyle.SetPressed(FSlateNoResource());
+		SetStyle(EmptyStyle);
+		SetClikcedEvent();
 	}
-	FVector2D ScreenPos = GetCachedGeometry().GetAbsolutePosition();
-
-
-	return ScreenPos;
 }

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameData/BlindStat.h"
-#include "Item/TaroPack.h"
+#include "Item/BoosterPackData.h"
 #include "StoreComponent.generated.h"
 
 USTRUCT()
@@ -35,6 +35,8 @@ private:
 
 	EBoosterPackType	SetItemType();
 
+	void	StartBoosterPackEvent(UBoosterPackData* InData);
+
 private:
 	class UVM_PlayerInfo* GetVMPlayerInfo();
 	class UVM_Store*	  GetVMPStore();
@@ -47,4 +49,6 @@ private:
 	UPROPERTY()
 	TArray<class UBoosterPackData*> BoosterPacks;
 
+
+	int32 BoosterPackIndex = 0;
 };

@@ -18,32 +18,31 @@ class BALRATRO_API UCardButton : public UButton
 public:
 	FORCEINLINE void SetCardIndex(int InValue) { CardIndex = InValue; }
 	
-	FORCEINLINE void SetCardInfoData(FDeckCardStat& InValue) { CardInfoData = InValue; }
-	FORCEINLINE FDeckCardStat& GetCardInfoData() {return CardInfoData; }
+	void			SetCardInfoData(FDeckCardStat& InValue);
+	FORCEINLINE FDeckCardStat&	GetCardInfoData() {return CardInfoData; }
 
-	void SetClikcedEvent();
+	FORCEINLINE const bool	GetSelected() const { return bSelected; }
+	FORCEINLINE void		SetSelected(bool _Selected) { bSelected = _Selected; }
 
+	void					SetClikcedEvent();
+	
+	
+private:
 	UFUNCTION()
 	void OnCardButtonClicked();
 
-
-	FORCEINLINE const bool GetSelected() const { return bSelected; }
-	FORCEINLINE void SetSelected(bool _Selected) { bSelected = _Selected; }
+private:
+	void					ChangeImage();
+	void					CreateImage();
 
 	class UVM_CardDeck* GetVMCardDeck();
-
-	void	SetImage();
-
-	FORCEINLINE void SetButtonBorder(class UBorder* InValue) { Border = InValue; }
-	FORCEINLINE void SetButtonImage(class UImage* InValue) { Image = InValue; }
-
-	FVector2D	PlayScoreText();
-
 private:
 	int CardIndex = 0;
 	FDeckCardStat CardInfoData;
 	
 	uint8 bSelected : 1;
+
+private:
 
 	UPROPERTY()
 	TObjectPtr<class UBorder> Border;

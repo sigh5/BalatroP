@@ -42,12 +42,12 @@ void UMainMenuWidget::NativeConstruct()
 		BlindSelectView = LoadClass<UBlindSelectView>(nullptr, TEXT("/Game/UI/View/SelectBlind/WBP_SelectBlind.WBP_SelectBlind_C"));
 		CurViewName = "SelectBlindView";
 
-		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(BlindSelectView));
+		/*UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(BlindSelectView));
 		if (BlindWidget)
 		{
 			BlindWidget->SetVisibility(ESlateVisibility::Visible);
 			CanvasSlot->AddChildToCanvas(BlindWidget);
-		}
+		}*/
 	}
 
 	if (PlayerInfoView == nullptr)
@@ -86,6 +86,11 @@ void UMainMenuWidget::NativeConstruct()
 		StoreView = LoadClass<UStoreView>(nullptr, TEXT("/Game/UI/View/StoreView/WBP_Stroe.WBP_Stroe_C"));
 		CurViewName = "StoreView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(StoreView));
+		if (BlindWidget)
+		{
+			BlindWidget->SetVisibility(ESlateVisibility::Visible);
+			CanvasSlot->AddChildToCanvas(BlindWidget);
+		}
 	}
 
 	if (RewardView == nullptr)

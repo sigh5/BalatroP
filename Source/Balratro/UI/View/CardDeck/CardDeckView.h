@@ -68,7 +68,7 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> DraiageText;
 
-
+private:
 	UPROPERTY()
 	TArray<TObjectPtr<class UCardButton>> HandCardButton;
 

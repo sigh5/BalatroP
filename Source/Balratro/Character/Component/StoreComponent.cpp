@@ -12,6 +12,7 @@
 
 #include "Item/BoosterPackData.h"
 
+#include "PaperSprite.h"
 
 void UStoreComponent::BeginPlay()
 {
@@ -35,6 +36,11 @@ void UStoreComponent::BeginPlay()
 
 	PS->OnSelectNextScene.AddUObject(this, &UStoreComponent::SetStoreView);
 	VM->OnReRollButton.AddUObject(this, &UStoreComponent::ReRollCostUp);
+	VM->OnBuyBoosterPack.AddUObject(this, &UStoreComponent::StartBoosterPackEvent);
+
+
+	// 디버그용
+	SetDownStoreItem();
 }
 
 void UStoreComponent::SetStoreView(EPlayerStateType _InType)
@@ -77,20 +83,28 @@ void UStoreComponent::SetDownStoreItem()
 
 	BoosterPacks.Empty();
 
-	TArray<EBoosterPackType> BoosterPackIndexs;
 	int32 BoosterPackNum = 2; // PS->GetDownStoreNum();
 
 	for (int i = 0; i < BoosterPackNum; ++i)
 	{
 		EBoosterPackType ItemType = SetItemType();
-		BoosterPackIndexs.Add(ItemType); // View를 위한 데이타
-
 		UBoosterPackData* CurPack = NewObject<UBoosterPackData>();
+		
+		int32 ItemIndex = i; //static_cast<int32>(ItemType);
+		FString ItemIndexStr = FString::FromInt(ItemIndex);	
+		FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Booster/boosters_Sprite_%s.boosters_Sprite_%s"), *ItemIndexStr, *ItemIndexStr);
+		CurPack->PackMesh = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+		if (!CurPack->PackMesh.IsValid())
+		{
+			CurPack->PackMesh.LoadSynchronous();
+		}
+
 		CurPack->SetType(ItemType);
-		BoosterPacks.Add(CurPack);  // 컴포넌트에서 사용할 데이타
+		CurPack->SetIndex(BoosterPackIndex++);
+		BoosterPacks.Add(CurPack);  
 	}
 
-	VM_Stroe->SetBoosterPackIndexs(BoosterPackIndexs);
+	VM_Stroe->SetBoosterPackTypes(BoosterPacks);
 }
 
 EBoosterPackType UStoreComponent::SetItemType()
@@ -110,6 +124,29 @@ EBoosterPackType UStoreComponent::SetItemType()
 	}
 
 	return EBoosterPackType::NONE;
+}
+
+void UStoreComponent::StartBoosterPackEvent(UBoosterPackData* InData)
+{
+	auto VM_Stroe = GetVMPStore();
+
+	UBoosterPackData* CurBoosterPack = nullptr;
+
+	for (int32 i = 0; i < BoosterPacks.Num(); i++)
+	{
+		if (BoosterPacks[i]->GetIndex() == InData->GetIndex())
+		{
+			CurBoosterPack = BoosterPacks[i];
+			BoosterPacks.RemoveAt(i);
+			break; 
+		}
+	}
+
+	check(CurBoosterPack);
+	/*  타로카드 고르는 View 키기 */
+
+
+	//VM_Stroe->SetBoosterPackTypes(BoosterPacks);
 }
 
 UVM_MainMenu* UStoreComponent::GetVMMainWidget()
