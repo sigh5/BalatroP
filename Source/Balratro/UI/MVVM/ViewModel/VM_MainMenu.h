@@ -46,10 +46,16 @@ public:
 	const FWidgetFlag_Info GetCurWidgetName() const {return CurWidgetName;}
 
 
+	void SetClearFlag(bool _InValue) { ClearFlag = _InValue; UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(ClearFlag); }
+	const bool GetClearFlag() const { return ClearFlag; }
 
 private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	FWidgetFlag_Info CurWidgetName;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool ClearFlag = false;
+
 
 };

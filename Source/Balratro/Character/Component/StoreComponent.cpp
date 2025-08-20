@@ -45,11 +45,16 @@ void UStoreComponent::BeginPlay()
 
 void UStoreComponent::SetStoreView(EPlayerStateType _InType)
 {
-	if (_InType != EPlayerStateType::STORE)
-		return;
-
 	auto PS = GetPlayerState();
 	auto VM_MainMenu = GetVMMainWidget();
+
+	if (_InType == EPlayerStateType::ITEM_SELECT)
+	{
+		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("StoreView", false));
+		return;
+	}
+	else if (_InType != EPlayerStateType::STORE)
+		return;
 
 	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("StoreView", true));
 
@@ -129,7 +134,8 @@ EBoosterPackType UStoreComponent::SetItemType()
 void UStoreComponent::StartBoosterPackEvent(UBoosterPackData* InData)
 {
 	auto VM_Stroe = GetVMPStore();
-
+	auto VM_MainMenu = GetVMMainWidget();
+	auto PS = GetPlayerState();
 	UBoosterPackData* CurBoosterPack = nullptr;
 
 	for (int32 i = 0; i < BoosterPacks.Num(); i++)
@@ -143,8 +149,17 @@ void UStoreComponent::StartBoosterPackEvent(UBoosterPackData* InData)
 	}
 
 	check(CurBoosterPack);
-	/*  타로카드 고르는 View 키기 */
+	
+	/*  
+		1) 타로카드 고르는 View 키기 
+		2) 부스터팩 정보 가지고와서 아이템뷰에 타로 카드 넣기
+	*/
+	
+	PS->SetSelectPackType(CurBoosterPack);
+	PS->SetPlayerState(EPlayerStateType::ITEM_SELECT);
+	
 
+	VM_MainMenu->SetClearFlag(true);
 
 	//VM_Stroe->SetBoosterPackTypes(BoosterPacks);
 }

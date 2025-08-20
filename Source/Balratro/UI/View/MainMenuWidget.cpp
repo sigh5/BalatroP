@@ -4,10 +4,7 @@
 #include "UI/View/MainMenuWidget.h"
 
 #include "Components/CanvasPanel.h"
-/*
-#include "Components/ProgressBar.h"
-#include "Components\TextBlock.h"
-#include "Components\Image.h"*/
+#include "Components/Border.h"
 
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/WidgetPool/BBUserWidgetPool.h"
@@ -18,6 +15,7 @@
 #include "UI/View/CardDeck/CardDeckView.h"
 #include "UI/View/Store/StoreView.h"
 #include "UI/View/Reward/RewardView.h"
+#include "UI/View/ItemSelect/ItemSelectView.h"
 
 UMainMenuWidget::UMainMenuWidget()
 {
@@ -31,8 +29,13 @@ void UMainMenuWidget::NativeConstruct()
 
 	const auto VMInst = TryGetViewModel<UVM_MainMenu>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
+	
 	VMInst->AddFieldValueChangedDelegate(UVM_MainMenu::FFieldNotificationClassDescriptor::CurWidgetName,
 		FFieldValueChangedDelegate::CreateUObject(this, &UMainMenuWidget::VM_FieldChanged_WidgetName));
+	
+	VMInst->AddFieldValueChangedDelegate(UVM_MainMenu::FFieldNotificationClassDescriptor::ClearFlag,
+		FFieldValueChangedDelegate::CreateUObject(this, &UMainMenuWidget::VM_FieldChanged_ClearAnimFlag));
+
 
 	WidgetPool = NewObject<UBBUserWidgetPool>(this);
 	FName CurViewName = "";
@@ -67,11 +70,11 @@ void UMainMenuWidget::NativeConstruct()
 		JokerSlotView = LoadClass<UJokerSlotWidget>(nullptr, TEXT("/Game/UI/View/Joker/WBP_JokerSlot.WBP_JokerSlot_C"));
 		CurViewName = "JokerSlotView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(JokerSlotView));
-		if (BlindWidget)
+		/*if (BlindWidget)
 		{
 			BlindWidget->SetVisibility(ESlateVisibility::Visible);
 			CanvasSlot->AddChildToCanvas(BlindWidget);
-		}
+		}*/
 	}
 
 	if (CadDeckView == nullptr)
@@ -79,6 +82,11 @@ void UMainMenuWidget::NativeConstruct()
 		CadDeckView = LoadClass<UCardDeckView>(nullptr, TEXT("/Game/UI/View/CardDeck/WBP_CardDeck.WBP_CardDeck_C"));
 		CurViewName = "CadDeckView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(CadDeckView));
+		/*if (BlindWidget)
+		{
+			BlindWidget->SetVisibility(ESlateVisibility::Visible);
+			CanvasSlot->AddChildToCanvas(BlindWidget);
+		}*/
 	}
 
 	if (StoreView == nullptr)
@@ -98,6 +106,13 @@ void UMainMenuWidget::NativeConstruct()
 		RewardView = LoadClass<URewardView>(nullptr, TEXT("/Game/UI/View/Reward/WBP_Reward.WBP_Reward_C"));
 		CurViewName = "RewardView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(RewardView));
+	}
+
+	if (ItemSelectView == nullptr)
+	{
+		ItemSelectView = LoadClass<UItemSelectView>(nullptr, TEXT("/Game/UI/View/ItemSelectView/WBP_ItemSelect.WBP_ItemSelect_C"));
+		CurViewName = "ItemSelectView";
+		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(ItemSelectView));
 	}
 
 }
@@ -123,4 +138,12 @@ void UMainMenuWidget::VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotif
 			CurWidget->RemoveFromParent();
 		}
 	}
+}
+
+void UMainMenuWidget::VM_FieldChanged_ClearAnimFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_MainMenu>();
+	check(VMInst);
+	
+	PlayAnimation(ClearAnimation);
 }

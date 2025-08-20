@@ -80,7 +80,6 @@ public:
 			&& CardSprite == Other.CardSprite;
 	}
 
-
 	bool operator!=(const FDeckCardStat& Other) const
 	{
 		return !(*this == Other);

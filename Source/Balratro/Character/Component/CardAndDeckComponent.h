@@ -40,11 +40,16 @@ private:
 
 	void    FinishHandPlay();
 
+	void	UseTaroItem(TArray<FDeckCardStat> CurCardDatas);
+
 private:
 	class UVM_CardDeck*		GetVMCardDeck();
 	class AMyPlayerState*	GetPlayerState();
 	class UVM_MainMenu*		GetVMMainWidget();
+	class UVM_ItemSelect* GetVMItemSelect();
 
+
+private:
 	int32  CurDrawIndex = 0;
 	TArray<FDeckCardStat> _CurData;
 	int32 _CardNum = 0;

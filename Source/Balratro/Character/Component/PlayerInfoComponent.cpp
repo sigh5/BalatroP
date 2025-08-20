@@ -7,7 +7,7 @@
 
 #include "Singleton/BBGameSingleton.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
-
+#include "UI/MVVM/ViewModel/VM_MainMenu.h"
 
 void UPlayerInfoComponent::BeginPlay()
 {
@@ -227,6 +227,15 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	auto VM_PI = GetVMPlayerInfo();
 	auto PS = GetPlayerState();
 	auto& Sigleton = UBBGameSingleton::Get();
+	auto VM_MW = GetVMMainWidget();
+
+
+	if (_InType == EPlayerStateType::ITEM_SELECT)
+	{
+		VM_MW->SetCurWidgetName(FWidgetFlag_Info("PlayerInfoView",false));
+		return;
+	}
+
 
 	int32 EntiCnt = PS->GetEntiCount();
 	int32 RoundCnt = PS->GetRoundCount();
@@ -315,4 +324,17 @@ void UPlayerInfoComponent::UpdateCalculatorDrainage()
 	int32 CurDrainage = PS->GetCurrentShowDrainage();
 
 	VM_PI->SetCurDrainage(CurDrainage);
+}
+
+
+UVM_MainMenu* UPlayerInfoComponent::GetVMMainWidget()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_MainMenu");
+	Context.ContextClass = UVM_MainMenu::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_MainMenu>(Found);
 }

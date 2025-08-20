@@ -22,15 +22,17 @@ protected:
 
 protected:
     void VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-   
+    void VM_FieldChanged_ClearAnimFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 private:
     UPROPERTY(meta = (BindWidget))
     class UCanvasPanel* CanvasSlot;
 
-
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UImage> BackGroundImage;
+
+    UPROPERTY(meta = (BindWidgetAnim), Transient)
+    TObjectPtr<class UWidgetAnimation> ClearAnimation;
 
     UPROPERTY()
     TSubclassOf<class UBlindSelectView> BlindSelectView;
@@ -49,6 +51,10 @@ private:
 
     UPROPERTY()
     TSubclassOf<class URewardView> RewardView;
+
+
+    UPROPERTY()
+    TSubclassOf<class UItemSelectView> ItemSelectView;
 
 
     UPROPERTY()

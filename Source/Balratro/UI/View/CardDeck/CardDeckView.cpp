@@ -15,10 +15,13 @@
 #include "UI/Button/Card/CardButton.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
+#include "UI/MVVM/ViewModel/VM_ItemSelect.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/Engine.h"
 #include "TimerManager.h"
+
+
 
 
 UCardDeckView::UCardDeckView()
@@ -31,6 +34,8 @@ void UCardDeckView::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	//CardButtonSubClass = LoadClass<UItemCardWidget>(nullptr, TEXT(""));
+
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
@@ -42,6 +47,10 @@ void UCardDeckView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::CurCardsData,
 		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_CurPlayCardData));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::ItemSelectFlag,
+		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_ItemSelectFlag));
+
 }
 
 void UCardDeckView::NativeOnInitialized()
@@ -52,6 +61,9 @@ void UCardDeckView::NativeOnInitialized()
 	RankSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnRankSortButtonClicked);
 	HandPlayButton->OnClicked.AddDynamic(this, &UCardDeckView::OnHandPlayButtonClicked);
 	ChuckButton->OnClicked.AddDynamic(this, &UCardDeckView::OnChuckButtonClicked);
+
+	UCanvasPanelSlot* HSlot = Cast<UCanvasPanelSlot>(CardPanel->Slot);
+	OriginCardPanelPos = HSlot->GetPosition();
 }
 
 UCardButton* UCardDeckView::ReuseCardButton(int32 CurAllCardNum ,int32 CurNum, UHandInCard_Info* CardInfo)
@@ -81,6 +93,8 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 	auto& CurHandInfo = VMInstance->GetCurrentAllHands();
 	int32 CurAllHandNum = CurHandInfo.Num();
 	
+	UE_LOG(LogTemp, Log, TEXT("VM_FieldChanged_HandInCard"));
+
 	CardPanel->ClearChildren(); // 기존 이미지 제거
 
 	for (int i = 0; i < CurAllHandNum; ++i)
@@ -107,18 +121,17 @@ void UCardDeckView::VM_FieldChanged_CardUpExist(UObject* Object, UE::FieldNotifi
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
-	TArray<FDeckCardStat> CardStatInfo;
+	TArray<FDeckCardStat> CardStatInfo; // 전체 선택한 것
 	int32 SelectedNum = 0;
+	
+	SetCardData(CardStatInfo, SelectedNum);
 
-	if (SetCardData(CardStatInfo, SelectedNum) == false)
-	{
-		if (SelectedNum == 0)
-		{
-			VMInst->BrodCastrHandRankName(0, CardStatInfo);
-		}
-	}
+	VMInst->BroadCastCurHands(SelectedNum, CardStatInfo);
+	
+	const auto VM_ItemSelct = TryGetViewModel<UVM_ItemSelect>("VM_ItemSelect", UVM_ItemSelect::StaticClass());
+	checkf(IsValid(VM_ItemSelct), TEXT("Couldn't find a valid ViewModel"));
 
-	VMInst->BrodCastrHandRankName(SelectedNum, CardStatInfo);
+	VM_ItemSelct->SetSelectCardInfos(CardStatInfo);
 }
 
 void UCardDeckView::VM_FieldChanged_CurPlayCardData(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -139,6 +152,45 @@ void UCardDeckView::VM_FieldChanged_CurPlayCardData(UObject* Object, UE::FieldNo
 		});
 	
 	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, TimerDelegate, 0.5f, true, 0.f);
+}
+
+void UCardDeckView::VM_FieldChanged_ItemSelectFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
+
+	if (VMInst->GetItemSelectFlag())
+	{
+		SuitSortButton->SetVisibility(ESlateVisibility::Collapsed);
+		RankSortButton->SetVisibility(ESlateVisibility::Collapsed);
+		HandPlayButton->SetVisibility(ESlateVisibility::Collapsed);
+		ChuckButton->SetVisibility(ESlateVisibility::Collapsed);
+		HandSortBorder->SetVisibility(ESlateVisibility::Collapsed);
+		HandSortText->SetVisibility(ESlateVisibility::Collapsed);
+
+		UCanvasPanelSlot* HSlot = Cast<UCanvasPanelSlot>(CardPanel->Slot);
+		if (HSlot)
+		{
+			FVector2D Pos = OriginCardPanelPos;
+			HSlot->SetPosition(FVector2D(Pos.X - 200.f, Pos.Y + 150.f));
+		}
+	}
+	else
+	{
+		SuitSortButton->SetVisibility(ESlateVisibility::Visible);
+		RankSortButton->SetVisibility(ESlateVisibility::Visible);
+		HandPlayButton->SetVisibility(ESlateVisibility::Visible);
+		ChuckButton->SetVisibility(ESlateVisibility::Visible);
+		HandSortBorder->SetVisibility(ESlateVisibility::Visible);
+		HandSortText->SetVisibility(ESlateVisibility::Visible);
+
+		UCanvasPanelSlot* HSlot = Cast<UCanvasPanelSlot>(CardPanel->Slot);
+		if (HSlot)
+		{
+			HSlot->SetPosition(OriginCardPanelPos);
+		}
+	}
+	
 }
 
 void UCardDeckView::OnSuitSortButtonClicked()

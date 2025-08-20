@@ -13,6 +13,7 @@
 
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
+#include "UI/MVVM/ViewModel/VM_ItemSelect.h"
 
 #include "GameData/HandRankingStat.h"
 #include "Interface/CalculatorScoreInterface.h"
@@ -23,12 +24,19 @@ void UCardAndDeckComponent::BeginPlay()
 	Super::BeginPlay();
 
 	const auto VM = GetVMCardDeck();
+	const auto VM_ItemSelcet = GetVMItemSelect();
+
 	auto	PS = GetPlayerState();
 	PS->OnSelectNextScene.AddUObject(this, &UCardAndDeckComponent::SetVisibleCardDeckView);
 
 	VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
 	VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
 	VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::UpdateHandPlay);
+
+	VM_ItemSelcet->OnUseTaroCard.AddUObject(this, &UCardAndDeckComponent::UseTaroItem);
+
+	// 디버그용
+	//InitDeck();
 }
 
 void UCardAndDeckComponent::UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardStat)
@@ -57,13 +65,24 @@ void UCardAndDeckComponent::UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardSta
 
 void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 {
+	auto VM_MainMenu = GetVMMainWidget();
+	auto VM_CardDeck = GetVMCardDeck();
+
 	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND
 		|| InValue == EPlayerStateType::SMALL_BLIND)
 	{
-		auto VM_MainMenu = GetVMMainWidget();
-		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CadDeckView",true));
+		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CadDeckView", true));
+		VM_CardDeck->SetItemSelectFlag(false);
 		InitDeck();
 	}
+	else if (InValue == EPlayerStateType::ITEM_SELECT)
+	{
+		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CadDeckView", true));
+		VM_CardDeck->SetItemSelectFlag(true);
+		InitDeck();
+	}
+	else
+		return;
 }
 
 void UCardAndDeckComponent::FinishHandPlay()
@@ -96,6 +115,11 @@ void UCardAndDeckComponent::FinishHandPlay()
 		UpdateCardInHand(_CurData);
 		DrawCard(_CardNum);
 	}
+}
+
+void UCardAndDeckComponent::UseTaroItem(TArray<FDeckCardStat> CurCardDatas)
+{
+
 }
 
 void UCardAndDeckComponent::SetPlayCardEffect()
@@ -319,4 +343,14 @@ AMyPlayerState* UCardAndDeckComponent::GetPlayerState()
 }
 
 
+UVM_ItemSelect* UCardAndDeckComponent::GetVMItemSelect()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
 
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_ItemSelect");
+	Context.ContextClass = UVM_ItemSelect::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_ItemSelect>(Found);
+}

@@ -16,7 +16,7 @@ void UCalculatorHandRankingComponent::BeginPlay()
 	Super::BeginPlay();
 
 	const auto VM_CardDeck = GetVMCardDeck();
-	VM_CardDeck->OnHandRankName.AddUObject(this, &UCalculatorHandRankingComponent::SetHandRankName);
+	VM_CardDeck->OnCurPlayHands.AddUObject(this, &UCalculatorHandRankingComponent::SetHandRankName);
 
 	TArray<FDeckCardStat> none; // 초기값 세팅을 위해
 	SetHandRankName(0, none);

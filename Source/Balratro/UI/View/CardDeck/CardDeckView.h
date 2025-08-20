@@ -28,6 +28,7 @@ protected:
 
 	void VM_FieldChanged_CurPlayCardData(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+	void VM_FieldChanged_ItemSelectFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 	UFUNCTION()
 	void OnSuitSortButtonClicked();
@@ -68,14 +69,30 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> DraiageText;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UBorder> HandSortBorder;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> HandSortText;
+
 private:
 	UPROPERTY()
 	TArray<TObjectPtr<class UCardButton>> HandCardButton;
 
+	UPROPERTY()
+	TSubclassOf<class UCardButtonWidget> CardButtonSubClass;
+
+	UPROPERTY()
+	TArray<TObjectPtr<class UCardButtonWidget>> HandCardButtons;
+
+private:
 	const int32 PaddingX = 8;
 
 	int32 CardIndex = 0;
 
 	int32 CurPlayCardNum = 0;
 	FTimerHandle MyTimerHandle;
+
+	FVector2D OriginCardPanelPos;
+
 };

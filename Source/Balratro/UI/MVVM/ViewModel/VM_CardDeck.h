@@ -14,7 +14,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseChuckButton,int32 , TArray<FDeckCardS
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseHandPlayButton, int32, TArray<FDeckCardStat>& /*PlayCardNum*/);
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHandRankName, int32, TArray<FDeckCardStat>& /*PlayCardNum*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCurPlayHands, int32, TArray<FDeckCardStat>& /*PlayCardNum*/);
 
 /**
  레드, 골드, 블루 봉인
@@ -32,7 +32,7 @@ public:
 	FOnSortTypeChange  OnSortTypeChange;
 	FOnUseChuckButton  OnUseChuck;
 	FOnUseHandPlayButton OnUseHandPlay;
-	FOnHandRankName OnHandRankName;
+	FOnCurPlayHands		OnCurPlayHands;
 public:
 	//const int32 GetDeckNum() const
 	//{
@@ -59,7 +59,7 @@ public:
 
 	void    UseChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnUseChuck.Broadcast(CardNum,_DeckCardStat); }
 	void    UseHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnUseHandPlay.Broadcast(CardNum, _DeckCardStat); }
-	void    BrodCastrHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnHandRankName.Broadcast(CardNum, _DeckCardStat); }
+	void    BroadCastCurHands(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnCurPlayHands.Broadcast(CardNum, _DeckCardStat); }
 
 
 	const bool GetIsUpCardExist() const
@@ -90,7 +90,16 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(CurCardsData, _InValue);
 	}
 
+	const bool GetItemSelectFlag() const
+	{
+		return ItemSelectFlag;
+	}
 
+	void SetItemSelectFlag(const bool InValue)
+	{
+		ItemSelectFlag = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(ItemSelectFlag);
+	}
 
 
 private:
@@ -104,7 +113,11 @@ private:
 	bool IsUpCardExist;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	TArray<FDeckCardStat> CurCardsData;
+	TArray<FDeckCardStat> CurCardsData;  // 핸드 플레이할 때 들어옴
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool ItemSelectFlag = false;
+
 
 	UPROPERTY()
 	bool IsSelectedMax = false;

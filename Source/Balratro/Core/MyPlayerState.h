@@ -8,6 +8,7 @@
 #include "GameData/DeckCardStat.h"
 #include "GameData/BlindStat.h"
 #include "GameData/JokerStat.h"
+#include "GameData/TaroStat.h"
 #include "MyPlayerState.generated.h"
 
 
@@ -22,7 +23,6 @@ enum class EHandInCardSortType : uint8
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseChuck, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseHandPlay, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectNextScene, EPlayerStateType);
-
 
 DECLARE_MULTICAST_DELEGATE(FOnDeckCardNum);
 DECLARE_MULTICAST_DELEGATE(FOnCurrentPlayerHandRanking);
@@ -131,11 +131,9 @@ public:
 
 	FORCEINLINE const EPlayerStateType GetPlayerState() const { return CurPlayerState; }
 	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { 
-		//PrevPlayerState = CurPlayerState;
 		CurPlayerState = InType; OnSelectNextScene.Broadcast(CurPlayerState); 
 	}
 
-	//FORCEINLINE const EPlayerStateType GetPrevPlayerState() const { return PrevPlayerState; }
 
 	FORCEINLINE TArray<class UJokerCard_Info*>& GetCurrentJokerCardsModify() { return CurJokerCardInfo; }
 	FORCEINLINE const TArray<class UJokerCard_Info*>& GetCurrentJokerCards() const { return CurJokerCardInfo; }
@@ -161,6 +159,9 @@ public:
 	void ReStart();  // 죽었을때 다시 하는거
 	void SetNextRound(); // 시작하는 값들 초기화
 
+	FORCEINLINE const class UBoosterPackData* GetSelectPackType() { return CurSelcetPackType; }
+	FORCEINLINE void  SetSelectPackType(class UBoosterPackData* InValue) { CurSelcetPackType = InValue; }
+
 
 private:
 	int32 RoundCount;
@@ -179,7 +180,6 @@ private:
 	int32 CardInHand = 8; // 초기 손에든 패 8장
 	int32 CardInDeckNum; // 초기 Deck 52장
 
-	//int32 CurrentRoundSumScore = 0;
 	int32 CurrentScore;
 	int32 MaxScore;
 
@@ -188,14 +188,14 @@ private:
 
 	int32		RerollCost = 5;
 
-	//EPlayerStateType		PrevPlayerState; // 나중에 삭제하기 필요없음
 	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;
 	EPokerHand				CurHandCard_Type;
 
 	int32	CurrentRoundBlindGrade = 0;
 
-
+	UPROPERTY()
+	TObjectPtr<class UBoosterPackData> CurSelcetPackType;
 
 	UPROPERTY()
 	TArray<class UHandRanking_Info*> MyHandRankingInfo;  // 내 핸드랭킹을 사용한 정보들
@@ -203,10 +203,10 @@ private:
 	TArray<FDeckCardStat> Deck_Stat;				// 현재 내 덱에 있는 카드들
 
 	UPROPERTY()
-	TArray<class UHandInCard_Info*> CurrentAllHands;  // 플레이시 들고 있는 카드들
+	TArray<class UHandInCard_Info*> CurrentAllHands;  // 플레이시 들고 있는 카드들 (8장있으면 8장)
 
 	UPROPERTY()
-	TArray<FDeckCardStat> CurCalculatorCardInHands;  // Play시에 점수 계산할 카드들
+	TArray<FDeckCardStat> CurCalculatorCardInHands;  // Play시에 점수 계산할 카드들 (1~5장 사이)
 
 	UPROPERTY()
 	TArray<class UJokerCard_Info*> CurJokerCardInfo;  // 내가 가지고 있는 조커

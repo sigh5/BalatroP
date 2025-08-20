@@ -90,7 +90,6 @@ void UBoosterPackWidget::ChangeImage()
 {
 	if (UPaperSprite* Sprite = PackData->PackMesh.Get())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Sprite"));
 		FSlateBrush SpriteBrush;
 		SpriteBrush.SetResourceObject(Sprite);
 		SpriteBrush.ImageSize = FVector2D(100.f, 150.f); // 원하는 크기

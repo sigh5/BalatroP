@@ -97,6 +97,30 @@ UBBGameSingleton::UBBGameSingleton()
 		//JokerStatMaxNum = JokerStatTable.Num();
 		//ensure(JokerStatMaxNum > 0);
 	}
+
+	static ConstructorHelpers::FObjectFinder<UDataTable>TaroTableRef(TEXT("/Script/Engine.DataTable'/Game/Data/DT_TaroStat.DT_TaroStat'"));
+	if (nullptr != TaroTableRef.Object)
+	{
+		const UDataTable* DataTable = TaroTableRef.Object;
+		check(DataTable->GetRowMap().Num() > 0);
+
+		for (const auto& Row : DataTable->GetRowMap())
+		{
+			const FName RowName = Row.Key;
+			FTaroStat* StatPtr = reinterpret_cast<FTaroStat*>(Row.Value);
+			if (StatPtr)
+			{
+				StatPtr->index = FCString::Atoi(*RowName.ToString());
+				FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Taro/Tarots_Sprite_%s.Tarots_Sprite_%s"), *RowName.ToString(), *RowName.ToString());
+				StatPtr->SpriteAsset = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+				TaroStatTable.Add(StatPtr);
+			}
+		}
+
+		TaroStatMaxNum = TaroStatTable.Num();
+		ensure(TaroStatMaxNum > 0);
+	}
+
 }
 
 UBBGameSingleton& UBBGameSingleton::Get()

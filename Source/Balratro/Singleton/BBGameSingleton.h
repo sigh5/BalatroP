@@ -8,6 +8,7 @@
 #include "GameData/DeckCardStat.h"
 #include "GameData/BlindStat.h"
 #include "GameData/JokerStat.h"
+#include "GameData/TaroStat.h"
 #include "BBGameSingleton.generated.h"
 
 /**
@@ -36,6 +37,8 @@ public:
 
 	FORCEINLINE const TArray<FBlindStat*>& GetBlindStat() const { return BlindStatTable; }
 
+	FORCEINLINE const TArray<FTaroStat*>& GetTaroStatTable() const { return TaroStatTable; }
+
 private:
 	TMap<const FName, FHandRankingStat*> HandRankingStatTable;
 
@@ -44,6 +47,8 @@ private:
 	TArray<FBlindStat*> BlindStatTable;
 
 	TArray<FJokerStat*> JokerStatTable;
+
+	TArray<FTaroStat*>	TaroStatTable;
 
 	UPROPERTY()
 	int32 HandRankingMaxNum;
@@ -56,5 +61,8 @@ private:
 
 	UPROPERTY()
 	int32 JokerStatMaxNum;
+
+	UPROPERTY()
+	int32 TaroStatMaxNum;
 
 };

@@ -36,6 +36,7 @@ enum class EPlayerStateType :uint8
 	BIG_BLIND_SKIP,
 	BOSS_BLIND,
 	REWARD,
+	ITEM_SELECT,
 };
 
 
