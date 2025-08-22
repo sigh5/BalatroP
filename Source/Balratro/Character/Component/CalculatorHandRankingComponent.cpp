@@ -35,8 +35,14 @@ void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<FDec
 	auto PS = GetPlayerState();
     auto VM_CardDeck = GetVMCardDeck();
 
-    SetHandRankingType(CardNum, _DeckCardStat);
-   
+	if (PS->GetPlayerState() == EPlayerStateType::ITEM_SELECT)
+	{
+		PS->SetCurCalculatorCardInHands(_DeckCardStat,false);
+	}
+	else
+	{
+		SetHandRankingType(CardNum, _DeckCardStat);
+	}
     if (CardNum == 5)  // 내가 공격할 수 있는 최대의 패
     {
         VM_CardDeck->SetIsSelectedMax(true);
@@ -52,9 +58,6 @@ void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<FDec
 void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
 	auto PS = GetPlayerState();
-
-	if (PS->GetPlayerState() == EPlayerStateType::ITEM_SELECT)
-		return;
 
 	TArray<FDeckCardStat> CurCalCulatorCards;
 
@@ -238,8 +241,8 @@ int32 UCalculatorHandRankingComponent::ResultScore()
 
 	for (auto cardInfo : CurPlayCards)
 	{
-		ShowChip += cardInfo.BaseChip;
-		if (cardInfo.EnforceType == EnforceStatType::DRAINAGE)
+		ShowChip += cardInfo->Info.BaseChip;
+		if (cardInfo->Info.EnforceType == EnforceStatType::DRAINAGE)
 		{
 			ShowDrainage += 4;
 		}

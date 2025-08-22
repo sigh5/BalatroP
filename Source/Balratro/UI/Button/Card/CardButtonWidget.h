@@ -34,6 +34,8 @@ private:
 	UFUNCTION()
 	void OnCardButtonClicked();
 
+	void LoadEnhanceImage();
+
 private:
 	void	SetClikcedEvent();
 

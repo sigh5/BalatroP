@@ -120,7 +120,7 @@ void UCardAndDeckComponent::FinishHandPlay()
 	}
 }
 
-void UCardAndDeckComponent::UseTaroItem(TArray<FDeckCardStat>& CurCardDatas, FTaroStat TaroStat)
+void UCardAndDeckComponent::UseTaroItem(FTaroStat& TaroStat)
 {
 	auto PS = GetPlayerState();
 	auto VM = GetVMCardDeck();
@@ -136,22 +136,77 @@ void UCardAndDeckComponent::UseTaroItem(TArray<FDeckCardStat>& CurCardDatas, FTa
 		}
 	}
 	
-	auto& Cards = PS->GetCurrentAllHandsModify();
+	if (TaroStat.EnforceType != 0)
+	{
+		UseEnhanceTaro(TaroStat.EnforceType);
+	}
+	else if (TaroStat.SealType != 0)
+	{
+		UseSealTaro(TaroStat.SealType);
+	}
+	else if (TaroStat.GhostCardType != 0)
+	{
+		UseGhostTaro(TaroStat.GhostCardType);
+	}
+
+	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
+}
+
+void UCardAndDeckComponent::UseEnhanceTaro(int32 EnhanceType)
+{
+	auto PS = GetPlayerState();
+	auto& Cards = PS->GetCurCalculatorCardInHands();
 
 	for (auto& Card : Cards)
 	{
-		Card->Info.EnforceType = EnforceStatType::DRAINAGE;
-		
+		if (EnhanceType >= 9)
+		{
+			if (static_cast<EnforceStatType>(EnhanceType) == EnforceStatType::CHANGE_HEART)
+			{
+				FName CurName = Card->Info.Name;
+				FString NameStr = CurName.ToString();
 
+				if (!NameStr.IsEmpty())
+				{
+					NameStr[0] = 'H';
+				}
+
+				Card->Info.Name = FName(*NameStr);
+				Card->Info.SuitGrade = 3;
+			}
+			else if (static_cast<EnforceStatType>(EnhanceType) == EnforceStatType::CHANGE_SPADE)
+			{
+				FName CurName = Card->Info.Name;
+				FString NameStr = CurName.ToString();
+
+				if (!NameStr.IsEmpty())
+				{
+					NameStr[0] = 'D';
+				}
+
+				Card->Info.Name = FName(*NameStr);
+				Card->Info.SuitGrade = 1;
+			}
+
+			
+			FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Card/%s.%s"), *Card->Info.Name.ToString(), *Card->Info.Name.ToString());
+			Card->Info.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+			
+
+		}
+		else
+		{
+			Card->Info.EnforceType = static_cast<EnforceStatType>(EnhanceType);
+		}
 	}
-	
-	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
+}
 
-	auto Temp = PS->GetCurrentAllHands();
+void UCardAndDeckComponent::UseSealTaro(int32 SealType)
+{
+}
 
-	bool c = false;
-
-
+void UCardAndDeckComponent::UseGhostTaro(int32 GhostType)
+{
 }
 
 void UCardAndDeckComponent::SetPlayCardEffect()
@@ -161,19 +216,29 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 	
 	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
 	
-	VM->SetCurCardsData(CurPlayCards);	
+	TArray<FDeckCardStat> CurCardsInfo;
+
+	for (auto Card : CurPlayCards)
+	{
+		FDeckCardStat Info;
+		Info = Card->Info;
+		CurCardsInfo.Add(Info);
+	}
+
+
+	VM->SetCurCardsData(CurCardsInfo);
 	
 	int32 CurCardNum = CurPlayCards.Num();
 	int32 EnforceTypeNum = 0;
 	int32 GhostTypeNum = 0;
 	for (auto Card : CurPlayCards)
 	{
-		if (Card.EnforceType != EnforceStatType::NONE)
+		if (Card->Info.EnforceType != EnforceStatType::NONE)
 		{
 			EnforceTypeNum++;
 		}
 
-		if (Card.GhostCardType != GhostCardStatType::NONE)
+		if (Card->Info.GhostCardType != GhostCardStatType::NONE)
 		{
 			GhostTypeNum++;
 		}

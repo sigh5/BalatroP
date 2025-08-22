@@ -26,24 +26,22 @@ protected:
 private:
 	void	InitDeck();
 	void	ShuffleDeck();
-
-	//		현재 모델에 있는 카드 데이터를 VM에 전달
-	void	DrawCard(int32 DrawCardNum);
-
-
+	void	DrawCard(int32 DrawCardNum); //		현재 모델에 있는 카드 데이터를 VM에 전달
 	void	SortHandInCard(const EHandInCardSortType& InType);
-
 	// 핸드플레이, 버리기 등 현재 손패에 있는 카드 데이터 제거 후 모델에 전달
-	void	UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardStat);
+	void	UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardStat); 
 
 	void	SetVisibleCardDeckView(EPlayerStateType InValue);
-
 	void    FinishHandPlay();
 
-	void	UseTaroItem(TArray<FDeckCardStat>& CurCardDatas, FTaroStat TaroStat);
+private:
+	void	UseTaroItem(FTaroStat& TaroStat);
+	
+	void	UseEnhanceTaro(int32 EnhanceType);
+	void	UseSealTaro(int32 SealType);
+	void	UseGhostTaro(int32 GhostType);
 
 
-	//void	Test111();
 
 private:
 	class UVM_CardDeck*		GetVMCardDeck();

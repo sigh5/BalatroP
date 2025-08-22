@@ -45,7 +45,7 @@ void UMainMenuWidget::NativeConstruct()
 		BlindSelectView = LoadClass<UBlindSelectView>(nullptr, TEXT("/Game/UI/View/SelectBlind/WBP_SelectBlind.WBP_SelectBlind_C"));
 		CurViewName = "SelectBlindView";
 
-		/*UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(BlindSelectView));
+	/*	UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(BlindSelectView));
 		if (BlindWidget)
 		{
 			BlindWidget->SetVisibility(ESlateVisibility::Visible);

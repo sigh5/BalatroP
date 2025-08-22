@@ -22,6 +22,8 @@ protected:
 	void	SetHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
 	void	SetHandRankingType(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
 
+	void	SetCurItemUseCards(TArray<FDeckCardStat>& _DeckCardStat);
+
 private:
 	bool	IsStraight(TArray<int32>& SortedRanks);
 	bool	IsFlush(TMap<int32, int32>& SuitCounts);

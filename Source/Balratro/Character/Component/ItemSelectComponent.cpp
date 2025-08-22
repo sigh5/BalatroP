@@ -44,11 +44,8 @@ void UItemSelectComponent::InitTaroInfoTable()
 	for (const auto& Info : Datas)
 	{
 		auto NewData = NewObject<UTaroStat_Info>();
-		NewData->Info.index = Info->index;
-		NewData->Info.weight = Info->weight;
-		NewData->Info.useNum = Info->useNum;
-		NewData->Info.SpriteAsset = Info->SpriteAsset;
-
+		NewData->Info = *Info;
+		
 		TaroTable.Add(NewData);
 	}
 

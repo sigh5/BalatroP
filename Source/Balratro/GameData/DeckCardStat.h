@@ -24,7 +24,11 @@ enum class EnforceStatType : uint8
 	WILD,
 	LUCKY,
 	GLASS,
-	STEEL
+	STEEL,
+	CHANGE_HEART,
+	CHANGE_SPADE,
+	CHANGE_CLOVER,
+	CHANGE_DIAMOND,
 };
 
 UENUM(BlueprintType)
@@ -43,7 +47,7 @@ struct FDeckCardStat : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FDeckCardStat() : BaseChip(0), SealType(SealStatType::NONE) , EnforceType(EnforceStatType::NONE) , GhostCardType(GhostCardStatType::NONE){}
+	FDeckCardStat() : BaseChip(0), SealType(SealStatType::NONE) , EnforceType(EnforceStatType::NONE) , GhostCardType(GhostCardStatType::NONE), UseNum(0) {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
@@ -66,6 +70,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SuitGrade;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 UseNum;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<class UPaperSprite> CardSprite;

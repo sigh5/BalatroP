@@ -8,7 +8,7 @@
 #include "GameData/DeckCardStat.h"
 #include "VM_ItemSelect.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseTaroCard, TArray<FDeckCardStat>&, FTaroStat);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnUseTaroCard, FTaroStat&);
 
 /**
  *
@@ -33,7 +33,7 @@ public:
 	const TArray<FDeckCardStat>& GetSelectCardInfos() const { return SelectCardInfos; }
 	void SetSelectCardInfos(TArray<FDeckCardStat>& _InValue)  { SelectCardInfos.Empty(); SelectCardInfos = _InValue; }
 
-	void	UseTaroItem(FTaroStat TaroStat) { OnUseTaroCard.Broadcast(SelectCardInfos, TaroStat); }
+	void	UseTaroItem(FTaroStat& TaroStat) { OnUseTaroCard.Broadcast(TaroStat); }
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))

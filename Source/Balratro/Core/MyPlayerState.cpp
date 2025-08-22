@@ -46,10 +46,38 @@ void AMyPlayerState::ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRank
 
 }
 
-void AMyPlayerState::SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue)
+void AMyPlayerState::SetCurCalculatorCardInHands(TArray<class UHandInCard_Info*>& InValue)
 {
 	CurCalculatorCardInHands.Empty();
 	CurCalculatorCardInHands = InValue; 
+
+	if (InValue.Num() == 0)
+	{
+		SetCurHandCard_Type(EPokerHand::NONE);
+	}
+}
+
+void AMyPlayerState::SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue, bool bPlay)
+{
+	CurCalculatorCardInHands.Empty();
+	
+	for (auto CurHandsCard : CurrentAllHands)
+	{
+		for (auto& CardStat : InValue)
+		{
+			if (CurHandsCard->Info == CardStat)
+			{
+				if (bPlay)
+				{
+					CurHandsCard->Info.UseNum++;
+				}
+
+				CurCalculatorCardInHands.Add(CurHandsCard);
+			
+				break;
+			}
+		}
+	}
 
 	if (InValue.Num() == 0)
 	{

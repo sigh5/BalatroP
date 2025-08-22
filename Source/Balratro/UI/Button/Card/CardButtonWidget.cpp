@@ -42,6 +42,8 @@ void UCardButtonWidget::SetClikcedEvent()
 
 void UCardButtonWidget::OnCardButtonClicked()
 {
+	bSelected = !bSelected; // Toggle
+
 	const auto VM = TryGetViewModel<UVM_CardDeck>();
 	check(VM);
 
@@ -51,8 +53,6 @@ void UCardButtonWidget::OnCardButtonClicked()
 	{
 		return;
 	}
-
-	bSelected = !bSelected; // Toggle
 
 	UHorizontalBoxSlot* HSlot = Cast<UHorizontalBoxSlot>(Slot);
 	check(HSlot);
@@ -74,45 +74,30 @@ void UCardButtonWidget::OnCardButtonClicked()
 	}
 }
 
+
 void UCardButtonWidget::SetInfo(FDeckCardStat& _inValue)
 {
 	CardInfoData = _inValue;
 
 	if (IsCreated == false)
+	{
 		CreateImage();
+	}
 	else
+	{
 		ChangeImage();
-
+	}
 
 	if (IsCreated == false)
+	{
 		IsCreated = true;
+	}
 }
 
 
 void UCardButtonWidget::ChangeImage()
 {
-	if (CardInfoData.EnforceType == EnforceStatType::DRAINAGE)
-	{
-		FString AssetPath = "/Game/CardResuorce/CardEnfoceImage/EnforceSprite_2.EnforceSprite_2";
-		CardInfoData.EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-
-		if (!CardInfoData.EnforceSprite.IsValid())
-		{
-			CardInfoData.EnforceSprite.LoadSynchronous();
-		}
-	}
-	else if (CardInfoData.EnforceType == EnforceStatType::NONE)
-	{
-		FString AssetPath = TEXT("/Game/CardResuorce/CardEnfoceImage/EnforceSprite_0.EnforceSprite_0");
-		CardInfoData.EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-
-		if (!CardInfoData.EnforceSprite.IsValid())
-		{
-			CardInfoData.EnforceSprite.LoadSynchronous();
-			UE_LOG(LogTemp, Warning, TEXT("nforceStatType::NONE!!!"));
-		}
-	}
-
+	LoadEnhanceImage();
 
 	if (UPaperSprite* Sprite = CardInfoData.CardSprite.Get())
 	{
@@ -144,4 +129,16 @@ void UCardButtonWidget::CreateImage()
 
 	ChangeImage();
 	SetClikcedEvent();
+}
+
+void UCardButtonWidget::LoadEnhanceImage()
+{
+	int32 EnforceNum = static_cast<int32>(CardInfoData.EnforceType);
+
+	FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/CardEnfoceImage/EnforceSprite_%d.EnforceSprite_%d"),EnforceNum, EnforceNum);
+	CardInfoData.EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+	if (!CardInfoData.EnforceSprite.IsValid())
+	{
+		CardInfoData.EnforceSprite.LoadSynchronous();
+	}	
 }

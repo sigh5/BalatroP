@@ -124,8 +124,11 @@ public:
 	FORCEINLINE void  SetCurHandCard_Type(EPokerHand InValue) { CurHandCard_Type = InValue;  OnCurrentPlayerHandRanking.Broadcast(); }
 
 
-	FORCEINLINE const TArray<FDeckCardStat>& GetCurCalculatorCardInHands() const { return CurCalculatorCardInHands; }
-	void  SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue);
+	FORCEINLINE const TArray<class UHandInCard_Info*>& GetCurCalculatorCardInHands() const { return CurCalculatorCardInHands; }
+	void  SetCurCalculatorCardInHands(TArray<class UHandInCard_Info*>& InValue);
+	void  SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue,bool bPlay = true);
+
+
 
 	FORCEINLINE const EPlayerStateType GetPlayerState() const { return CurPlayerState; }
 	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { 
@@ -218,7 +221,7 @@ private:
 	TArray<class UHandInCard_Info*> CurrentAllHands;  // 플레이시 들고 있는 카드들 (8장있으면 8장) (Deck_Stat에 있는 클라스 가지고옴)
 
 	UPROPERTY()
-	TArray<FDeckCardStat> CurCalculatorCardInHands;  // Play시에 점수 계산할 카드들 (1~5장 사이) 단순 (Delay 시간)계산만 하므로 구조체로 만듦
+	TArray<class UHandInCard_Info*> CurCalculatorCardInHands;  // Play시에 점수 계산할 카드들 (1~5장 사이) 단순 (Delay 시간)계산만 하므로 구조체로 만듦
 
 	UPROPERTY()
 	TArray<class UJokerCard_Info*> CurJokerCardInfo;  // 내가 가지고 있는 조커
