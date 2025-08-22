@@ -49,7 +49,6 @@ void UBoosterPackWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	UE_LOG(LogTemp, Log, TEXT("NativeConstruct"));	
 }
 
 void UBoosterPackWidget::SetInfo(UBoosterPackData* _inValue)

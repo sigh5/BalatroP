@@ -35,7 +35,7 @@ void UCardAndDeckComponent::BeginPlay()
 	
 
 	VM_ItemSelcet->OnUseTaroCard.AddUObject(this, &UCardAndDeckComponent::UseTaroItem);
-
+	//VM->OnSkipButtonClicked.AddUObject(this, &UCardAndDeckComponent::Test111);
 	// 디버그용
 	//InitDeck();
 }
@@ -81,6 +81,8 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", true));
 		VM_CardDeck->SetItemSelectFlag(true);
 		InitDeck();
+
+		//UE_LOG(LogTemp, Warning, TEXT("SetVisibleCardDeckView"));
 	}
 	else
 		return;
@@ -139,13 +141,7 @@ void UCardAndDeckComponent::UseTaroItem(TArray<FDeckCardStat>& CurCardDatas, FTa
 	for (auto& Card : Cards)
 	{
 		Card->Info.EnforceType = EnforceStatType::DRAINAGE;
-		FString AssetPath = "/Game/CardResuorce/CardEnfoceImage/EnforceSprite_2.EnforceSprite_2";
-		Card->Info.EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-
-		if (!Card->Info.EnforceSprite.IsValid())
-		{
-			Card->Info.EnforceSprite.LoadSynchronous();
-		}
+		
 
 	}
 	
@@ -158,20 +154,16 @@ void UCardAndDeckComponent::UseTaroItem(TArray<FDeckCardStat>& CurCardDatas, FTa
 
 }
 
-
-
 void UCardAndDeckComponent::SetPlayCardEffect()
 {
 	auto PS = GetPlayerState();
 	auto VM = GetVMCardDeck();
-
+	
 	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
-	int32 CurCardNum = CurPlayCards.Num();
-
-
-
+	
 	VM->SetCurCardsData(CurPlayCards);	
 	
+	int32 CurCardNum = CurPlayCards.Num();
 	int32 EnforceTypeNum = 0;
 	int32 GhostTypeNum = 0;
 	for (auto Card : CurPlayCards)
@@ -226,20 +218,20 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 {
 	auto PS = GetPlayerState();
 	auto VM = GetVMCardDeck();
-	auto& MyDeckStatTable = PS->GetDeckStatTable();
+	auto& MyDeckStatTable = PS->GetDeckStatTableModify();
 
 	for (int i = CurDrawIndex; i < CurDrawIndex + DrawCardNum; ++i)
 	{
-		if (!MyDeckStatTable[i].CardSprite.IsValid())
+		if (!MyDeckStatTable[i]->Info.CardSprite.IsValid())
 		{
-			MyDeckStatTable[i].CardSprite.LoadSynchronous();
+			MyDeckStatTable[i]->Info.CardSprite.LoadSynchronous();
 		}
 
 		PS->AddHandInCard(MyDeckStatTable[i]);
 	}
 	SortHandInCard(PS->GetCurSortType());
 
-	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
+	//VM->SetCurrentAllHands(PS->GetCurrentAllHands());
 	VM->SetIsSelectedMax(false);
 
 	PS->SetCardInDeckNum(PS->GetCardInDeckNum() - DrawCardNum);

@@ -91,6 +91,29 @@ void UCardButtonWidget::SetInfo(FDeckCardStat& _inValue)
 
 void UCardButtonWidget::ChangeImage()
 {
+	if (CardInfoData.EnforceType == EnforceStatType::DRAINAGE)
+	{
+		FString AssetPath = "/Game/CardResuorce/CardEnfoceImage/EnforceSprite_2.EnforceSprite_2";
+		CardInfoData.EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+
+		if (!CardInfoData.EnforceSprite.IsValid())
+		{
+			CardInfoData.EnforceSprite.LoadSynchronous();
+		}
+	}
+	else if (CardInfoData.EnforceType == EnforceStatType::NONE)
+	{
+		FString AssetPath = TEXT("/Game/CardResuorce/CardEnfoceImage/EnforceSprite_0.EnforceSprite_0");
+		CardInfoData.EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+
+		if (!CardInfoData.EnforceSprite.IsValid())
+		{
+			CardInfoData.EnforceSprite.LoadSynchronous();
+			UE_LOG(LogTemp, Warning, TEXT("nforceStatType::NONE!!!"));
+		}
+	}
+
+
 	if (UPaperSprite* Sprite = CardInfoData.CardSprite.Get())
 	{
 		FSlateBrush SpriteBrush;

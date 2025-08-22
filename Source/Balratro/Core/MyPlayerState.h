@@ -104,19 +104,17 @@ public:
 	FORCEINLINE void  SetRerollCost(int32 InValue) { RerollCost = InValue;   }
 
 
-	FORCEINLINE TArray<FDeckCardStat>& GetDeckStatTableModify()  { return Deck_Stat; }
-	FORCEINLINE const TArray<FDeckCardStat>& GetDeckStatTable() const { return Deck_Stat; }
+	FORCEINLINE TArray<class UHandInCard_Info*>& GetDeckStatTableModify()  { return Deck_Stat; }
+	FORCEINLINE const TArray<class UHandInCard_Info*>& GetDeckStatTable() const { return Deck_Stat; }
 	void ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRanking);
 	
 	FORCEINLINE TArray<class UHandInCard_Info*>& GetCurrentAllHandsModify()  { return CurrentAllHands; }
 	FORCEINLINE const TArray<class UHandInCard_Info*>& GetCurrentAllHands() const {return CurrentAllHands;}
 	FORCEINLINE void SetCurrentAllHands(TArray<class UHandInCard_Info*>& InValue) { CurrentAllHands = InValue;}
 
-	void AddHandInCard(const FDeckCardStat& Info)
+	FORCEINLINE void AddHandInCard(class UHandInCard_Info* Info)
 	{
-		auto HandCard = NewObject<UHandInCard_Info>(this);
-		HandCard->Info = Info;
-		CurrentAllHands.Add(HandCard);
+		CurrentAllHands.Add(Info);
 	}
 
 	FORCEINLINE const EHandInCardSortType& GetCurSortType() const { return CurSortType; }
@@ -213,13 +211,14 @@ private:
 	UPROPERTY()
 	TArray<class UHandRanking_Info*> MyHandRankingInfo;  // 내 핸드랭킹을 사용한 정보들
 
-	TArray<FDeckCardStat> Deck_Stat;				// 현재 내 덱에 있는 카드들
+	UPROPERTY()
+	TArray<class UHandInCard_Info*> Deck_Stat;				// 현재 내 덱에 있는 카드들
 
 	UPROPERTY()
-	TArray<class UHandInCard_Info*> CurrentAllHands;  // 플레이시 들고 있는 카드들 (8장있으면 8장)
+	TArray<class UHandInCard_Info*> CurrentAllHands;  // 플레이시 들고 있는 카드들 (8장있으면 8장) (Deck_Stat에 있는 클라스 가지고옴)
 
 	UPROPERTY()
-	TArray<FDeckCardStat> CurCalculatorCardInHands;  // Play시에 점수 계산할 카드들 (1~5장 사이)
+	TArray<FDeckCardStat> CurCalculatorCardInHands;  // Play시에 점수 계산할 카드들 (1~5장 사이) 단순 (Delay 시간)계산만 하므로 구조체로 만듦
 
 	UPROPERTY()
 	TArray<class UJokerCard_Info*> CurJokerCardInfo;  // 내가 가지고 있는 조커

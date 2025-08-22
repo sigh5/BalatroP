@@ -57,6 +57,7 @@ public:
 
 	void SetCurrentAllHands(const TArray<UHandInCard_Info*>& InValue)
 	{
+		CurrentAllHands.Empty();
 		CurrentAllHands = InValue;
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurrentAllHands);
 	}

@@ -48,6 +48,11 @@ UBBGameSingleton::UBBGameSingleton()
 				AssetPath = TEXT("/Game/CardResuorce/CardEnfoceImage/EnforceSprite_0.EnforceSprite_0");
 				StatPtr->EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
 
+				if(!StatPtr->EnforceSprite.IsValid())
+				{
+					StatPtr->EnforceSprite.LoadSynchronous();
+				}
+
 				DeckCardStatTable.Add(StatPtr);
 			}
 		}

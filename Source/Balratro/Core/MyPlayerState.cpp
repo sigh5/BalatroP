@@ -29,20 +29,19 @@ void AMyPlayerState::ResetMyHandRankingInfo(const TMap<const FName, FHandRanking
 
 void AMyPlayerState::ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRanking)
 {
-	FDeckCardStat StatInfo;
-
 	for (auto& Info : InHandRanking)
 	{
-		StatInfo.Name = Info->Name;
-		StatInfo.BaseChip = Info->BaseChip;
-		StatInfo.SealType = Info->SealType;
-		StatInfo.EnforceType = Info->EnforceType;
-		StatInfo.GhostCardType = Info->GhostCardType;
-		StatInfo.RankGrade = Info->RankGrade;
-		StatInfo.SuitGrade = Info->SuitGrade;
-		StatInfo.CardSprite = Info->CardSprite;
+		UHandInCard_Info* CardInfo = NewObject<UHandInCard_Info>();
+		CardInfo->Info.Name = Info->Name;
+		CardInfo->Info.BaseChip = Info->BaseChip;
+		CardInfo->Info.SealType = Info->SealType;
+		CardInfo->Info.EnforceType = Info->EnforceType;
+		CardInfo->Info.GhostCardType = Info->GhostCardType;
+		CardInfo->Info.RankGrade = Info->RankGrade;
+		CardInfo->Info.SuitGrade = Info->SuitGrade;
+		CardInfo->Info.CardSprite = Info->CardSprite;
 
-		Deck_Stat.Add(StatInfo);
+		Deck_Stat.Add(CardInfo);
 	}
 
 }
