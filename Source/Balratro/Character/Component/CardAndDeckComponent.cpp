@@ -32,6 +32,7 @@ void UCardAndDeckComponent::BeginPlay()
 	VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
 	VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
 	VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::UpdateHandPlay);
+	
 
 	VM_ItemSelcet->OnUseTaroCard.AddUObject(this, &UCardAndDeckComponent::UseTaroItem);
 
@@ -71,13 +72,13 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND
 		|| InValue == EPlayerStateType::SMALL_BLIND)
 	{
-		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CadDeckView", true));
+		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", true));
 		VM_CardDeck->SetItemSelectFlag(false);
 		InitDeck();
 	}
 	else if (InValue == EPlayerStateType::ITEM_SELECT)
 	{
-		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CadDeckView", true));
+		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", true));
 		VM_CardDeck->SetItemSelectFlag(true);
 		InitDeck();
 	}
@@ -103,7 +104,7 @@ void UCardAndDeckComponent::FinishHandPlay()
 		GetWorld()->GetTimerManager().ClearTimer(TotalScoreHandle);
 
 		auto VM_MainWidget = GetVMMainWidget();
-		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("CadDeckView", false));
+		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", false));
 
 		PS->SetPlayerState(EPlayerStateType::REWARD);
 	}
@@ -117,10 +118,47 @@ void UCardAndDeckComponent::FinishHandPlay()
 	}
 }
 
-void UCardAndDeckComponent::UseTaroItem(TArray<FDeckCardStat> CurCardDatas)
+void UCardAndDeckComponent::UseTaroItem(TArray<FDeckCardStat>& CurCardDatas, FTaroStat TaroStat)
 {
+	auto PS = GetPlayerState();
+	auto VM = GetVMCardDeck();
+
+	auto TaroTable = PS->GetTaroStatTableModify();
+
+	for (auto& Info : TaroTable)
+	{
+		if (Info->Info.index == TaroStat.index)
+		{
+			Info->Info.useNum++;
+			break;
+		}
+	}
+	
+	auto& Cards = PS->GetCurrentAllHandsModify();
+
+	for (auto& Card : Cards)
+	{
+		Card->Info.EnforceType = EnforceStatType::DRAINAGE;
+		FString AssetPath = "/Game/CardResuorce/CardEnfoceImage/EnforceSprite_2.EnforceSprite_2";
+		Card->Info.EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+
+		if (!Card->Info.EnforceSprite.IsValid())
+		{
+			Card->Info.EnforceSprite.LoadSynchronous();
+		}
+
+	}
+	
+	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
+
+	auto Temp = PS->GetCurrentAllHands();
+
+	bool c = false;
+
 
 }
+
+
 
 void UCardAndDeckComponent::SetPlayCardEffect()
 {
@@ -129,6 +167,8 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 
 	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
 	int32 CurCardNum = CurPlayCards.Num();
+
+
 
 	VM->SetCurCardsData(CurPlayCards);	
 	
@@ -188,8 +228,6 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 	auto VM = GetVMCardDeck();
 	auto& MyDeckStatTable = PS->GetDeckStatTable();
 
-	UE_LOG(LogTemp, Log, TEXT("CurDrawIndex %d"), CurDrawIndex);
-
 	for (int i = CurDrawIndex; i < CurDrawIndex + DrawCardNum; ++i)
 	{
 		if (!MyDeckStatTable[i].CardSprite.IsValid())
@@ -203,8 +241,6 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 
 	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
 	VM->SetIsSelectedMax(false);
-
-	UE_LOG(LogTemp, Log, TEXT("CardInDeckNum %d"), PS->GetCardInDeckNum() - DrawCardNum);
 
 	PS->SetCardInDeckNum(PS->GetCardInDeckNum() - DrawCardNum);
 	CurDrawIndex += DrawCardNum;

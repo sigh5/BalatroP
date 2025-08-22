@@ -17,11 +17,14 @@ UENUM(BlueprintType)
 enum class EnforceStatType : uint8
 {
 	NONE = 0,
+	STONE,
+	GOLD,
 	CHIP_PLUS,
 	DRAINAGE,
-	STEEL,
-	GOLD,
-	GLASS
+	WILD,
+	LUCKY,
+	GLASS,
+	STEEL
 };
 
 UENUM(BlueprintType)
@@ -66,6 +69,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<class UPaperSprite> CardSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<class UPaperSprite> EnforceSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<class UPaperSprite> GhostSprite;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<class UPaperSprite> SealSprite;
 
 
 	bool operator==(const FDeckCardStat& Other) const

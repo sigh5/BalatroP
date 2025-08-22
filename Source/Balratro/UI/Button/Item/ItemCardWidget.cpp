@@ -44,9 +44,9 @@ void UItemCardWidget::SetClikcedEvent()
 	UseButton->OnClicked.AddDynamic(this, &UItemCardWidget::OnItemUseClicked);
 }
 
-void UItemCardWidget::SetInfo(FTaroStat* _inValue)
+void UItemCardWidget::SetInfo(FTaroStat& _inValue)
 {
-	TaroData = *_inValue;
+	TaroData = _inValue;
 
 	if (IsCreated == false)
 		CreateImage();
@@ -54,6 +54,8 @@ void UItemCardWidget::SetInfo(FTaroStat* _inValue)
 		ChangeImage();
 
 	IsSelected = false;
+	SetVisibility(ESlateVisibility::Visible); // 모든 버튼 보이게 초기화
+
 	UseButton->SetVisibility(ESlateVisibility::Collapsed);
 
 	if (IsCreated == false)
@@ -90,7 +92,7 @@ void UItemCardWidget::OnItemUseClicked()
 
 	if (TaroData.maxUseCardNum <= CurCards.Num())
 	{
-		VM_Inst->UseTaroItem();
+		VM_Inst->UseTaroItem(TaroData);
 		this->SetVisibility(ESlateVisibility::Collapsed);
 	}
 	else
@@ -109,7 +111,7 @@ void UItemCardWidget::ChangeImage()
 	{
 		FSlateBrush SpriteBrush;
 		SpriteBrush.SetResourceObject(Sprite);
-		SpriteBrush.ImageSize = FVector2D(180.f, 250.f); // 원하는 크기
+		SpriteBrush.ImageSize = FVector2D(126.f, 186.f); // 원하는 크기
 		SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
 		MainImage->SetBrush(SpriteBrush);
 	}

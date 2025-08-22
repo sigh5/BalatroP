@@ -162,6 +162,15 @@ public:
 	FORCEINLINE const class UBoosterPackData* GetSelectPackType() { return CurSelcetPackType; }
 	FORCEINLINE void  SetSelectPackType(class UBoosterPackData* InValue) { CurSelcetPackType = InValue; }
 
+	FORCEINLINE TArray<class UTaroStat_Info*>& GetTaroStatTableModify() { return CurTaroStatTable; }
+	FORCEINLINE const TArray<class UTaroStat_Info*>& GetTaroStatTable()  const { return CurTaroStatTable; }
+	FORCEINLINE void  SetTaroStatTable(class TArray<class UTaroStat_Info*>& InValue) { CurTaroStatTable = InValue; }
+
+
+	FORCEINLINE int32 GetHaveBoosterPackNum() { return HaveBoosterPackNum; }
+	FORCEINLINE void  SetHaveBoosterPackNum(int32 InValue) { HaveBoosterPackNum = InValue;  FMath::Max(MaxHaveBoosterPackNum, HaveBoosterPackNum);}
+
+	FORCEINLINE int32 GetMaxHaveBoosterPackNum() { return MaxHaveBoosterPackNum; }
 
 private:
 	int32 RoundCount;
@@ -187,6 +196,10 @@ private:
 	int32		CurrentShowDrainage; // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 배수
 
 	int32		RerollCost = 5;
+	int32		HaveBoosterPackNum = 2;
+	int32		MaxHaveBoosterPackNum = 2;
+
+
 
 	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;
@@ -211,6 +224,7 @@ private:
 	UPROPERTY()
 	TArray<class UJokerCard_Info*> CurJokerCardInfo;  // 내가 가지고 있는 조커
 
-	
+	UPROPERTY()
+	TArray<class UTaroStat_Info*>	CurTaroStatTable;   // 현재 내 타로 카드 리스트
 
 };

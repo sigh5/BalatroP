@@ -232,8 +232,8 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 
 	if (_InType == EPlayerStateType::ITEM_SELECT)
 	{
-		VM_MW->SetCurWidgetName(FWidgetFlag_Info("PlayerInfoView",false));
-		return;
+		// 상점 이펙트랑 동일
+		_InType = EPlayerStateType::STORE;
 	}
 
 

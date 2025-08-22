@@ -12,10 +12,10 @@
 #include "Components/Border.h"
 #include "Components/CanvasPanelSlot.h"
 
-#include "UI/Button/Card/CardButton.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 #include "UI/MVVM/ViewModel/VM_ItemSelect.h"
+#include "UI/Button/Card/CardButtonWidget.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/Engine.h"
@@ -34,7 +34,7 @@ void UCardDeckView::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	//CardButtonSubClass = LoadClass<UItemCardWidget>(nullptr, TEXT(""));
+	CardButtonSubClass = LoadClass<UCardButtonWidget>(nullptr, TEXT("/Game/UI/View/CardDeck/WBP_CardButtonWidget.WBP_CardButtonWidget_C"));
 
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
@@ -66,24 +66,25 @@ void UCardDeckView::NativeOnInitialized()
 	OriginCardPanelPos = HSlot->GetPosition();
 }
 
-UCardButton* UCardDeckView::ReuseCardButton(int32 CurAllCardNum ,int32 CurNum, UHandInCard_Info* CardInfo)
+UCardButtonWidget* UCardDeckView::ReuseCardButtonWidget(int32 CurAllCardNum, int32 CurNum, UHandInCard_Info* CardInfo)
 {
-	UCardButton* NewButton = nullptr;
-	if (HandCardButton.Num() < CurAllCardNum)
+	UCardButtonWidget* NewButton = nullptr;
+	if (HandCardButtons.Num() < CurAllCardNum)
 	{
-		NewButton = NewObject<UCardButton>(this);
-		NewButton->SetCardInfoData(CardInfo->Info);
+		NewButton = CreateWidget<UCardButtonWidget>(this, CardButtonSubClass);
+		NewButton->SetInfo(CardInfo->Info);
 		NewButton->SetCardIndex(CardIndex++);
-		HandCardButton.Add(NewButton);
+		HandCardButtons.Add(NewButton);
 	}
 	else
 	{
-		NewButton = HandCardButton[CurNum];
-		check(NewButton);
+		NewButton = HandCardButtons[CurNum];
 		NewButton->SetSelected(false);
-		NewButton->SetCardInfoData(CardInfo->Info);
+		NewButton->SetInfo(CardInfo->Info);
 		NewButton->SetCardIndex(CardIndex++);
 	}
+
+	check(NewButton);
 	return NewButton;
 }
 
@@ -93,13 +94,11 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 	auto& CurHandInfo = VMInstance->GetCurrentAllHands();
 	int32 CurAllHandNum = CurHandInfo.Num();
 	
-	UE_LOG(LogTemp, Log, TEXT("VM_FieldChanged_HandInCard"));
-
 	CardPanel->ClearChildren(); // 기존 이미지 제거
 
 	for (int i = 0; i < CurAllHandNum; ++i)
 	{
-		UCardButton* NewButton = ReuseCardButton(CurAllHandNum, i, CurHandInfo[i]);
+		UCardButtonWidget* NewButton = ReuseCardButtonWidget(CurAllHandNum, i, CurHandInfo[i]);
 
 		UHorizontalBoxSlot* BoxSlot = CardPanel->AddChildToHorizontalBox(NewButton);
 		BoxSlot->SetSize(FSlateChildSize(ESlateSizeRule::Automatic));
@@ -164,31 +163,18 @@ void UCardDeckView::VM_FieldChanged_ItemSelectFlag(UObject* Object, UE::FieldNot
 		SuitSortButton->SetVisibility(ESlateVisibility::Collapsed);
 		RankSortButton->SetVisibility(ESlateVisibility::Collapsed);
 		HandPlayButton->SetVisibility(ESlateVisibility::Collapsed);
-		ChuckButton->SetVisibility(ESlateVisibility::Collapsed);
-		HandSortBorder->SetVisibility(ESlateVisibility::Collapsed);
-		HandSortText->SetVisibility(ESlateVisibility::Collapsed);
 
-		UCanvasPanelSlot* HSlot = Cast<UCanvasPanelSlot>(CardPanel->Slot);
-		if (HSlot)
-		{
-			FVector2D Pos = OriginCardPanelPos;
-			HSlot->SetPosition(FVector2D(Pos.X - 200.f, Pos.Y + 150.f));
-		}
+		ChuckButtonText->SetText(FText::FromString(TEXT("Skip")));
+		HandSortText->SetText(FText::FromString(TEXT("Select2"))); // 나중에 숫자 필요
 	}
 	else
 	{
 		SuitSortButton->SetVisibility(ESlateVisibility::Visible);
 		RankSortButton->SetVisibility(ESlateVisibility::Visible);
 		HandPlayButton->SetVisibility(ESlateVisibility::Visible);
-		ChuckButton->SetVisibility(ESlateVisibility::Visible);
-		HandSortBorder->SetVisibility(ESlateVisibility::Visible);
-		HandSortText->SetVisibility(ESlateVisibility::Visible);
-
-		UCanvasPanelSlot* HSlot = Cast<UCanvasPanelSlot>(CardPanel->Slot);
-		if (HSlot)
-		{
-			HSlot->SetPosition(OriginCardPanelPos);
-		}
+		
+		ChuckButtonText->SetText(FText::FromString(TEXT("Chuck")));
+		HandSortText->SetText(FText::FromString(TEXT("HandSort")));
 	}
 	
 }
@@ -209,13 +195,21 @@ void UCardDeckView::OnChuckButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	
-	TArray<FDeckCardStat> CardStatInfo; 
-	int32 SelectedNum = 0;
+	if (VMInst->GetItemSelectFlag())
+	{
+		// SKip 액션 실행 (저번 씬 창으로 이동해야됌)
+		VMInst->SkipButtonClicked();
+	}
+	else
+	{
+		TArray<FDeckCardStat> CardStatInfo;
+		int32 SelectedNum = 0;
 
-	if (SetCardData(CardStatInfo, SelectedNum) == false)
-		return;
-	
-	VMInst->UseChuck(SelectedNum, CardStatInfo);
+		if (SetCardData(CardStatInfo, SelectedNum) == false)
+			return;
+
+			VMInst->UseChuck(SelectedNum, CardStatInfo);
+	}
 }
 
 void UCardDeckView::OnHandPlayButtonClicked()
@@ -267,8 +261,8 @@ void UCardDeckView::CardChipScoreText()
 			break;
 		}
 
-		UCardButton* CurCardButton = nullptr;
-		for (auto& Card : HandCardButton)
+		UCardButtonWidget* CurCardButton = nullptr;
+		for (auto& Card : HandCardButtons)
 		{
 			if (Card->GetCardInfoData() == Data[CurPlayCardNum])
 			{
@@ -313,7 +307,7 @@ void UCardDeckView::CardChipScoreText()
 
 bool UCardDeckView::SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum)
 {
-	for (auto& Button : HandCardButton)
+	for (auto& Button : HandCardButtons)
 	{
 		if (Button->GetSelected())
 		{

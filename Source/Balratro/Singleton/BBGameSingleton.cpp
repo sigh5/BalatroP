@@ -44,6 +44,10 @@ UBBGameSingleton::UBBGameSingleton()
 				StatPtr->Name = RowName;
 				FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Card/%s.%s"), *RowName.ToString(), *RowName.ToString());		
 				StatPtr->CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+				
+				AssetPath = TEXT("/Game/CardResuorce/CardEnfoceImage/EnforceSprite_0.EnforceSprite_0");
+				StatPtr->EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+
 				DeckCardStatTable.Add(StatPtr);
 			}
 		}

@@ -45,7 +45,7 @@ private:
 
 private:
 	bool  SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum);
-	class UCardButton* ReuseCardButton(int32 CurAllCardNum , int32 CurNum, UHandInCard_Info* CardInfo);
+	class UCardButtonWidget* ReuseCardButtonWidget(int32 CurAllCardNum, int32 CurNum, UHandInCard_Info* CardInfo);
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -75,10 +75,10 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> HandSortText;
 
-private:
-	UPROPERTY()
-	TArray<TObjectPtr<class UCardButton>> HandCardButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> ChuckButtonText;
 
+private:
 	UPROPERTY()
 	TSubclassOf<class UCardButtonWidget> CardButtonSubClass;
 

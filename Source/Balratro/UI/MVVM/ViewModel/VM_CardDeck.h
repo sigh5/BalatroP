@@ -8,6 +8,8 @@
 #include "Core\MyPlayerState.h"
 #include "VM_CardDeck.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnSkipButtonClicked);
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSortTypeChange, const EHandInCardSortType&);
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseChuckButton,int32 , TArray<FDeckCardStat>& /*ChuckCardNum*/);
@@ -15,6 +17,8 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseChuckButton,int32 , TArray<FDeckCardS
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseHandPlayButton, int32, TArray<FDeckCardStat>& /*PlayCardNum*/);
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCurPlayHands, int32, TArray<FDeckCardStat>& /*PlayCardNum*/);
+
+
 
 /**
  ∑πµÂ, ∞ÒµÂ, ∫Ì∑Á ∫¿¿Œ
@@ -33,6 +37,8 @@ public:
 	FOnUseChuckButton  OnUseChuck;
 	FOnUseHandPlayButton OnUseHandPlay;
 	FOnCurPlayHands		OnCurPlayHands;
+	FOnSkipButtonClicked OnSkipButtonClicked;
+
 public:
 	//const int32 GetDeckNum() const
 	//{
@@ -51,7 +57,8 @@ public:
 
 	void SetCurrentAllHands(const TArray<UHandInCard_Info*>& InValue)
 	{
-		UE_MVVM_SET_PROPERTY_VALUE(CurrentAllHands, InValue);
+		CurrentAllHands = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurrentAllHands);
 	}
 
 	void	SetSuitSort() {OnSortTypeChange.Broadcast(EHandInCardSortType::SORT_SUIT);}
@@ -101,6 +108,7 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(ItemSelectFlag);
 	}
 
+	void SkipButtonClicked() { OnSkipButtonClicked.Broadcast(); }
 
 private:
 	//UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))

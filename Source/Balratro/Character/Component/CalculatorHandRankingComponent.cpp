@@ -28,10 +28,6 @@ int32 UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArr
 	SetHandRankingType(CardNum, _DeckCardStat);
 
 	return ResultScore();
-
-	//auto PS = GetPlayerState();
-	//PS->OnScoreEffectStart.Broadcast();
-
 }
 
 void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
@@ -56,6 +52,9 @@ void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<FDec
 void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
 {
 	auto PS = GetPlayerState();
+
+	if (PS->GetPlayerState() == EPlayerStateType::ITEM_SELECT)
+		return;
 
 	TArray<FDeckCardStat> CurCalCulatorCards;
 
@@ -231,14 +230,11 @@ void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<F
 int32 UCalculatorHandRankingComponent::ResultScore()
 {
 	auto PS = GetPlayerState();
-	
 	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
 
 	int32 Score = 0;
-
 	int32 ShowChip = PS->GetCurrentShowChip();
 	int32 ShowDrainage = PS->GetCurrentShowDrainage();
-
 
 	for (auto cardInfo : CurPlayCards)
 	{

@@ -28,6 +28,8 @@ void UCardButtonWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	Ghost_Image->SetVisibility(ESlateVisibility::Collapsed);
+	Foil_Image->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 
@@ -57,7 +59,7 @@ void UCardButtonWidget::OnCardButtonClicked()
 	if (bSelected == false)
 	{
 		FMargin Margin = HSlot->GetPadding();
-		Margin.Top += 150.f;  // 선택한 카드 내리는 것
+		Margin.Top += 100.f;  // 선택한 카드 내리는 것
 		HSlot->SetPadding(Margin);
 
 		VM->SetIsUpCardExist(true);
@@ -65,7 +67,7 @@ void UCardButtonWidget::OnCardButtonClicked()
 	else if (bSelected == true && CurSelectedMax == false)
 	{
 		FMargin Margin = HSlot->GetPadding();
-		Margin.Top -= 150.f;    // 선택한 카드 올리는 것
+		Margin.Top -= 100.f;    // 선택한 카드 올리는 것
 		HSlot->SetPadding(Margin);
 
 		VM->SetIsUpCardExist(true);
@@ -93,10 +95,20 @@ void UCardButtonWidget::ChangeImage()
 	{
 		FSlateBrush SpriteBrush;
 		SpriteBrush.SetResourceObject(Sprite);
-		SpriteBrush.ImageSize = FVector2D(100.f, 150.f); // 원하는 크기
 		SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
+		SpriteBrush.SetImageSize(FVector2D(100.f, 150.f));
 		MainImage->SetBrush(SpriteBrush);
 	}
+
+	if (UPaperSprite* Sprite = CardInfoData.EnforceSprite.Get())
+	{
+		FSlateBrush SpriteBrush;
+		SpriteBrush.SetResourceObject(Sprite);
+		SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
+		SpriteBrush.SetImageSize(FVector2D(100.f, 150.f));
+		Enhance_Image->SetBrush(SpriteBrush);
+	}
+
 }
 
 void UCardButtonWidget::CreateImage()
@@ -108,4 +120,5 @@ void UCardButtonWidget::CreateImage()
 	MainButton->SetStyle(EmptyStyle);
 
 	ChangeImage();
+	SetClikcedEvent();
 }

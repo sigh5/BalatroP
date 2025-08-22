@@ -22,6 +22,7 @@ protected:
 	void	SetItemList();
 
 	void    InitTaroInfoTable();
+	void	ItemSelectSceneSkip();
 
 private:
 	TSet<int32>	 SetTaroType();
@@ -32,13 +33,9 @@ private:
 	class AMyPlayerState* GetPlayerState();
 	class UVM_MainMenu* GetVMMainWidget();
 	class UVM_ItemSelect* GetVMItemSelect();
-
+	class UVM_CardDeck* GetVMCardDeck();
 
 private:
-	UPROPERTY()
-	TArray<class UTaroStat_Info*>	CurTaroStatTable;
-
-	
-	TArray<FTaroStat>   CurShowTaroInfo;
+	TArray<FTaroStat>   CurShowTaroInfo; // UI 에 보여지는 타로 리스트
 
 };

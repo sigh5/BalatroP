@@ -31,6 +31,9 @@ private:
 	UFUNCTION()
 	void OnReRollButton();
 
+private:
+	class UBoosterPackWidget* ReUseWidget(int32 DataNum, int32 Index,class UBoosterPackData* Data);
+
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -56,7 +59,7 @@ private:
 
 private:
 	UPROPERTY()
-	TArray<class UBoosterPackWidget*> BoosterPackWidget;
+	TArray<class UBoosterPackWidget*> BoosterPackWidgets;
 
 
 };

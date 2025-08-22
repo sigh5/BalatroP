@@ -54,6 +54,23 @@ void UStoreView::OnReRollButton()
 	VMInst->ReRollButtonClicked();
 }
 
+UBoosterPackWidget* UStoreView::ReUseWidget(int32 DataNum,int32 Index,  UBoosterPackData* Data)
+{
+	UBoosterPackWidget* BoosterPackButton = nullptr;
+
+	if (DataNum > BoosterPackWidgets.Num())
+	{
+		BoosterPackButton = CreateWidget<UBoosterPackWidget>(this, BoosterPackWidgetSubClass);
+	}
+	else
+	{
+		BoosterPackButton = BoosterPackWidgets[Index];
+	}
+	
+	check(BoosterPackButton);
+	BoosterPackButton->SetInfo(Data);
+	return BoosterPackButton;
+}
 
 void UStoreView::VM_FieldChanged_BoosterPacks(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
@@ -61,17 +78,17 @@ void UStoreView::VM_FieldChanged_BoosterPacks(UObject* Object, UE::FieldNotifica
 	check(VMInst);
 
 	auto Datas = VMInst->GetBoosterPackTypes();
+	int32 DataNum = Datas.Num();
 
-	for (int i = 0; i < Datas.Num(); ++i)
+	PackHorizontalBox->ClearChildren();  // 기존 이미지 제거
+
+	for (int i = 0; i < DataNum; ++i)
 	{ 
-		UBoosterPackWidget* BoosterPackButton = CreateWidget<UBoosterPackWidget>(this, BoosterPackWidgetSubClass);
-		if (!BoosterPackButton) continue;
-
-		BoosterPackButton->SetInfo(Datas[i]);
+		UBoosterPackWidget* BoosterPackButton = ReUseWidget(DataNum, i, Datas[i]);
 
 		UHorizontalBoxSlot* BoxSlot = PackHorizontalBox->AddChildToHorizontalBox(BoosterPackButton);
 		BoxSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
 		
-		BoosterPackWidget.Add(BoosterPackButton);
+		BoosterPackWidgets.Add(BoosterPackButton);
 	}
 }

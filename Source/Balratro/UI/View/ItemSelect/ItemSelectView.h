@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/View/Core/BBUserWidgetBase.h"
+#include "GameData/TaroStat.h"
 #include "ItemSelectView.generated.h"
 
 /**
@@ -24,11 +25,17 @@ private:
 	void VM_FieldChanged_TaroList(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 private:
+	class UItemCardWidget* ReUseBoosterPackWidget(int32 DataNum, int32 Index, FTaroStat& Data);
+
+
+private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UHorizontalBox> ItemPanel;
 
 	UPROPERTY()
 	TSubclassOf<class UItemCardWidget> TaroStatSubClass;
 
-
+private:
+	UPROPERTY()
+	TArray<class UItemCardWidget*> BoosterPackWidgets;
 };

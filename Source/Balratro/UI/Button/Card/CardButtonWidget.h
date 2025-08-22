@@ -25,6 +25,7 @@ public:
 	FORCEINLINE void SetCardIndex(int InValue) { CardIndex = InValue; }
 
 	void			 SetInfo(FDeckCardStat& _inValue);
+	FORCEINLINE FDeckCardStat& GetCardInfoData() { return CardInfoData; }
 
 	FORCEINLINE const bool	GetSelected() const { return bSelected; }
 	FORCEINLINE void		SetSelected(bool _Selected) { bSelected = _Selected; }
@@ -66,6 +67,5 @@ private:
 	FDeckCardStat CardInfoData;
 
 	uint8 bSelected : 1;
-
 	uint8 IsCreated : 1;
 };

@@ -25,11 +25,15 @@ public:
 	int32 useNum;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 maxUseCardNum;
+	int32 maxUseCardNum; // 효과 적용가능한 최대카드 숫자
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<class UPaperSprite> SpriteAsset;
+
+
+
+
 };
 
 

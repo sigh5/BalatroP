@@ -22,7 +22,7 @@ private:
 	virtual void NativeConstruct()override;
 
 public:
-	void	SetInfo(FTaroStat* _inValue);
+	void	SetInfo(FTaroStat& _inValue);
 
 private:
 	UFUNCTION()

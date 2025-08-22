@@ -41,6 +41,7 @@ void UStoreComponent::BeginPlay()
 
 	// 디버그용
 	SetDownStoreItem();
+	
 }
 
 void UStoreComponent::SetStoreView(EPlayerStateType _InType)
@@ -86,29 +87,32 @@ void UStoreComponent::SetDownStoreItem()
 	auto PS = GetPlayerState();
 	auto VM_Stroe = GetVMPStore();
 
-	BoosterPacks.Empty();
+	int32 BoosterPackNum = PS->GetHaveBoosterPackNum();
+	int32 MaxBoosterPackNum = PS->GetMaxHaveBoosterPackNum();
 
-	int32 BoosterPackNum = 2; // PS->GetDownStoreNum();
-
-	for (int i = 0; i < BoosterPackNum; ++i)
+	if (BoosterPackNum == MaxBoosterPackNum)
 	{
-		EBoosterPackType ItemType = SetItemType();
-		UBoosterPackData* CurPack = NewObject<UBoosterPackData>();
-		
-		int32 ItemIndex = i; //static_cast<int32>(ItemType);
-		FString ItemIndexStr = FString::FromInt(ItemIndex);	
-		FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Booster/boosters_Sprite_%s.boosters_Sprite_%s"), *ItemIndexStr, *ItemIndexStr);
-		CurPack->PackMesh = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-		if (!CurPack->PackMesh.IsValid())
+		BoosterPacks.Empty();
+		for (int i = 0; i < BoosterPackNum; ++i)
 		{
-			CurPack->PackMesh.LoadSynchronous();
+			EBoosterPackType ItemType = SetItemType();
+			UBoosterPackData* CurPack = NewObject<UBoosterPackData>();
+
+			int32 ItemIndex = i; //static_cast<int32>(ItemType);
+			FString ItemIndexStr = FString::FromInt(ItemIndex);
+			FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Booster/boosters_Sprite_%s.boosters_Sprite_%s"), *ItemIndexStr, *ItemIndexStr);
+			CurPack->PackMesh = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+			if (!CurPack->PackMesh.IsValid())
+			{
+				CurPack->PackMesh.LoadSynchronous();
+			}
+
+			CurPack->SetType(ItemType);
+			CurPack->SetIndex(BoosterPackIndex++);
+			BoosterPacks.Add(CurPack);
 		}
-
-		CurPack->SetType(ItemType);
-		CurPack->SetIndex(BoosterPackIndex++);
-		BoosterPacks.Add(CurPack);  
 	}
-
+	
 	VM_Stroe->SetBoosterPackTypes(BoosterPacks);
 }
 
@@ -144,20 +148,20 @@ void UStoreComponent::StartBoosterPackEvent(UBoosterPackData* InData)
 		{
 			CurBoosterPack = BoosterPacks[i];
 			BoosterPacks.RemoveAt(i);
-			break; 
+			break;
 		}
 	}
 
 	check(CurBoosterPack);
-	
-	/*  
-		1) 타로카드 고르는 View 키기 
+
+	/*
+		1) 타로카드 고르는 View 키기
 		2) 부스터팩 정보 가지고와서 아이템뷰에 타로 카드 넣기
 	*/
-	
+
 	PS->SetSelectPackType(CurBoosterPack);
 	PS->SetPlayerState(EPlayerStateType::ITEM_SELECT);
-	
+
 
 	VM_MainMenu->SetClearFlag(true);
 

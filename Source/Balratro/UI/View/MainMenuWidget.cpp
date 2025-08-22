@@ -80,7 +80,7 @@ void UMainMenuWidget::NativeConstruct()
 	if (CadDeckView == nullptr)
 	{
 		CadDeckView = LoadClass<UCardDeckView>(nullptr, TEXT("/Game/UI/View/CardDeck/WBP_CardDeck.WBP_CardDeck_C"));
-		CurViewName = "CadDeckView";
+		CurViewName = "CardDeckView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(CadDeckView));
 		/*if (BlindWidget)
 		{

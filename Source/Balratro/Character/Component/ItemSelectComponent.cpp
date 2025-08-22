@@ -14,6 +14,7 @@
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/MVVM/ViewModel/VM_Store.h"
 #include "UI/MVVM/ViewModel/VM_ItemSelect.h"
+#include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
 // Called when the game starts
 void UItemSelectComponent::BeginPlay()
@@ -22,15 +23,23 @@ void UItemSelectComponent::BeginPlay()
 
 	auto PS = GetPlayerState();
 	auto VM_Stroe = GetVMPStore();
-	
+	auto VM_CardDeck = GetVMCardDeck();
+
 	InitTaroInfoTable();
 
 	PS->OnSelectNextScene.AddUObject(this, &UItemSelectComponent::SetItemSelectView);
+
+
+	VM_CardDeck->OnSkipButtonClicked.AddUObject(this, &UItemSelectComponent::ItemSelectSceneSkip);
+
 }
 
 void UItemSelectComponent::InitTaroInfoTable()
 {
 	auto Datas = UBBGameSingleton::Get().GetTaroStatTable();
+	auto PS = GetPlayerState();
+
+	TArray<class UTaroStat_Info*> TaroTable;
 
 	for (const auto& Info : Datas)
 	{
@@ -40,8 +49,23 @@ void UItemSelectComponent::InitTaroInfoTable()
 		NewData->Info.useNum = Info->useNum;
 		NewData->Info.SpriteAsset = Info->SpriteAsset;
 
-		CurTaroStatTable.Add(NewData);
+		TaroTable.Add(NewData);
 	}
+
+	PS->SetTaroStatTable(TaroTable);
+}
+
+void UItemSelectComponent::ItemSelectSceneSkip()
+{
+	auto VM_MainMenu = GetVMMainWidget();
+	auto PS = GetPlayerState();
+	
+	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("ItemSelectView", false));
+	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", false));
+
+	PS->SetNextRound();
+
+	PS->SetPlayerState(EPlayerStateType::STORE);
 }
 
 void UItemSelectComponent::SetItemSelectView(EPlayerStateType _InType)
@@ -69,7 +93,7 @@ void UItemSelectComponent::SetItemList()
 	// 메가면 2장 선택 아니면 1장 선택
 	
 	TSet<int32> IndexList = SetTaroType();
-	for (UTaroStat_Info* Info : CurTaroStatTable)
+	for (UTaroStat_Info* Info : PS->GetTaroStatTable())
 	{
 		if (Info && IndexList.Contains(Info->Info.index))
 		{
@@ -87,18 +111,20 @@ void UItemSelectComponent::SetItemList()
 
 TSet<int32> UItemSelectComponent::SetTaroType()
 {
+	auto PS = GetPlayerState();
+
 	TSet<int32> IndexArr;
 
 	while (IndexArr.Num() < 5)
 	{
 		int32 TotalWeight = 0;
-		for (auto& Elem : CurTaroStatTable)
+		for (auto& Elem : PS->GetTaroStatTable())
 			TotalWeight += Elem->Info.weight;
 
 		int32 RandomValue = FMath::RandRange(1, TotalWeight);
 		int32 Accumulated = 0;
 
-		for (auto& Elem : CurTaroStatTable)
+		for (auto& Elem : PS->GetTaroStatTable())
 		{
 			Accumulated += Elem->Info.weight;
 			if (RandomValue <= Accumulated)
@@ -153,4 +179,16 @@ AMyPlayerState* UItemSelectComponent::GetPlayerState()
 	const auto Pawn = Cast<APawn>(GetOwner());
 	auto PlayerState = Pawn->GetController()->GetPlayerState<AMyPlayerState>();
 	return PlayerState;
+}
+
+UVM_CardDeck* UItemSelectComponent::GetVMCardDeck()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_CardDeck");
+	Context.ContextClass = UVM_CardDeck::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_CardDeck>(Found);
 }

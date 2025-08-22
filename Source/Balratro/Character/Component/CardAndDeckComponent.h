@@ -40,7 +40,10 @@ private:
 
 	void    FinishHandPlay();
 
-	void	UseTaroItem(TArray<FDeckCardStat> CurCardDatas);
+	void	UseTaroItem(TArray<FDeckCardStat>& CurCardDatas, FTaroStat TaroStat);
+
+
+	void	ItemSelectSceneSkip();
 
 private:
 	class UVM_CardDeck*		GetVMCardDeck();
@@ -51,7 +54,7 @@ private:
 
 private:
 	int32  CurDrawIndex = 0;
-	TArray<FDeckCardStat> _CurData;
+	TArray<FDeckCardStat> _CurData; // 타이머를 위해 저장하는 단순 변수
 	int32 _CardNum = 0;
 	float _DelayTime = 0.f;
 	int32 ResultScore = 0;

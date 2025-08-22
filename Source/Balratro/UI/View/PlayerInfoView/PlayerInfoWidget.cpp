@@ -14,6 +14,7 @@
 
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_BlindSelect.h"
+#include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
 #include "Animation/WidgetAnimation.h"
 
@@ -139,9 +140,8 @@ void UPlayerInfoWidget::VM_FieldChanged_CurPlayerHandCount(UObject* Object, UE::
 }
 
 void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE::FieldNotification::FFieldId FieldId)
-{
+{	
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
-	
 	FString MyFString = ChipText->GetText().ToString();
 	int Value = VMInstance->GetCurChip();
 
@@ -181,7 +181,6 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE:
 void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
-
 	int Value = VMInstance->GetCurDrainage();
 	FString MyFString = DrainageText->GetText().ToString();
 

@@ -26,33 +26,31 @@ void URewardComponent::BeginPlay()
 
 void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 {
-	if (EPlayerStateType::REWARD != InType)
+	if (EPlayerStateType::REWARD == InType)
 	{
-		return;
+		auto VM_MainWidget = GetVMMainWidget();
+		auto PS = GetPlayerState();
+		auto VM_PI = GetVMPlayerInfo();
+		auto VM_Reward = GetVMReward();
+
+		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("RewardView", true));
+
+		int32 RestHands = PS->GetMaxHandCount() - PS->GetUseHandCount();
+		int32 RestChucks = PS->GetMaxChuckCount() - PS->GetUseChuckCount();
+		int32 CurGold = PS->GetGold();
+		int32 BlindGrade = VM_PI->GetBlindGrade();
+		int32 BlindReward = VM_PI->GetBlindReward();
+		int32 BlindImageIndex = VM_PI->GetBlindImageIndex();
+
+		EarnGold = RestHands + BlindReward + (CurGold / 5);
+		VM_Reward->SetEarnGold(EarnGold);		// Order 0
+
+		VM_Reward->SetBlindReward(BlindReward);  // Order 1
+		VM_Reward->SetRestHands(RestHands);		// Order 2
+		VM_Reward->SetInterest(CurGold / 5);	// Order 3
+		VM_Reward->SetBlindGrade(BlindGrade);	// Order 4
+		VM_Reward->SetBlindImageIndex(BlindImageIndex); // Order 5
 	}
-	
-	auto VM_MainWidget = GetVMMainWidget();
-	auto PS = GetPlayerState();
-	auto VM_PI = GetVMPlayerInfo();
-	auto VM_Reward = GetVMReward();
-
-	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("RewardView", true));
-
-	int32 RestHands = PS->GetMaxHandCount() - PS->GetUseHandCount();
-	int32 RestChucks = PS->GetMaxChuckCount() - PS->GetUseChuckCount();
-	int32 CurGold = PS->GetGold();
-	int32 BlindGrade = VM_PI->GetBlindGrade();
-	int32 BlindReward = VM_PI->GetBlindReward();
-	int32 BlindImageIndex = VM_PI->GetBlindImageIndex();
-
-	EarnGold = RestHands + BlindReward + (CurGold / 5);
-	VM_Reward->SetEarnGold(EarnGold);		// Order 0
-
-	VM_Reward->SetBlindReward(BlindReward);  // Order 1
-	VM_Reward->SetRestHands(RestHands);		// Order 2
-	VM_Reward->SetInterest(CurGold / 5);	// Order 3
-	VM_Reward->SetBlindGrade(BlindGrade);	// Order 4
-	VM_Reward->SetBlindImageIndex(BlindImageIndex); // Order 5
 
 }
 
@@ -66,6 +64,9 @@ void URewardComponent::StartStoreView()
 
 	PS->SetNextRound();
 	PS->SetPlayerState(EPlayerStateType::STORE);
+	
+	PS->SetHaveBoosterPackNum(2); // 나중에 넣기
+	
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("RewardView", false));
 }
 
