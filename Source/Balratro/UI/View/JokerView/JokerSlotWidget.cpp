@@ -32,20 +32,20 @@ void UJokerSlotWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	AddButton->OnClicked.AddDynamic(this, &UJokerSlotWidget::AddClicked);
-	RemoveButton->OnClicked.AddDynamic(this, &UJokerSlotWidget::RemoveClicked);
+	//AddButton->OnClicked.AddDynamic(this, &UJokerSlotWidget::AddClicked);
+	//RemoveButton->OnClicked.AddDynamic(this, &UJokerSlotWidget::RemoveClicked);
 }
 
 void UJokerSlotWidget::VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInstance = Cast<UVM_JockerSlot>(Object);
-	StatusTextBlock->SetText(VMInstance->GetStatus() == EPartyStatus::Ready ? FText::FromString("Ready") : FText::FromString(("Not ready!")));
+	//StatusTextBlock->SetText(VMInstance->GetStatus() == EPartyStatus::Ready ? FText::FromString("Ready") : FText::FromString(("Not ready!")));
 }
 
 void UJokerSlotWidget::VM_FieldChanged_Players(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInstance = Cast<UVM_JockerSlot>(Object);
-	PartyListView->SetListItems(VMInstance->GetPlayers());
+	//PartyListView->SetListItems(VMInstance->GetPlayers());
 }
 
 void UJokerSlotWidget::AddClicked()

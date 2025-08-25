@@ -25,7 +25,7 @@ protected:
 	void	ItemSelectSceneSkip();
 
 private:
-	TSet<int32>	 SetTaroType();
+	TSet<int32>	 SetTaroType(int32 SetTaroNum);
 
 
 private:

@@ -85,11 +85,19 @@ void UItemSelectComponent::SetItemList()
 	CurShowTaroInfo.Empty();
 	//// PackType == > Taro / Ghost / Orb / CardPack 에 따라 다르게 세팅
 
-	bool IsMega = (static_cast<int32>(PackType->GetType()) % 2) ? true : false ;
-	// 5장은 리스트에 올려야됌
+	int32 IsMegaNum = (static_cast<int32>(PackType->GetType()) % 2) ? 5 : 3 ;
+	// 메가 5장, 노말 3장 리스트에 올려야됌
 	// 메가면 2장 선택 아니면 1장 선택
-	
-	TSet<int32> IndexList = SetTaroType();
+	if (IsMegaNum == 5)
+	{
+		PS->SetCurSelectTaroNum(2);
+	}
+	else
+	{
+		PS->SetCurSelectTaroNum(1);
+	}
+
+	TSet<int32> IndexList = SetTaroType(IsMegaNum);
 	for (UTaroStat_Info* Info : PS->GetTaroStatTable())
 	{
 		if (Info && IndexList.Contains(Info->Info.index))
@@ -106,13 +114,13 @@ void UItemSelectComponent::SetItemList()
 	VM_ItemSelectView->SetShowTaroInfo(CurShowTaroInfo);
 }
 
-TSet<int32> UItemSelectComponent::SetTaroType()
+TSet<int32> UItemSelectComponent::SetTaroType(int32 SetTaroNum)
 {
 	auto PS = GetPlayerState();
 
 	TSet<int32> IndexArr;
 
-	while (IndexArr.Num() < 5)
+	while (IndexArr.Num() < SetTaroNum)
 	{
 		int32 TotalWeight = 0;
 		for (auto& Elem : PS->GetTaroStatTable())

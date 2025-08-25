@@ -167,6 +167,9 @@ public:
 	FORCEINLINE const TArray<class UTaroStat_Info*>& GetTaroStatTable()  const { return CurTaroStatTable; }
 	FORCEINLINE void  SetTaroStatTable(class TArray<class UTaroStat_Info*>& InValue) { CurTaroStatTable = InValue; }
 
+	FORCEINLINE int32 GetCurSelectTaroNum() { return CurSelectTaroNum; }
+	FORCEINLINE void  SetCurSelectTaroNum(int32 InValue) { CurSelectTaroNum = InValue; }
+
 
 	FORCEINLINE int32 GetHaveBoosterPackNum() { return HaveBoosterPackNum; }
 	FORCEINLINE void  SetHaveBoosterPackNum(int32 InValue) { HaveBoosterPackNum = InValue;  FMath::Max(MaxHaveBoosterPackNum, HaveBoosterPackNum);}
@@ -228,5 +231,7 @@ private:
 
 	UPROPERTY()
 	TArray<class UTaroStat_Info*>	CurTaroStatTable;   // 현재 내 타로 카드 리스트
+
+	int32 CurSelectTaroNum = 0;
 
 };

@@ -109,11 +109,12 @@ void UCardAndDeckComponent::FinishHandPlay()
 		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", false));
 
 		PS->SetPlayerState(EPlayerStateType::REWARD);
+
+		// 게임 끝나면 초기화 하는게 맞는듯? (마땅한 자리가 없음)
+		GetWorld()->GetTimerManager().ClearTimer(ItemSkipTimerHandle);
 	}
 	else
 	{
-		GetWorld()->GetTimerManager().ClearTimer(TotalScoreHandle);
-		
 		PS->SetCurrentScore(ResultScore);
 		UpdateCardInHand(_CurData);
 		DrawCard(_CardNum);
@@ -126,6 +127,8 @@ void UCardAndDeckComponent::UseTaroItem(FTaroStat& TaroStat)
 	auto VM = GetVMCardDeck();
 
 	auto TaroTable = PS->GetTaroStatTableModify();
+
+	int32 TaroSelectCount = PS->GetCurSelectTaroNum();
 
 	for (auto& Info : TaroTable)
 	{
@@ -150,6 +153,29 @@ void UCardAndDeckComponent::UseTaroItem(FTaroStat& TaroStat)
 	}
 
 	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
+
+	// 현재 부스터팩에서 사용할 타로 횟수가 끝나면 자동으로 상점으로 변환
+	if (TaroSelectCount - 1 == 0) 
+	{
+		GetWorld()->GetTimerManager().SetTimer(
+			ItemSkipTimerHandle,
+			[VM]()
+			{
+				if (VM)
+				{
+					VM->SkipButtonClicked();
+				}
+			},
+			1.f,
+			false
+		);
+	}
+	else
+	{
+		PS->SetCurSelectTaroNum(TaroSelectCount - 1);
+		GetWorld()->GetTimerManager().ClearTimer(TotalScoreHandle);
+	}
+
 }
 
 void UCardAndDeckComponent::UseEnhanceTaro(int32 EnhanceType)

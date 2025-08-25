@@ -70,11 +70,11 @@ void UMainMenuWidget::NativeConstruct()
 		JokerSlotView = LoadClass<UJokerSlotWidget>(nullptr, TEXT("/Game/UI/View/Joker/WBP_JokerSlot.WBP_JokerSlot_C"));
 		CurViewName = "JokerSlotView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(JokerSlotView));
-		/*if (BlindWidget)
+		if (BlindWidget)
 		{
 			BlindWidget->SetVisibility(ESlateVisibility::Visible);
 			CanvasSlot->AddChildToCanvas(BlindWidget);
-		}*/
+		}
 	}
 
 	if (CadDeckView == nullptr)

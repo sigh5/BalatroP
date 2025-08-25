@@ -1,3 +1,13 @@
-Name,Skill
-Base,0
-Temp,1
+Name,JokerType,JokerGrade,JokerSFX,price,UseNum,
+Base,0,0,0,3,0,
+Temp,1,0,0,3,0,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,

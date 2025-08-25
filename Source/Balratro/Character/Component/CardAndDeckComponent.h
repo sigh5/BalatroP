@@ -40,7 +40,7 @@ private:
 	void	UseEnhanceTaro(int32 EnhanceType);
 	void	UseSealTaro(int32 SealType);
 	void	UseGhostTaro(int32 GhostType);
-
+	//void	UseGameDataTaro();
 
 
 private:
@@ -58,4 +58,6 @@ private:
 	int32 ResultScore = 0;
 
 	FTimerHandle TotalScoreHandle;
+
+	FTimerHandle ItemSkipTimerHandle;
 };

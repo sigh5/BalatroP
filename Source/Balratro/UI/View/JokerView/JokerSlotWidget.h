@@ -26,7 +26,7 @@ protected:
 	void VM_FieldChanged_Players(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 private:
-	UPROPERTY(meta = (BindWidget))
+	/*UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UListView> PartyListView;
 
 	UPROPERTY(meta = (BindWidget))
@@ -36,7 +36,7 @@ private:
 	TObjectPtr<class UButton> AddButton;
 	
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UButton> RemoveButton;
+	TObjectPtr<class UButton> RemoveButton;*/
 
 	UFUNCTION()
 	void AddClicked();

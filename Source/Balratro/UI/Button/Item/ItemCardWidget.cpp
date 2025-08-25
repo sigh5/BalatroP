@@ -98,16 +98,21 @@ void UItemCardWidget::OnItemUseClicked()
 		VM_Inst->UseTaroItem(TaroData);
 		// 0인 애들은 그냥 사용가능함
 	}
-	else if (TaroData.maxUseCardNum > 0 && TaroData.maxUseCardNum < CurCards.Num())
-	{
-		// 0이 아니고 제한 개수에 안걸림
-		VM_Inst->UseTaroItem(TaroData);
-		this->SetVisibility(ESlateVisibility::Collapsed);
-	}
 	else
 	{
-		// 화면 흔들리는 애니메이션 필요
-		return;
+		UE_LOG(LogTemp, Warning, TEXT("CurCardsdNum : %d"), CurCards.Num());
+
+		if (TaroData.maxUseCardNum >= CurCards.Num())
+		{
+			// 0이 아니고 제한 개수에 안걸림
+			VM_Inst->UseTaroItem(TaroData);
+			this->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		else
+		{
+			// 화면 흔들리는 애니메이션 필요
+			return;
+		}
 	}
 }
 
