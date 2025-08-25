@@ -250,7 +250,7 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 	}
 
 
-	VM->SetCurCardsData(CurCardsInfo);
+	VM->SetCurCardsData(CurCardsInfo); // 보여주는 카드 점수 계산하는거
 	
 	int32 CurCardNum = CurPlayCards.Num();
 	int32 EnforceTypeNum = 0;
@@ -268,7 +268,7 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 		}
 	}
 
-	float CurDelayTime = (CurCardNum)+(EnforceTypeNum)+(GhostTypeNum);
+	float CurDelayTime = (CurCardNum)+(EnforceTypeNum * 0.25f) + (GhostTypeNum * 0.25f);
 	_DelayTime = CurDelayTime;
 
 	// 여기서 이제 

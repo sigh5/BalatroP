@@ -147,7 +147,7 @@ void UCardDeckView::VM_FieldChanged_CurPlayCardData(UObject* Object, UE::FieldNo
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([&]()
 		{
-			CardChipScoreText();
+			CardChipScore_EffectText();
 		});
 	
 	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, TimerDelegate, 0.5f, true, 0.f);
@@ -225,7 +225,7 @@ void UCardDeckView::OnHandPlayButtonClicked()
 	VMInst->UseHandPlay(SelectedNum, CardStatInfo);
 }
 
-void UCardDeckView::CardChipScoreText()
+void UCardDeckView::CardChipScore_EffectText()
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	auto& Data = VMInst->GetCurCardsData();
@@ -238,29 +238,7 @@ void UCardDeckView::CardChipScoreText()
 	else
 	{
 		int32 ChipGrade = Data[CurPlayCardNum].BaseChip;
-		int32 DraiageGrade = 0;
-
-		EnforceStatType Type = Data[CurPlayCardNum].EnforceType;
-		switch (Type)
-		{
-		case EnforceStatType::NONE:
-			break;
-		case EnforceStatType::CHIP_PLUS:
-			ChipGrade += 40;
-			break;
-		case EnforceStatType::DRAINAGE:
-			DraiageGrade += 4;
-			break;
-		case EnforceStatType::STEEL:
-			break;
-		case EnforceStatType::GOLD:
-			break;
-		case EnforceStatType::GLASS:
-			break;
-		default:
-			break;
-		}
-
+		
 		UCardButtonWidget* CurCardButton = nullptr;
 		for (auto& Card : HandCardButtons)
 		{
@@ -282,7 +260,6 @@ void UCardDeckView::CardChipScoreText()
 			CurChip += Data[CurPlayCardNum].BaseChip;
 			VM_PlayerInfo->SetCurChip(CurChip);
 
-
 			FGeometry CardGeo = CurCardButton->GetCachedGeometry();
 			FVector2D AbsPos = CardGeo.GetAbsolutePosition();
 			FVector2D Size = CardGeo.GetLocalSize();
@@ -303,6 +280,44 @@ void UCardDeckView::CardChipScoreText()
 		}
 	}
 	++CurPlayCardNum;
+}
+
+void UCardDeckView::CardDraiageScore_EffextText()
+{
+	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+	auto& Data = VMInst->GetCurCardsData();
+
+	if (CurPlayCardNum >= Data.Num())
+	{
+		DraiageText->SetVisibility(ESlateVisibility::Collapsed);
+		GetWorld()->GetTimerManager().ClearTimer(MyTimerHandle);
+	}
+	else
+	{
+		int32 ChipGrade = Data[CurPlayCardNum].BaseChip;
+		int32 DraiageGrade = 0;
+		EnforceStatType Type = Data[CurPlayCardNum].EnforceType;
+		switch (Type)
+		{
+		case EnforceStatType::NONE:
+			break;
+		case EnforceStatType::CHIP_PLUS:
+			ChipGrade += 40;
+			break;
+		case EnforceStatType::DRAINAGE:
+			DraiageGrade += 4;
+			break;
+		case EnforceStatType::STEEL:
+			break;
+		case EnforceStatType::GOLD:
+			break;
+		case EnforceStatType::GLASS:
+			break;
+		default:
+			break;
+		}
+
+	}
 }
 
 bool UCardDeckView::SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum)

@@ -40,8 +40,8 @@ protected:
 	void OnHandPlayButtonClicked();
 
 private:
-	void  CardChipScoreText();
-
+	void  CardChipScore_EffectText();
+	void  CardDraiageScore_EffextText();
 
 private:
 	bool  SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum);
