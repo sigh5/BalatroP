@@ -39,9 +39,10 @@ void UStoreComponent::BeginPlay()
 	VM->OnBuyBoosterPack.AddUObject(this, &UStoreComponent::StartBoosterPackEvent);
 
 
-	// 디버그용
+#ifdef Store_View_TEST
 	SetDownStoreItem();
-	
+	SetUpStoreItem();
+#endif
 }
 
 void UStoreComponent::SetStoreView(EPlayerStateType _InType)
@@ -74,7 +75,34 @@ void UStoreComponent::ReRollCostUp()
 
 void UStoreComponent::SetUpStoreItem()
 {
+	auto PS = GetPlayerState();
+	auto VM_Stroe = GetVMPStore();
 
+	JokerCards.Empty();
+
+	int32 UpStoreItemNum = PS->GetHaveUpStoreNum();
+	
+	for (int i = 0; i < UpStoreItemNum; ++i)
+	{
+		EJokerType ItemType = SetJokerType();
+		UJokerCard_Info* CurJoker = NewObject<UJokerCard_Info>();
+
+		int32 ItemIndex = i; //static_cast<int32>(ItemType);
+		FString ItemIndexStr = FString::FromInt(ItemIndex);
+		FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Jokers_Sprite_%s.Jokers_Sprite_%s"), *ItemIndexStr, *ItemIndexStr);
+		CurJoker->Info.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+		if (!CurJoker->Info.CardSprite.IsValid())
+		{
+			CurJoker->Info.CardSprite.LoadSynchronous();
+		}
+
+		CurJoker->Info.JokerType = ItemType;
+		
+		CurJoker->Info.Price = 3;
+		JokerCards.Add(CurJoker);
+	}
+
+	VM_Stroe->SetStoreJokerData(JokerCards);
 }
 
 void UStoreComponent::SetBoucherItem()
@@ -98,7 +126,7 @@ void UStoreComponent::SetDownStoreItem()
 			EBoosterPackType ItemType = SetItemType();
 			UBoosterPackData* CurPack = NewObject<UBoosterPackData>();
 
-			int32 ItemIndex = i; //static_cast<int32>(ItemType);
+			int32 ItemIndex = static_cast<int32>(ItemType);
 			FString ItemIndexStr = FString::FromInt(ItemIndex);
 			FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Booster/boosters_Sprite_%s.boosters_Sprite_%s"), *ItemIndexStr, *ItemIndexStr);
 			CurPack->PackMesh = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
@@ -133,6 +161,13 @@ EBoosterPackType UStoreComponent::SetItemType()
 	}
 
 	return EBoosterPackType::NONE;
+}
+
+EJokerType UStoreComponent::SetJokerType()
+{
+
+
+	return EJokerType::BASE_JOKER;
 }
 
 void UStoreComponent::StartBoosterPackEvent(UBoosterPackData* InData)

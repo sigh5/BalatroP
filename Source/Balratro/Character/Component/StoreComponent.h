@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "GameData/BlindStat.h"
 #include "Item/BoosterPackData.h"
+#include "GameData/JokerStat.h"
 #include "StoreComponent.generated.h"
 
 USTRUCT()
@@ -28,26 +29,32 @@ protected:
 private:
 	void	SetStoreView(EPlayerStateType _InType);
 	void	ReRollCostUp();
+	void	StartBoosterPackEvent(UBoosterPackData* InData);
 
+private:	
 	void	SetUpStoreItem();
 	void	SetBoucherItem();
 	void	SetDownStoreItem();
 
+private:
 	EBoosterPackType	SetItemType();
-
-	void	StartBoosterPackEvent(UBoosterPackData* InData);
+	EJokerType			SetJokerType();
 
 private:
-	class UVM_PlayerInfo* GetVMPlayerInfo();
-	class UVM_Store*	  GetVMPStore();
-	class AMyPlayerState* GetPlayerState();
-	class UVM_MainMenu* GetVMMainWidget();
+	class UVM_PlayerInfo*	GetVMPlayerInfo();
+	class UVM_Store*		GetVMPStore();
+	class AMyPlayerState*	GetPlayerState();
+	class UVM_MainMenu*		GetVMMainWidget();
 
 private:
 	TArray<FItemWeight> ItemWeights;  
 
+	// 상점이 가지고 있어야되는 이유 플레이어가 아직 소유한 것이 아닌 상점소유 데이터라서
 	UPROPERTY()
-	TArray<class UBoosterPackData*> BoosterPacks;
+	TArray<class UBoosterPackData*> BoosterPacks; 
+
+	UPROPERTY()
+	TArray<class UJokerCard_Info*> JokerCards;
 
 
 	int32 BoosterPackIndex = 0;

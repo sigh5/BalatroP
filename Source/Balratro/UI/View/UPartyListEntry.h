@@ -21,9 +21,4 @@ protected:
 private:
 	void UpdateVisuals();
 
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UTextBlock> NameTextBlock;
-
-	UPROPERTY()
-	TObjectPtr<class UPartJoker> MemberData;
 };

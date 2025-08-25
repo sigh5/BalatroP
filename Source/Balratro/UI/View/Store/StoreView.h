@@ -24,6 +24,9 @@ protected:
 private:
 	void VM_FieldChanged_BoosterPacks(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+	void VM_FieldChanged_UpStoreJoker(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
+
 private:
 	UFUNCTION()
 	void OnNextButton();
@@ -34,6 +37,7 @@ private:
 private:
 	class UBoosterPackWidget* ReUseWidget(int32 DataNum, int32 Index,class UBoosterPackData* Data);
 
+	class UJokerCardWidget* ReUseJokerWidget(int32 DataNum, int32 Index, class UJokerCard_Info* Data);
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -46,7 +50,7 @@ private:
 	TObjectPtr<class UTextBlock> ReRollText;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UHorizontalBox> UpHorizontalBox;
+	TObjectPtr<class UHorizontalBox> UpHorizontalBox;	
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UHorizontalBox> BoucherHorizontalBox;
@@ -57,9 +61,14 @@ private:
 	UPROPERTY()
 	TSubclassOf<class UBoosterPackWidget> BoosterPackWidgetSubClass;
 
+	UPROPERTY()
+	TSubclassOf<class UJokerCardWidget> JokerCardWidgetSubClass;
+
 private:
 	UPROPERTY()
 	TArray<class UBoosterPackWidget*> BoosterPackWidgets;
 
+	UPROPERTY()
+	TArray<class UJokerCardWidget*> JokercardWidgets;
 
 };

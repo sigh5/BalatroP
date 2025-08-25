@@ -12,6 +12,16 @@
 #include "MyPlayerState.generated.h"
 
 
+// First  Test
+// 디버그일때만 사용 릴리즈 일때 꺼야됌
+#define Bline_View_TEST
+//#define Store_View_TEST
+#define PlayerInfoView_VIEW_TEST
+#define JokerSlotView_VIEW_TEST
+//#define CadDeckView_View_TEST
+
+
+
 UENUM()
 enum class EHandInCardSortType : uint8
 {
@@ -33,6 +43,8 @@ DECLARE_MULTICAST_DELEGATE(FOnSetCurrentGold);
 DECLARE_MULTICAST_DELEGATE(FOnSetEntiCount);
 DECLARE_MULTICAST_DELEGATE(FOnShowUIChip);  //FOnPlayerInfoShowBaseChip
 DECLARE_MULTICAST_DELEGATE(FOnShowUIDrainage);
+
+
 
 //DECLARE_MULTICAST_DELEGATE(FOnScoreEffectStart);
 
@@ -138,7 +150,7 @@ public:
 
 	FORCEINLINE TArray<class UJokerCard_Info*>& GetCurrentJokerCardsModify() { return CurJokerCardInfo; }
 	FORCEINLINE const TArray<class UJokerCard_Info*>& GetCurrentJokerCards() const { return CurJokerCardInfo; }
-	FORCEINLINE void SetCurrentJokerCards(TArray<class UJokerCard_Info*>& InValue) { CurJokerCardInfo = InValue; }
+	FORCEINLINE void SetCurrentJokerCards(TArray<class UJokerCard_Info*>& InValue) { CurJokerCardInfo = InValue;}
 
 	void AddCurrentJokerCard(const FJokerStat& Info)
 	{
@@ -176,6 +188,9 @@ public:
 
 	FORCEINLINE int32 GetMaxHaveBoosterPackNum() { return MaxHaveBoosterPackNum; }
 
+	FORCEINLINE int32 GetHaveUpStoreNum() { return HaveUpStoreNum; }
+	FORCEINLINE void  SetHaveUpStoreNum(int32 InValue) { HaveUpStoreNum = InValue; }
+
 private:
 	int32 RoundCount;
 	
@@ -202,6 +217,9 @@ private:
 	int32		RerollCost = 5;
 	int32		HaveBoosterPackNum = 2;
 	int32		MaxHaveBoosterPackNum = 2;
+
+	int32		HaveUpStoreNum = 2;
+	
 
 
 

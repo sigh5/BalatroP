@@ -32,11 +32,9 @@ void UCardAndDeckComponent::BeginPlay()
 	VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
 	VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
 	VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::UpdateHandPlay);
-	
 
 	VM_ItemSelcet->OnUseTaroCard.AddUObject(this, &UCardAndDeckComponent::UseTaroItem);
-	//VM->OnSkipButtonClicked.AddUObject(this, &UCardAndDeckComponent::Test111);
-	// 디버그용
+
 	//InitDeck();
 }
 

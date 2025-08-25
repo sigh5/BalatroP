@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/View/Core/BBUserWidgetBase.h"
+#include "GameData/JokerStat.h"
 #include "JokerSlotWidget.generated.h"
 
 
@@ -22,27 +23,25 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
 
-	void VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-	void VM_FieldChanged_Players(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+private:
+	void VM_FieldChanged_AddJokerCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
 
 private:
-	/*UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UListView> PartyListView;
+	class UJokerCardWidget* ReuseCardButtonWidget(int32 AllNum, int32 Index, UJokerCard_Info* Data);
 
+
+private:
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UTextBlock> StatusTextBlock;
+	TObjectPtr<class UWrapBox> JokerWrapBox;
 
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UButton> AddButton;
-	
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UButton> RemoveButton;*/
+private:
+	UPROPERTY()
+	TSubclassOf<class UJokerCardWidget> JokerCardSubClass;
 
-	UFUNCTION()
-	void AddClicked();
-	UFUNCTION()
-	void RemoveClicked();
-	
-	int32 TotalAddedCount = 0;
+	UPROPERTY()
+	TArray<TObjectPtr<class UJokerCardWidget>> JokerButtons;
 
+private:
+	const int32 PaddingX = 8;
 };

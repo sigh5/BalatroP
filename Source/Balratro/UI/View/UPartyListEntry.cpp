@@ -8,20 +8,12 @@
 
 void UUPartyListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
-	if (auto PartyMemberData = Cast<UPartJoker>(ListItemObject))
-	{
-		MemberData = PartyMemberData;
-	}
+	
 
 	UpdateVisuals();
 }
 
 void UUPartyListEntry::UpdateVisuals()
 {
-	if (!IsValid(MemberData))
-	{
-		return;
-	}
 
-	NameTextBlock->SetText(MemberData->Name);
 }

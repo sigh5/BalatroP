@@ -22,6 +22,8 @@ private:
 	void UpdateJoker();
 	void CalculatorJoker(UJokerCard_Info* JokerCard);
 
+	void UpdateAddJoker(FJokerStat& Data);
+
 
 private:
 	class UVM_PlayerInfo* GetVMPlayerInfo();

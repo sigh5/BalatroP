@@ -17,6 +17,9 @@
 #include "UI/View/Reward/RewardView.h"
 #include "UI/View/ItemSelect/ItemSelectView.h"
 
+// 디버그일떄만
+#include "Core/MyPlayerState.h"
+
 UMainMenuWidget::UMainMenuWidget()
 {
 	ViewModelClass = UVM_MainMenu::StaticClass();
@@ -44,13 +47,16 @@ void UMainMenuWidget::NativeConstruct()
 	{
 		BlindSelectView = LoadClass<UBlindSelectView>(nullptr, TEXT("/Game/UI/View/SelectBlind/WBP_SelectBlind.WBP_SelectBlind_C"));
 		CurViewName = "SelectBlindView";
-
-	/*	UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(BlindSelectView));
+		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(BlindSelectView));
+		
+#ifdef Bline_View_TEST
 		if (BlindWidget)
 		{
 			BlindWidget->SetVisibility(ESlateVisibility::Visible);
 			CanvasSlot->AddChildToCanvas(BlindWidget);
-		}*/
+		}
+#endif
+
 	}
 
 	if (PlayerInfoView == nullptr)
@@ -58,11 +64,14 @@ void UMainMenuWidget::NativeConstruct()
 		PlayerInfoView = LoadClass<UPlayerInfoWidget>(nullptr, TEXT("/Game/UI/View/PlayerInfo/WBP_PlayerInfo.WBP_PlayerInfo_C"));
 		CurViewName = "PlayerInfoView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(PlayerInfoView));
+		
+#ifdef PlayerInfoView_VIEW_TEST
 		if (BlindWidget)
 		{
 			BlindWidget->SetVisibility(ESlateVisibility::Visible);
 			CanvasSlot->AddChildToCanvas(BlindWidget);
 		}
+#endif
 	}
 
 	if (JokerSlotView == nullptr)
@@ -70,11 +79,14 @@ void UMainMenuWidget::NativeConstruct()
 		JokerSlotView = LoadClass<UJokerSlotWidget>(nullptr, TEXT("/Game/UI/View/Joker/WBP_JokerSlot.WBP_JokerSlot_C"));
 		CurViewName = "JokerSlotView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(JokerSlotView));
+	
+#ifdef JokerSlotView_VIEW_TEST
 		if (BlindWidget)
 		{
 			BlindWidget->SetVisibility(ESlateVisibility::Visible);
 			CanvasSlot->AddChildToCanvas(BlindWidget);
 		}
+#endif
 	}
 
 	if (CadDeckView == nullptr)
@@ -82,11 +94,14 @@ void UMainMenuWidget::NativeConstruct()
 		CadDeckView = LoadClass<UCardDeckView>(nullptr, TEXT("/Game/UI/View/CardDeck/WBP_CardDeck.WBP_CardDeck_C"));
 		CurViewName = "CardDeckView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(CadDeckView));
-		/*if (BlindWidget)
+		
+#ifdef 	CadDeckView_View_TEST
+		if (BlindWidget)
 		{
 			BlindWidget->SetVisibility(ESlateVisibility::Visible);
 			CanvasSlot->AddChildToCanvas(BlindWidget);
-		}*/
+		}
+#endif
 	}
 
 	if (StoreView == nullptr)
@@ -94,11 +109,15 @@ void UMainMenuWidget::NativeConstruct()
 		StoreView = LoadClass<UStoreView>(nullptr, TEXT("/Game/UI/View/StoreView/WBP_Stroe.WBP_Stroe_C"));
 		CurViewName = "StoreView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(StoreView));
+	
+#ifdef Store_View_TEST
 		if (BlindWidget)
 		{
 			BlindWidget->SetVisibility(ESlateVisibility::Visible);
 			CanvasSlot->AddChildToCanvas(BlindWidget);
 		}
+#endif
+
 	}
 
 	if (RewardView == nullptr)

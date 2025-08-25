@@ -1,0 +1,77 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "UI/View/Core/BBUserWidgetBase.h"
+#include "GameData/JokerStat.h"
+#include "JokerCardWidget.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class BALRATRO_API UJokerCardWidget : public UBBUserWidgetBase
+{
+	GENERATED_BODY()
+	
+public:
+	UJokerCardWidget();
+
+private:
+	virtual void NativeConstruct()override;
+
+public:
+	void	SetInfo(FJokerStat& _inValue);
+
+	FORCEINLINE const bool	GetSelected() const { return IsSelected; }
+	FORCEINLINE void		SetSelected(bool _Selected) { IsSelected = _Selected; }
+
+	FORCEINLINE const bool	GetIsStoreHave() const { return IsStore; }
+	void		SetIsStoreHave(bool _Selected);
+
+private:
+	UFUNCTION()
+	void					OnJokerButtonClicked();
+
+	UFUNCTION()
+	void					OnSellButtonClicked();
+
+	UFUNCTION()
+	void					OnButtonHover();
+
+private:
+	void					SetInit();
+	void					ChangeJokerImage();
+	void					CreateJokerImage();
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UOverlay> Overlay;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UBorder> BuyBorder;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> BuyPriceText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> MainButton;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> EventButton; // Sell Buy
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> PriceText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> MainImage;
+
+private:
+	FJokerStat		JokerData;
+
+	uint8 IsSelected : 1;
+	uint8 IsCreated : 1;
+
+	uint8 IsStore : 1;  // true 상점거 false 조커뷰
+};

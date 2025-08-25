@@ -8,7 +8,7 @@
 UENUM(BlueprintType)
 enum class EJokerGrade : uint8
 {
-	NONE = -1,
+	NONE = 0,
 	NORMAL,
 	SCREAT,
 	REAR,
@@ -18,7 +18,7 @@ enum class EJokerGrade : uint8
 UENUM(BlueprintType)
 enum class EJokerSFX : uint8 // 조커 포리콜롬 효과
 {
-	NONE = -1,
+	NONE = 0,
 	FOIL, // chip +50
 	DRAINAGE_ADD , //  DRAINAGE + 10
 	DRAINAGE_MUL,  //  DRAINAGE x 1.5
@@ -28,8 +28,7 @@ enum class EJokerSFX : uint8 // 조커 포리콜롬 효과
 UENUM(BlueprintType)
 enum class EJokerType : uint8
 {
-	NONE,
-	BASE_JOKER // 4Drainage
+	BASE_JOKER =0 // 4Drainage
 
 };
 
@@ -39,7 +38,7 @@ struct FJokerStat : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FJokerStat() : Name(""), JokerType(EJokerType::NONE), JokerGrade(EJokerGrade::NONE), JokerSFX(EJokerSFX::NONE), Price(0), UseNum(0) {}
+	FJokerStat() : Name(""), JokerType(EJokerType::BASE_JOKER), JokerGrade(EJokerGrade::NONE), JokerSFX(EJokerSFX::NONE), Price(0), UseNum(0) {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
