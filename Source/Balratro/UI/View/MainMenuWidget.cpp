@@ -16,6 +16,8 @@
 #include "UI/View/Store/StoreView.h"
 #include "UI/View/Reward/RewardView.h"
 #include "UI/View/ItemSelect/ItemSelectView.h"
+#include "UI/View/HandRanking/HandRankingView.h"
+
 
 // 디버그일떄만
 #include "Core/MyPlayerState.h"
@@ -133,6 +135,22 @@ void UMainMenuWidget::NativeConstruct()
 		CurViewName = "ItemSelectView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(ItemSelectView));
 	}
+
+	if (HandRankingView == nullptr)
+	{
+		HandRankingView = LoadClass<UHandRankingView>(nullptr, TEXT("/Game/UI/View/HandRanking/WBP_HandRanking.WBP_HandRanking_C"));
+		CurViewName = "HandRankingView";
+		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(HandRankingView));
+
+#ifdef HandRankingView_View_TEST
+		if (BlindWidget)
+		{
+			BlindWidget->SetVisibility(ESlateVisibility::Visible);
+			CanvasSlot->AddChildToCanvas(BlindWidget);
+		}
+#endif
+	}
+
 
 }
 

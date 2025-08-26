@@ -4,13 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "GameData/DeckCardStat.h"
-#include "GameData/HandRankingStat.h"
-#include "CalculatorScoreInterface.generated.h"
+#include "JokerCalculatorInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UCalculatorScoreInterface : public UInterface
+class UJokerCalculatorInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -18,12 +16,11 @@ class UCalculatorScoreInterface : public UInterface
 /**
  * 
  */
-class BALRATRO_API ICalculatorScoreInterface
+class BALRATRO_API IJokerCalculatorInterface
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual int32 CalCulatorHandRanking(int32 CardNum, TArray<class UHandInCard_Info*>& _DeckCardStat) = 0;
-
+	virtual void CalculatorJokerSkill(OUT int32& CurChip, OUT float& CurDriange) = 0;
 };

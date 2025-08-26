@@ -8,6 +8,7 @@
 #include <MVVMSubsystem.h>
 
 
+#include "Interface/JokerCalculatorInterface.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 #include  "Algo/AnyOf.h"
 
@@ -18,26 +19,28 @@ void UCalculatorHandRankingComponent::BeginPlay()
 	const auto VM_CardDeck = GetVMCardDeck();
 	VM_CardDeck->OnCurPlayHands.AddUObject(this, &UCalculatorHandRankingComponent::SetHandRankName);
 
-	TArray<FDeckCardStat> none; // 초기값 세팅을 위해
+	TArray<UHandInCard_Info*> none; // 초기값 세팅을 위해
 	SetHandRankName(0, none);
 	
 }
 
-int32 UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
+int32 UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat)
 {
+	SetStillCards(_DeckCardStat);
+	
 	SetHandRankingType(CardNum, _DeckCardStat);
 
 	return ResultScore();
 }
 
-void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
+void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat)
 {
 	auto PS = GetPlayerState();
     auto VM_CardDeck = GetVMCardDeck();
 
 	if (PS->GetPlayerState() == EPlayerStateType::ITEM_SELECT)
 	{
-		PS->SetCurCalculatorCardInHands(_DeckCardStat,false);
+		PS->SetCurCalculatorCardInHands0(_DeckCardStat,false);
 	}
 	else
 	{
@@ -55,11 +58,11 @@ void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<FDec
     VM_CardDeck->SetIsUpCardExist(false);
 }
 
-void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
+void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat)
 {
 	auto PS = GetPlayerState();
 
-	TArray<FDeckCardStat> CurCalCulatorCards;
+	TArray<UHandInCard_Info*> CurCalCulatorCards;
 
 	if (CardNum == 0)
 	{
@@ -75,9 +78,9 @@ void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<F
 
 	for (int i = 0; i < CardNum; ++i)
 	{
-		RankCounts.FindOrAdd(_DeckCardStat[i].RankGrade)++;
-		SuitCounts.FindOrAdd(_DeckCardStat[i].SuitGrade)++;
-		UniqueRanks.Add(_DeckCardStat[i].RankGrade);
+		RankCounts.FindOrAdd(_DeckCardStat[i]->Info.RankGrade)++;
+		SuitCounts.FindOrAdd(_DeckCardStat[i]->Info.SuitGrade)++;
+		UniqueRanks.Add(_DeckCardStat[i]->Info.RankGrade);
 	}
 
 	SortedRanks = UniqueRanks.Array();
@@ -124,7 +127,7 @@ void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<F
 		check(SameRankSet.Num() != 0)
 			for (auto Card : _DeckCardStat)
 			{
-				if (Card.RankGrade == *SameRankSet.begin())
+				if (Card->Info.RankGrade == *SameRankSet.begin())
 				{
 					CurCalCulatorCards.Add(Card);
 				}
@@ -164,7 +167,7 @@ void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<F
 
 			for (auto Card : _DeckCardStat)
 			{
-				if (Card.RankGrade == *SameRankSet.begin())
+				if (Card->Info.RankGrade == *SameRankSet.begin())
 				{
 					CurCalCulatorCards.Add(Card);
 				}
@@ -192,7 +195,7 @@ void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<F
 		{
 			for (auto Card : _DeckCardStat)
 			{
-				if (Card.RankGrade == CurPairNum)
+				if (Card->Info.RankGrade == CurPairNum)
 				{
 					CurCalCulatorCards.Add(Card);
 				}
@@ -208,7 +211,7 @@ void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<F
 
 		for (auto Card : _DeckCardStat)
 		{
-			if (Card.RankGrade == *SameRankSet.begin())
+			if (Card->Info.RankGrade == *SameRankSet.begin())
 			{
 				CurCalCulatorCards.Add(Card);
 			}
@@ -220,7 +223,7 @@ void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<F
 
 	for (auto Card : _DeckCardStat)
 	{
-		if (Card.RankGrade == SortedRanks[0])
+		if (Card->Info.RankGrade == SortedRanks[0])
 		{
 			CurCalCulatorCards.Add(Card);
 			break;
@@ -230,6 +233,33 @@ void UCalculatorHandRankingComponent::SetHandRankingType(int32 CardNum, TArray<F
 	PS->SetCurHandCard_Type(EPokerHand::HIGH_CARD);
 }
 
+void UCalculatorHandRankingComponent::Calculator_StillCard(OUT int32& CurChip, OUT float& CurDriange)
+{
+	if (CurStillCard.Num() == 0)
+		return;
+
+	auto PS = GetPlayerState();
+	auto VM_CardDeck = GetVMCardDeck();
+
+	for (auto& SteelCard : CurStillCard)
+	{
+		CurDriange *= 1.5f;
+	}
+}
+
+void UCalculatorHandRankingComponent::Calculator_Joker(OUT int32& CurChip, OUT float& CurDriange)
+{
+	for (UActorComponent* Comp : GetOwner()->GetComponents())
+	{
+		if (Comp->GetClass()->ImplementsInterface(UJokerCalculatorInterface::StaticClass()))
+		{
+			IJokerCalculatorInterface* InterfacePtr = Cast<IJokerCalculatorInterface>(Comp);
+			InterfacePtr->CalculatorJokerSkill(CurChip, CurDriange);
+			break;
+		}
+	}
+}
+
 int32 UCalculatorHandRankingComponent::ResultScore()
 {
 	auto PS = GetPlayerState();
@@ -237,7 +267,7 @@ int32 UCalculatorHandRankingComponent::ResultScore()
 
 	int32 Score = 0;
 	int32 ShowChip = PS->GetCurrentShowChip();
-	int32 ShowDrainage = PS->GetCurrentShowDrainage();
+	float ShowDrainage = static_cast<float>(PS->GetCurrentShowDrainage());
 
 	for (auto cardInfo : CurPlayCards)
 	{
@@ -246,9 +276,34 @@ int32 UCalculatorHandRankingComponent::ResultScore()
 		{
 			ShowDrainage += 4;
 		}
+		else if(cardInfo->Info.EnforceType == EnforceStatType::CHIP_PLUS)
+		{
+			ShowChip += 30;
+		}
 	}
 	
-	return Score = ShowChip * ShowDrainage;
+	Calculator_StillCard(ShowChip,ShowDrainage);  // 여기까지 손패에서 계산
+	Calculator_Joker(ShowChip, ShowDrainage);
+
+	Score = static_cast<int>(static_cast<float>(ShowChip) * ShowDrainage);
+
+	return Score;
+}
+
+void UCalculatorHandRankingComponent::SetStillCards(TArray<UHandInCard_Info*>& _CurPlayCards)
+{
+	CurStillCard.Empty();
+
+	auto PS = GetPlayerState();
+	auto CurrentAllHands = PS->GetCurrentAllHands();
+
+	for (auto* Card : CurrentAllHands)
+	{
+		if (!_CurPlayCards.Contains(Card) && Card->Info.EnforceType == EnforceStatType::STEEL)
+		{
+			CurStillCard.Add(Card);
+		}
+	}
 }
 
 bool UCalculatorHandRankingComponent::IsStraight(TArray<int32>& SortedRanks)

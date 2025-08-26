@@ -58,9 +58,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 UseNum;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<class UPaperSprite> CardSprite;
+
+	bool operator==(const FJokerStat& Other) const
+	{
+		return Name == Other.Name
+			&& JokerType == Other.JokerType
+			&& JokerGrade == Other.JokerGrade
+			&& JokerSFX == Other.JokerSFX
+			&& Price == Other.Price
+			&& UseNum == Other.UseNum;
+	}
+
+	bool operator!=(const FJokerStat& Other) const
+	{
+		return !(*this == Other);
+	}
+
 };
 
 

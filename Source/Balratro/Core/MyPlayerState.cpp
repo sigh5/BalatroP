@@ -35,7 +35,7 @@ void AMyPlayerState::ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRank
 		CardInfo->Info.Name = Info->Name;
 		CardInfo->Info.BaseChip = Info->BaseChip;
 		CardInfo->Info.SealType = Info->SealType;
-		CardInfo->Info.EnforceType = EnforceStatType::DRAINAGE;//Info->EnforceType;
+		CardInfo->Info.EnforceType = Info->EnforceType; // EnforceStatType
 		CardInfo->Info.GhostCardType = Info->GhostCardType;
 		CardInfo->Info.RankGrade = Info->RankGrade;
 		CardInfo->Info.SuitGrade = Info->SuitGrade;
@@ -57,7 +57,7 @@ void AMyPlayerState::SetCurCalculatorCardInHands(TArray<class UHandInCard_Info*>
 	}
 }
 
-void AMyPlayerState::SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue, bool bPlay)
+void AMyPlayerState::SetCurCalculatorCardInHands0(TArray<UHandInCard_Info*>& InValue, bool bPlay)
 {
 	CurCalculatorCardInHands.Empty();
 	
@@ -65,7 +65,7 @@ void AMyPlayerState::SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue,
 	{
 		for (auto& CardStat : InValue)
 		{
-			if (CurHandsCard->Info == CardStat)
+			if (CurHandsCard->Info == CardStat->Info)
 			{
 				if (bPlay)
 				{

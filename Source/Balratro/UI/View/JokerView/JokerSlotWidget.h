@@ -25,15 +25,29 @@ protected:
 
 private:
 	void VM_FieldChanged_AddJokerCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
+	void VM_FieldChanged_CalcualtorJokerCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 private:
 	class UJokerCardWidget* ReuseCardButtonWidget(int32 AllNum, int32 Index, UJokerCard_Info* Data);
+
+private:
+
+	void	JokerScroe_EffectText(); // 점수 관련 이벤트들
+	void	SetJoker_EffectOrder(class UJokerCardWidget* EventJoker, FJokerStat& CardData);
+	void	PushTimerEvent(TFunction<void(class UJokerCardWidget*, FJokerStat)> InFunc, class UJokerCardWidget* CurEventJoker, FJokerStat InValue);
+
+	void	StartNextTimer();
+
+	void SetSkillTextPos(class UJokerCardWidget* CurEventCard);
 
 
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UWrapBox> JokerWrapBox;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> SkillText;
+
 
 private:
 	UPROPERTY()
@@ -44,4 +58,11 @@ private:
 
 private:
 	const int32 PaddingX = 8;
+
+
+	TQueue<FTimerDelegate> TimerFuncQueue;
+	FTimerHandle		   JokerEffectTimerHandle;
+
+	FTimerHandle			FinishJokerTimerHandle;
+
 };

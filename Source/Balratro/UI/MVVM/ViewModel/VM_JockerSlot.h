@@ -32,15 +32,24 @@ public:
 		JokerDatas = InValue;
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(JokerDatas);
 	}
+
+	const bool GetCalculatorFlag() const { return CalculatorFlag; }
+	void SetCalculatorFlag(bool _InValue) {
+		CalculatorFlag = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CalculatorFlag);
+	}
+
 ///////////////////////////////////////////////////////////////////////////
 	void	SetAddJokerCard(FJokerStat& Data) { OnAddJoker.Broadcast(Data); }// JokerList에 내 조커 추가하기
 
-
+	
 
 private:
-	// Array of members of the party
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<class UJokerCard_Info*> JokerDatas;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool	CalculatorFlag = false;
 
 
 };

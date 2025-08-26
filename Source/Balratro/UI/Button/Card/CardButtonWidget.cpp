@@ -75,7 +75,7 @@ void UCardButtonWidget::OnCardButtonClicked()
 }
 
 
-void UCardButtonWidget::SetInfo(FDeckCardStat& _inValue)
+void UCardButtonWidget::SetInfo(UHandInCard_Info* _inValue)
 {
 	CardInfoData = _inValue;
 
@@ -99,7 +99,7 @@ void UCardButtonWidget::ChangeImage()
 {
 	LoadEnhanceImage();
 
-	if (UPaperSprite* Sprite = CardInfoData.CardSprite.Get())
+	if (UPaperSprite* Sprite = CardInfoData->Info.CardSprite.Get())
 	{
 		FSlateBrush SpriteBrush;
 		SpriteBrush.SetResourceObject(Sprite);
@@ -108,7 +108,7 @@ void UCardButtonWidget::ChangeImage()
 		MainImage->SetBrush(SpriteBrush);
 	}
 
-	if (UPaperSprite* Sprite = CardInfoData.EnforceSprite.Get())
+	if (UPaperSprite* Sprite = CardInfoData->Info.EnforceSprite.Get())
 	{
 		FSlateBrush SpriteBrush;
 		SpriteBrush.SetResourceObject(Sprite);
@@ -133,12 +133,12 @@ void UCardButtonWidget::CreateImage()
 
 void UCardButtonWidget::LoadEnhanceImage()
 {
-	int32 EnforceNum = static_cast<int32>(CardInfoData.EnforceType);
+	int32 EnforceNum = static_cast<int32>(CardInfoData->Info.EnforceType);
 
 	FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/CardEnfoceImage/EnforceSprite_%d.EnforceSprite_%d"),EnforceNum, EnforceNum);
-	CardInfoData.EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-	if (!CardInfoData.EnforceSprite.IsValid())
+	CardInfoData->Info.EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+	if (!CardInfoData->Info.EnforceSprite.IsValid())
 	{
-		CardInfoData.EnforceSprite.LoadSynchronous();
+		CardInfoData->Info.EnforceSprite.LoadSynchronous();
 	}	
 }

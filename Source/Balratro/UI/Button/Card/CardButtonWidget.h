@@ -22,10 +22,10 @@ private:
 	virtual void NativeConstruct()override;
 
 public:
-	FORCEINLINE void SetCardIndex(int InValue) { CardIndex = InValue; }
+	FORCEINLINE void		SetCardIndex(int InValue) { CardIndex = InValue; }
 
-	void			 SetInfo(FDeckCardStat& _inValue);
-	FORCEINLINE FDeckCardStat& GetCardInfoData() { return CardInfoData; }
+	void					SetInfo(UHandInCard_Info* _inValue);
+	FORCEINLINE				UHandInCard_Info* GetCardInfoData() { return CardInfoData; }
 
 	FORCEINLINE const bool	GetSelected() const { return bSelected; }
 	FORCEINLINE void		SetSelected(bool _Selected) { bSelected = _Selected; }
@@ -66,7 +66,9 @@ private:
 
 private:
 	int CardIndex = 0;
-	FDeckCardStat CardInfoData;
+	
+	UPROPERTY()
+	class UHandInCard_Info* CardInfoData;
 
 	uint8 bSelected : 1;
 	uint8 IsCreated : 1;

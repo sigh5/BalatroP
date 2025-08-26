@@ -8,6 +8,8 @@
 #include "GameData/HandRankingStat.h"
 #include "VM_PlayerInfo.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnClickedRunInfoButton);
+
 /**
  * 
  */
@@ -15,6 +17,9 @@ UCLASS()
 class BALRATRO_API UVM_PlayerInfo : public UMVVMViewModelBase
 {
 	GENERATED_BODY()
+
+public:
+	FOnClickedRunInfoButton OnClickedRunInfoButton;
 
 
 public:
@@ -188,6 +193,11 @@ public:
 	void SetBlindBorderColor(FLinearColor InValue)
 	{
 		UE_MVVM_SET_PROPERTY_VALUE(BlindBorderColor, InValue);
+	}
+
+	void ClickedRunInfoButton()
+	{
+		OnClickedRunInfoButton.Broadcast();
 	}
 
 

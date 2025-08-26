@@ -12,11 +12,11 @@ DECLARE_MULTICAST_DELEGATE(FOnSkipButtonClicked);
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSortTypeChange, const EHandInCardSortType&);
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseChuckButton,int32 , TArray<FDeckCardStat>& /*ChuckCardNum*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseChuckButton,int32 , TArray<UHandInCard_Info*>& /*ChuckCardNum*/);
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseHandPlayButton, int32, TArray<FDeckCardStat>& /*PlayCardNum*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseHandPlayButton, int32, TArray<UHandInCard_Info*>& /*PlayCardNum*/);
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCurPlayHands, int32, TArray<FDeckCardStat>& /*PlayCardNum*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCurPlayHands, int32, TArray<UHandInCard_Info*>& /*PlayCardNum*/);
 
 
 
@@ -65,9 +65,9 @@ public:
 	void	SetSuitSort() {OnSortTypeChange.Broadcast(EHandInCardSortType::SORT_SUIT);}
 	void	SetRankSort() { OnSortTypeChange.Broadcast(EHandInCardSortType::SORT_RANK);}
 
-	void    UseChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnUseChuck.Broadcast(CardNum,_DeckCardStat); }
-	void    UseHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnUseHandPlay.Broadcast(CardNum, _DeckCardStat); }
-	void    BroadCastCurHands(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) { OnCurPlayHands.Broadcast(CardNum, _DeckCardStat); }
+	void    UseChuck(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat) { OnUseChuck.Broadcast(CardNum,_DeckCardStat); }
+	void    UseHandPlay(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat) { OnUseHandPlay.Broadcast(CardNum, _DeckCardStat); }
+	void    BroadCastCurHands(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat) { OnCurPlayHands.Broadcast(CardNum, _DeckCardStat); }
 
 
 	const bool GetIsUpCardExist() const
@@ -88,12 +88,12 @@ public:
 	FORCEINLINE bool GetIsSelectedMax() const { return IsSelectedMax; }
 
 
-	const TArray<FDeckCardStat>& GetCurCardsData()  const
+	const TArray<UHandInCard_Info*>& GetCurCardsData()  const
 	{
 		return CurCardsData;
 	}
 
-	void	SetCurCardsData(TArray<FDeckCardStat>& _InValue)
+	void	SetCurCardsData(TArray<UHandInCard_Info*>& _InValue)
 	{ 
 		UE_MVVM_SET_PROPERTY_VALUE(CurCardsData, _InValue);
 	}
@@ -122,7 +122,7 @@ private:
 	bool IsUpCardExist;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	TArray<FDeckCardStat> CurCardsData;  // 핸드 플레이할 때 들어옴
+	TArray<class UHandInCard_Info*> CurCardsData;  // 핸드 플레이할 때 들어옴
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool ItemSelectFlag = false;

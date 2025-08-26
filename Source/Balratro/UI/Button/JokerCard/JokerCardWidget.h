@@ -23,12 +23,18 @@ private:
 
 public:
 	void	SetInfo(FJokerStat& _inValue);
+	const   FJokerStat& GetInfo() const { return JokerData; }
+
+	void	 ShakingEvent();
+
 
 	FORCEINLINE const bool	GetSelected() const { return IsSelected; }
 	FORCEINLINE void		SetSelected(bool _Selected) { IsSelected = _Selected; }
 
 	FORCEINLINE const bool	GetIsStoreHave() const { return IsStore; }
 	void		SetIsStoreHave(bool _Selected);
+
+	//void					Set
 
 private:
 	UFUNCTION()
@@ -66,6 +72,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UImage> MainImage;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	TObjectPtr<class UWidgetAnimation> ShakingAnim;
 
 private:
 	FJokerStat		JokerData;

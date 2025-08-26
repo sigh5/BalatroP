@@ -16,6 +16,7 @@
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 #include "UI/MVVM/ViewModel/VM_ItemSelect.h"
 #include "UI/Button/Card/CardButtonWidget.h"
+#include "UI/MVVM/ViewModel/VM_JockerSlot.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/Engine.h"
@@ -61,9 +62,6 @@ void UCardDeckView::NativeOnInitialized()
 	RankSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnRankSortButtonClicked);
 	HandPlayButton->OnClicked.AddDynamic(this, &UCardDeckView::OnHandPlayButtonClicked);
 	ChuckButton->OnClicked.AddDynamic(this, &UCardDeckView::OnChuckButtonClicked);
-
-	UCanvasPanelSlot* HSlot = Cast<UCanvasPanelSlot>(CardPanel->Slot);
-	OriginCardPanelPos = HSlot->GetPosition();
 }
 
 UCardButtonWidget* UCardDeckView::ReuseCardButtonWidget(int32 CurAllCardNum, int32 CurNum, UHandInCard_Info* CardInfo)
@@ -72,7 +70,7 @@ UCardButtonWidget* UCardDeckView::ReuseCardButtonWidget(int32 CurAllCardNum, int
 	if (HandCardButtons.Num() < CurAllCardNum)
 	{
 		NewButton = CreateWidget<UCardButtonWidget>(this, CardButtonSubClass);
-		NewButton->SetInfo(CardInfo->Info);
+		NewButton->SetInfo(CardInfo);
 		NewButton->SetCardIndex(CardIndex++);
 		HandCardButtons.Add(NewButton);
 	}
@@ -80,7 +78,7 @@ UCardButtonWidget* UCardDeckView::ReuseCardButtonWidget(int32 CurAllCardNum, int
 	{
 		NewButton = HandCardButtons[CurNum];
 		NewButton->SetSelected(false);
-		NewButton->SetInfo(CardInfo->Info);
+		NewButton->SetInfo(CardInfo);
 		NewButton->SetCardIndex(CardIndex++);
 	}
 
@@ -120,7 +118,7 @@ void UCardDeckView::VM_FieldChanged_CardUpExist(UObject* Object, UE::FieldNotifi
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
-	TArray<FDeckCardStat> CardStatInfo; // 전체 선택한 것
+	TArray<UHandInCard_Info*> CardStatInfo; // 전체 선택한 것
 	int32 SelectedNum = 0;
 	
 	SetCardData(CardStatInfo, SelectedNum);
@@ -138,19 +136,11 @@ void UCardDeckView::VM_FieldChanged_CurPlayCardData(UObject* Object, UE::FieldNo
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
-	auto& Data = VMInst->GetCurCardsData();
 	
-	CurPlayCardNum = 0;
-	
-	ChipText->SetVisibility(ESlateVisibility::HitTestInvisible);
+	GetWorld()->GetTimerManager().ClearTimer(FinishScoreTimerHandle);
+	TimerFuncQueue.Empty();
 
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindLambda([&]()
-		{
-			CardChipScore_EffectText();
-		});
-	
-	GetWorld()->GetTimerManager().SetTimer(MyTimerHandle, TimerDelegate, 0.5f, true, 0.f);
+	CardScroe_EffectText();
 }
 
 void UCardDeckView::VM_FieldChanged_ItemSelectFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -202,7 +192,7 @@ void UCardDeckView::OnChuckButtonClicked()
 	}
 	else
 	{
-		TArray<FDeckCardStat> CardStatInfo;
+		TArray<UHandInCard_Info*> CardStatInfo;
 		int32 SelectedNum = 0;
 
 		if (SetCardData(CardStatInfo, SelectedNum) == false)
@@ -216,7 +206,7 @@ void UCardDeckView::OnHandPlayButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 
-	TArray<FDeckCardStat> CardStatInfo;
+	TArray<UHandInCard_Info*>  CardStatInfo;
 	int32 SelectedNum = 0;
 
 	if (SetCardData(CardStatInfo, SelectedNum) == false)
@@ -225,102 +215,161 @@ void UCardDeckView::OnHandPlayButtonClicked()
 	VMInst->UseHandPlay(SelectedNum, CardStatInfo);
 }
 
-void UCardDeckView::CardChipScore_EffectText()
+void UCardDeckView::CardScroe_EffectText()
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	auto& Data = VMInst->GetCurCardsData();
-
-	if (CurPlayCardNum >= Data.Num())
+	
+	for (int i = 0; i < Data.Num(); ++i)
 	{
-		ChipText->SetVisibility(ESlateVisibility::Collapsed);
-		GetWorld()->GetTimerManager().ClearTimer(MyTimerHandle);
-	}
-	else
-	{
-		int32 ChipGrade = Data[CurPlayCardNum].BaseChip;
-		
-		UCardButtonWidget* CurCardButton = nullptr;
 		for (auto& Card : HandCardButtons)
 		{
-			if (Card->GetCardInfoData() == Data[CurPlayCardNum])
+			if (Card->GetCardInfoData()->Info == Data[i]->Info)
 			{
-				CurCardButton = Card;
+				FDeckCardStat CurData = Data[i]->Info;
+				SetCard_EffectOrder(Card, CurData);
 				break;
 			}
 		}
-		
-		if (CurCardButton)
-		{
-			ChipText->SetText(FText::AsNumber(Data[CurPlayCardNum].BaseChip));
-			
-			auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
-			check(VM_PlayerInfo);
-
-			int32 CurChip =  VM_PlayerInfo->GetCurChip();
-			CurChip += Data[CurPlayCardNum].BaseChip;
-			VM_PlayerInfo->SetCurChip(CurChip);
-
-			FGeometry CardGeo = CurCardButton->GetCachedGeometry();
-			FVector2D AbsPos = CardGeo.GetAbsolutePosition();
-			FVector2D Size = CardGeo.GetLocalSize();
-
-			if (UWidget* CanvasParent = ChipText->GetParent())
-			{
-				FGeometry ParentGeo = CanvasParent->GetCachedGeometry();
-				FVector2D LocalCenter = ParentGeo.AbsoluteToLocal(AbsPos);
-				
-				LocalCenter.Y -= 55.f;
-				LocalCenter.X -= (Size.X * 0.39f);
-				
-				if (UCanvasPanelSlot* ChipSlot = Cast<UCanvasPanelSlot>(ChipText->Slot))
-				{
-					ChipSlot->SetPosition(LocalCenter);
-				}
-			}
-		}
 	}
-	++CurPlayCardNum;
+
+	StartNextTimer();	
 }
 
-void UCardDeckView::CardDraiageScore_EffextText()
+void UCardDeckView::SetCard_EffectOrder(UCardButtonWidget* EventCard, FDeckCardStat& CardData)
 {
-	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
-	auto& Data = VMInst->GetCurCardsData();
+	if (EventCard)
+	{
+		PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
+			{
+				ScoreResultText->SetVisibility(ESlateVisibility::HitTestInvisible);
 
-	if (CurPlayCardNum >= Data.Num())
-	{
-		DraiageText->SetVisibility(ESlateVisibility::Collapsed);
-		GetWorld()->GetTimerManager().ClearTimer(MyTimerHandle);
-	}
-	else
-	{
-		int32 ChipGrade = Data[CurPlayCardNum].BaseChip;
-		int32 DraiageGrade = 0;
-		EnforceStatType Type = Data[CurPlayCardNum].EnforceType;
-		switch (Type)
+				auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+				check(VM_PlayerInfo);
+
+				int32 CurChip = VM_PlayerInfo->GetCurChip();
+				CurChip += Value;
+				VM_PlayerInfo->SetCurChip(CurChip);
+
+				FString ScoreStr = FString::Printf(TEXT("+%d"), Value);
+				ScoreResultText->SetText(FText::FromString(ScoreStr));
+				SetScoreTextPos(CurEventCard);
+			}, EventCard, CardData.BaseChip);
+
+		
+		if (CardData.EnforceType == EnforceStatType::DRAINAGE)
 		{
-		case EnforceStatType::NONE:
-			break;
-		case EnforceStatType::CHIP_PLUS:
-			ChipGrade += 40;
-			break;
-		case EnforceStatType::DRAINAGE:
-			DraiageGrade += 4;
-			break;
-		case EnforceStatType::STEEL:
-			break;
-		case EnforceStatType::GOLD:
-			break;
-		case EnforceStatType::GLASS:
-			break;
-		default:
-			break;
-		}
+			PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
+				{
+					ScoreResultText->SetVisibility(ESlateVisibility::HitTestInvisible);
 
+					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+					check(VM_PlayerInfo);
+
+					int32 CurDriange = VM_PlayerInfo->GetCurDrainage();
+					CurDriange += Value;
+
+					VM_PlayerInfo->SetCurDrainage(CurDriange);
+
+					FString ScoreStr = FString::Printf(TEXT("+%d Drainage"), Value);
+					ScoreResultText->SetText(FText::FromString(ScoreStr));
+
+					SetScoreTextPos(CurEventCard);
+				}, EventCard, 4);
+		}
+		else if (CardData.EnforceType == EnforceStatType::CHIP_PLUS)
+		{
+			PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
+				{
+					ScoreResultText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+					check(VM_PlayerInfo);
+
+					int32 CurChip = VM_PlayerInfo->GetCurChip();
+					CurChip += Value;
+					VM_PlayerInfo->SetCurChip(CurChip);
+
+					FString ScoreStr = FString::Printf(TEXT("+%d"), Value);
+					ScoreResultText->SetText(FText::FromString(ScoreStr));
+					SetScoreTextPos(CurEventCard);
+
+				}, EventCard, 30);
+		}
+	}
+
+}
+
+void UCardDeckView::SetScoreTextPos(UCardButtonWidget* CurEventCard)
+{
+	FGeometry CardGeo = CurEventCard->GetCachedGeometry();
+	FVector2D AbsPos = CardGeo.GetAbsolutePosition();
+	FVector2D Size = CardGeo.GetLocalSize();
+
+	if (UWidget* CanvasParent = ScoreResultText->GetParent())
+	{
+		FGeometry ParentGeo = CanvasParent->GetCachedGeometry();
+		FVector2D LocalCenter = ParentGeo.AbsoluteToLocal(AbsPos);
+
+		LocalCenter.Y -= 55.f;
+		LocalCenter.X -= (Size.X * 0.39f);
+
+		if (UCanvasPanelSlot* ChipSlot = Cast<UCanvasPanelSlot>(ScoreResultText->Slot))
+		{
+			ChipSlot->SetPosition(LocalCenter);
+		}
 	}
 }
 
-bool UCardDeckView::SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum)
+void UCardDeckView::StartNextTimer()
+{
+	if(TimerFuncQueue.IsEmpty())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(MyTimerHandle);
+
+		FTimerDelegate ScoreTimerFinishDelegate; 
+		ScoreTimerFinishDelegate.BindLambda([&]() {
+			ScoreResultText->SetVisibility(ESlateVisibility::Collapsed);
+			ScoreResultText->SetText(FText::FromString("")); 
+			});
+
+		GetWorld()->GetTimerManager().SetTimer(
+			FinishScoreTimerHandle,
+			ScoreTimerFinishDelegate,
+			0.5f,
+			false);
+
+		auto VM_Joker = TryGetViewModel<UVM_JockerSlot>("VM_JockerSlot", UVM_JockerSlot::StaticClass()); check(VM_Joker);
+		VM_Joker->SetCalculatorFlag(true);
+
+		return;
+	}
+
+	FTimerDelegate Delegate;
+	TimerFuncQueue.Dequeue(Delegate);
+
+	GetWorld()->GetTimerManager().SetTimer(
+		MyTimerHandle,
+		Delegate,
+		0.5f,
+		false);
+}
+
+void UCardDeckView::PushTimerEvent(TFunction<void(UCardButtonWidget* , int32)> InFunc, UCardButtonWidget* CurEventCard,int32 InValue)
+{
+	FTimerDelegate Delegate;
+	Delegate.BindLambda([this, InFunc, CurEventCard,InValue]()
+		{
+			// InValue를 그대로 전달해 실행
+			InFunc(CurEventCard,InValue);
+
+			// 다음 이벤트 실행
+			StartNextTimer();
+		});
+	TimerFuncQueue.Enqueue(Delegate);
+}
+
+bool UCardDeckView::SetCardData(OUT TArray<UHandInCard_Info*>& CardStatInfo, OUT int32& SelectedCardNum)
 {
 	for (auto& Button : HandCardButtons)
 	{

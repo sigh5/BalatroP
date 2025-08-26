@@ -14,20 +14,19 @@
 
 // First  Test
 // 디버그일때만 사용 릴리즈 일때 꺼야됌
+// 초기 시작  Bline_View_TEST, PlayerInfoView_VIEW_TEST ,JokerSlotView_VIEW_TEST
 #define Bline_View_TEST
 //#define Store_View_TEST
 #define PlayerInfoView_VIEW_TEST
 #define JokerSlotView_VIEW_TEST
 //#define CadDeckView_View_TEST
-
-
+//#define HandRankingView_View_TEST
 
 UENUM()
 enum class EHandInCardSortType : uint8
 {
 	SORT_RANK = 0,
 	SORT_SUIT,
-
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseChuck, int32);
@@ -41,12 +40,9 @@ DECLARE_MULTICAST_DELEGATE(FOnSetCurrentScore);
 DECLARE_MULTICAST_DELEGATE(FOnSetRoundCount);
 DECLARE_MULTICAST_DELEGATE(FOnSetCurrentGold);
 DECLARE_MULTICAST_DELEGATE(FOnSetEntiCount);
-DECLARE_MULTICAST_DELEGATE(FOnShowUIChip);  //FOnPlayerInfoShowBaseChip
+DECLARE_MULTICAST_DELEGATE(FOnShowUIChip); 
 DECLARE_MULTICAST_DELEGATE(FOnShowUIDrainage);
 
-
-
-//DECLARE_MULTICAST_DELEGATE(FOnScoreEffectStart);
 
 /**
  * 
@@ -138,7 +134,7 @@ public:
 
 	FORCEINLINE const TArray<class UHandInCard_Info*>& GetCurCalculatorCardInHands() const { return CurCalculatorCardInHands; }
 	void  SetCurCalculatorCardInHands(TArray<class UHandInCard_Info*>& InValue);
-	void  SetCurCalculatorCardInHands(TArray<FDeckCardStat>& InValue,bool bPlay = true);
+	void  SetCurCalculatorCardInHands0(TArray<UHandInCard_Info*>& InValue,bool bPlay = true);
 
 
 
@@ -211,23 +207,21 @@ private:
 	int32 CurrentScore;
 	int32 MaxScore;
 
-	int32		CurrentShowChip;	 // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 칩
-	int32		CurrentShowDrainage; // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 배수
+	int32	CurrentShowChip;	 // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 칩
+	int32	CurrentShowDrainage; // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 배수
 
-	int32		RerollCost = 5;
-	int32		HaveBoosterPackNum = 2;
-	int32		MaxHaveBoosterPackNum = 2;
+	int32	RerollCost = 5;
+	int32	HaveBoosterPackNum = 2;
+	int32	MaxHaveBoosterPackNum = 2;
 
-	int32		HaveUpStoreNum = 2;
-	
+	int32	HaveUpStoreNum = 2;
+	int32	CurrentRoundBlindGrade = 0;
+	int32	CurSelectTaroNum = 0;
 
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;
 	EPokerHand				CurHandCard_Type;
-
-	int32	CurrentRoundBlindGrade = 0;
 
 	UPROPERTY()
 	TObjectPtr<class UBoosterPackData> CurSelcetPackType;
@@ -249,7 +243,5 @@ private:
 
 	UPROPERTY()
 	TArray<class UTaroStat_Info*>	CurTaroStatTable;   // 현재 내 타로 카드 리스트
-
-	int32 CurSelectTaroNum = 0;
 
 };

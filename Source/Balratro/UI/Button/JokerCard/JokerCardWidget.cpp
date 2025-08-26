@@ -61,6 +61,12 @@ void UJokerCardWidget::SetInfo(FJokerStat& _inValue)
 		IsCreated = true;
 }
 
+void UJokerCardWidget::ShakingEvent()
+{
+	PlayAnimation(ShakingAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
+
+}
+
 void UJokerCardWidget::OnSellButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_JockerSlot>(); check(VMInst);
@@ -73,6 +79,7 @@ void UJokerCardWidget::OnSellButtonClicked()
 
 void UJokerCardWidget::OnButtonHover()
 {
+
 }
 
 void UJokerCardWidget::SetIsStoreHave(bool _Selected)
@@ -94,6 +101,7 @@ void UJokerCardWidget::SetIsStoreHave(bool _Selected)
 void UJokerCardWidget::OnJokerButtonClicked()
 {
 	IsSelected = !IsSelected;
+
 
 	if (IsStore)
 	{

@@ -14,26 +14,30 @@ class BALRATRO_API UCalculatorHandRankingComponent : public UActorComponent, pub
 	GENERATED_BODY()
 
 public:
-	virtual int32 CalCulatorHandRanking(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat) override;
+	virtual int32 CalCulatorHandRanking(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat) override;
 
 protected:
 	virtual void BeginPlay() override;
 
-	void	SetHandRankName(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
-	void	SetHandRankingType(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat);
+private:
+	void	SetHandRankName(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat);
+	void	SetHandRankingType(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat);
+	void	SetStillCards(TArray<UHandInCard_Info*>& _CurPlayCards);
 
-	void	SetCurItemUseCards(TArray<FDeckCardStat>& _DeckCardStat);
+	void	Calculator_StillCard(OUT int32& CurChip, OUT float& CurDriange); // CurDriange이거 때문에
+	void	Calculator_Joker(OUT int32& CurChip, OUT float& CurDriange);
+
+	int32	ResultScore();
 
 private:
 	bool	IsStraight(TArray<int32>& SortedRanks);
 	bool	IsFlush(TMap<int32, int32>& SuitCounts);
 
-	int32	ResultScore();
-
-
-
 private:
 	class UVM_CardDeck* GetVMCardDeck();
 	class AMyPlayerState* GetPlayerState();
+
+	UPROPERTY()
+	TArray<UHandInCard_Info*> CurStillCard;
 
 };

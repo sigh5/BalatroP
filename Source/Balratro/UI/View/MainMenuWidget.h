@@ -52,9 +52,11 @@ private:
     UPROPERTY()
     TSubclassOf<class URewardView> RewardView;
 
-
     UPROPERTY()
     TSubclassOf<class UItemSelectView> ItemSelectView;
+
+    UPROPERTY()
+    TSubclassOf<class UHandRankingView> HandRankingView;
 
 
     UPROPERTY()

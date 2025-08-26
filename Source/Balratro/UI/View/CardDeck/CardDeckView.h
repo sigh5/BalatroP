@@ -40,11 +40,18 @@ protected:
 	void OnHandPlayButtonClicked();
 
 private:
-	void  CardChipScore_EffectText();
-	void  CardDraiageScore_EffextText();
+	void	CardScroe_EffectText(); // 점수 관련 이벤트들
+	void	SetCard_EffectOrder(class UCardButtonWidget* EventCard, FDeckCardStat& CardData);
+
+
+	// 순서 BaseChip >  Chip_Plus or Drainage > 10배수 or 1.5 or 50(foil) > Ghost (retriger)
+	void SetScoreTextPos(class UCardButtonWidget* CurEventCard);
+
+	void	StartNextTimer();
+	void	PushTimerEvent(TFunction<void(class UCardButtonWidget*,int32)> InFunc, class UCardButtonWidget* CurEventCard,int32 InValue);
 
 private:
-	bool  SetCardData(OUT TArray<FDeckCardStat>& CardStatInfo, OUT int32& SelectedCardNum);
+	bool  SetCardData(OUT TArray<UHandInCard_Info*>& CardStatInfo, OUT int32& SelectedCardNum);
 	class UCardButtonWidget* ReuseCardButtonWidget(int32 CurAllCardNum, int32 CurNum, UHandInCard_Info* CardInfo);
 
 private:
@@ -64,11 +71,9 @@ private:
 	TObjectPtr<class UHorizontalBox> CardPanel;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UTextBlock> ChipText;
+	TObjectPtr<class UTextBlock> ScoreResultText;
 
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UTextBlock> DraiageText;
-
+	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UBorder> HandSortBorder;
 	
@@ -87,12 +92,12 @@ private:
 
 private:
 	const int32 PaddingX = 8;
-
 	int32 CardIndex = 0;
-
-	int32 CurPlayCardNum = 0;
+	
 	FTimerHandle MyTimerHandle;
 
-	FVector2D OriginCardPanelPos;
+	TQueue<FTimerDelegate> TimerFuncQueue;
 
+
+	FTimerHandle FinishScoreTimerHandle;
 };

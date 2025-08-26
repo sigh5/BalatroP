@@ -30,8 +30,8 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(ShowTaroInfo);
 	}
 
-	const TArray<FDeckCardStat>& GetSelectCardInfos() const { return SelectCardInfos; }
-	void SetSelectCardInfos(TArray<FDeckCardStat>& _InValue)  { SelectCardInfos.Empty(); SelectCardInfos = _InValue; }
+	const TArray<UHandInCard_Info*>& GetSelectCardInfos() const { return SelectCardInfos; }
+	void SetSelectCardInfos(TArray<UHandInCard_Info*>& _InValue)  { SelectCardInfos.Empty(); SelectCardInfos = _InValue; }
 
 	void	UseTaroItem(FTaroStat& TaroStat) { OnUseTaroCard.Broadcast(TaroStat); }
 
@@ -39,7 +39,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<FTaroStat>   ShowTaroInfo;
 
-
-	TArray<FDeckCardStat>   SelectCardInfos;
+	UPROPERTY()
+	TArray<UHandInCard_Info*>   SelectCardInfos;
 
 };

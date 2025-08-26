@@ -28,7 +28,6 @@ void UJokerCardComponent::BeginPlay()
 
 
 #ifdef JokerSlotView_VIEW_TEST
-	
 	FJokerStat Test_Data;
 	EJokerType ItemType = EJokerType::BASE_JOKER;
 	
@@ -54,21 +53,32 @@ void UJokerCardComponent::UpdateJoker()
 
 }
 
-void UJokerCardComponent::CalculatorJoker(UJokerCard_Info* JokerCard)
+void UJokerCardComponent::CalculatorJoker(UJokerCard_Info* JokerCard, OUT int32& CurChip, OUT float& CurDriange)
 {
-	auto PS = GetPlayerState();
-	auto VM_PlayerInfo = GetVMPlayerInfo();
-
-	int32 CurrentChip = PS->GetCurrentShowChip();
-	int32 CurrentDrainage = PS->GetCurrentShowDrainage();
-
 	EJokerType Type = EJokerType::BASE_JOKER;		//(JokerType)(JokerCard->Info.Stat);
 	if (Type == EJokerType::BASE_JOKER)
 	{
-		VM_PlayerInfo->SetCurDrainage(CurrentDrainage * 4);
+		CurDriange += 4;
 	}
 
 
+}
+
+void UJokerCardComponent::CalculatorJokerSkill(OUT int32& CurChip, OUT float& CurDriange)
+{
+	auto PS = GetPlayerState();
+	auto CurJokerCards = PS->GetCurrentJokerCards();
+
+	for (auto Joker : CurJokerCards)
+	{
+		CalculatorJoker(Joker, CurChip, CurDriange);
+	}
+
+	/*조커 칩 더하는거*/
+
+	/*조커 합 배수*/
+
+	/*조커 곱 배수*/
 }
 
 void UJokerCardComponent::UpdateAddJoker(FJokerStat& Data)

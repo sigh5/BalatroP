@@ -21,6 +21,11 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
 
+private:
+	UFUNCTION()
+	void					OnRunInfoButton();
+
+
 private: /*VM_PlayerInfo*/
 	void VM_FieldChanged_Score(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CurPlayerHandName(UObject* Object, UE::FieldNotification::FFieldId FieldId);
@@ -115,11 +120,22 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UImage> ShopImage;
 
+/*Button*/
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> RunInfoBtn;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> OptionBtn;
+
+
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TObjectPtr<class UMaterialInterface> WaveMaterial;
 
 	UPROPERTY()
 	TObjectPtr<class UMaterialInstanceDynamic> DynMat;
+
+
+
 
 
 	FVector2D		MainOrderPos;

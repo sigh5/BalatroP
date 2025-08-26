@@ -38,7 +38,7 @@ void UCardAndDeckComponent::BeginPlay()
 	//InitDeck();
 }
 
-void UCardAndDeckComponent::UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardStat)
+void UCardAndDeckComponent::UpdateCardInHand(TArray<UHandInCard_Info*>& _DeckCardStat)
 {
 	auto PS = GetPlayerState();
 
@@ -48,16 +48,16 @@ void UCardAndDeckComponent::UpdateCardInHand(TArray<FDeckCardStat>& _DeckCardSta
 			if (!HandCard)
 				return false;
 
-			return _DeckCardStat.ContainsByPredicate([&](const FDeckCardStat& Stat)
+			return _DeckCardStat.ContainsByPredicate([&](const UHandInCard_Info* Stat)
 				{
-					return Stat == HandCard->Info;
+					return Stat->Info == HandCard->Info;
 				});
 		});
 	// 나중에 DeckNumIndex ==> 카드가 덱에 추가된 순서를 csv에 넣어줘야함
 
 	PS->SetCurrentAllHands(CurHandInCard);
 
-	TArray<FDeckCardStat> Empty;
+	TArray<UHandInCard_Info*> Empty;
 	PS->SetCurCalculatorCardInHands(Empty);
 
 }
@@ -86,7 +86,7 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 		return;
 }
 
-void UCardAndDeckComponent::FinishHandPlay()
+void UCardAndDeckComponent::FinishHandPlay(TArray<UHandInCard_Info*> DeckCardStat, int32 CardNum)
 {
 	auto PS = GetPlayerState();
 	
@@ -99,23 +99,19 @@ void UCardAndDeckComponent::FinishHandPlay()
 		PS->SetMaxScore(CurrentSum);
 		PS->SetCurrentScore(CurrentSum);
 
-		// 라운드 끝 로직 실행
-		// 한 2초까지 점수 보여주고 그 뒤에 상점 뷰가게 만들어야함 
 		GetWorld()->GetTimerManager().ClearTimer(TotalScoreHandle);
 
 		auto VM_MainWidget = GetVMMainWidget();
 		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", false));
 
 		PS->SetPlayerState(EPlayerStateType::REWARD);
-
-		// 게임 끝나면 초기화 하는게 맞는듯? (마땅한 자리가 없음)
-		GetWorld()->GetTimerManager().ClearTimer(ItemSkipTimerHandle);
+		GetWorld()->GetTimerManager().ClearTimer(ItemSkipTimerHandle);	// 게임 끝나면 초기화 하는게 맞는듯? (마땅한 자리가 없음)
 	}
 	else
 	{
-		PS->SetCurrentScore(ResultScore);
-		UpdateCardInHand(_CurData);
-		DrawCard(_CardNum);
+		PS->SetCurrentScore(CurrentSum);
+		UpdateCardInHand(DeckCardStat);
+		DrawCard(CardNum);
 	}
 }
 
@@ -239,18 +235,7 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 	auto VM = GetVMCardDeck();
 	
 	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
-	
-	TArray<FDeckCardStat> CurCardsInfo;
-
-	for (auto Card : CurPlayCards)
-	{
-		FDeckCardStat Info;
-		Info = Card->Info;
-		CurCardsInfo.Add(Info);
-	}
-
-
-	VM->SetCurCardsData(CurCardsInfo); // 보여주는 카드 점수 계산하는거
+	VM->SetCurCardsData(CurPlayCards); // 보여주는 카드 점수 계산하는거
 	
 	int32 CurCardNum = CurPlayCards.Num();
 	int32 EnforceTypeNum = 0;
@@ -268,14 +253,23 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 		}
 	}
 
-	float CurDelayTime = (CurCardNum)+(EnforceTypeNum * 0.25f) + (GhostTypeNum * 0.25f);
-	_DelayTime = CurDelayTime;
+	float CurDelayTime = (CurCardNum)+(EnforceTypeNum * 0.5f) + (GhostTypeNum * 0.5f);
+	
+	auto Temp = PS->GetCurrentJokerCards().Num();
 
-	// 여기서 이제 
+	CurDelayTime += (Temp * 0.5f) + 0.5f; // 나중에 점수 계산하는 조커들만 따로 빼서 시간 더하기
+
 	// 1번) 현재 패에 있는 배수 카드 계산,
 	// 2번) 현재 손패에 남은 카드에서 스틸카드 계산
 	// 3번) 조커 카드 계산
 	// 할때까지 패 안뽑고 점수 계산하게 만들어야함
+
+	
+	_DelayTime = CurDelayTime;
+
+ 
+	
+	
 }
 
 void UCardAndDeckComponent::ShuffleDeck()
@@ -327,7 +321,7 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 	CurDrawIndex += DrawCardNum;
 }
 
-void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
+void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat)
 {
 	auto PS = GetPlayerState();
 
@@ -342,7 +336,7 @@ void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<FDeckCardStat>& _D
 	DrawCard(CardNum);
 }
 
-void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>& _DeckCardStat)
+void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat)
 {
 	auto PS = GetPlayerState();
 
@@ -362,14 +356,14 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>&
 				ResultScore = InterfacePtr->CalCulatorHandRanking(CardNum, _DeckCardStat);
 				SetPlayCardEffect();
 
-				_CurData = _DeckCardStat;
-				_CardNum = CardNum;
+				//_CurData = _DeckCardStat;
+				//_CardNum = CardNum;
 
 				FTimerDelegate Delegate;
-				Delegate.BindLambda([&]()
+				Delegate.BindLambda([&](TArray<UHandInCard_Info*> T, int32 U)
 					{
-						FinishHandPlay();
-					});
+						FinishHandPlay(T, U);
+					}, _DeckCardStat, CardNum);
 
 				GetWorld()->GetTimerManager().SetTimer(TotalScoreHandle, Delegate, _DelayTime, false);
 				break;
@@ -383,8 +377,8 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<FDeckCardStat>&
 void UCardAndDeckComponent::InitDeck()
 {
 	CurDrawIndex = 0;
-	_CardNum = 0;
-	_CurData.Empty();
+	//_CardNum = 0;
+	//_CurData.Empty();
 	_DelayTime = 0.f;
 	ResultScore = 0;
 

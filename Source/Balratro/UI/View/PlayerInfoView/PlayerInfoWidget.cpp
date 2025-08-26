@@ -10,8 +10,9 @@
 #include "Components/Image.h"
 #include "Components/Border.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/Button.h"
 
-
+#include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_BlindSelect.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
@@ -93,10 +94,11 @@ void UPlayerInfoWidget::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindBorderColor,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_BlindNameBorderColor));
 
-
 	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindImageIndex,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage));
 
+
+	RunInfoBtn->OnClicked.AddDynamic(this, &UPlayerInfoWidget::OnRunInfoButton);
 }
 
 void UPlayerInfoWidget::NativeOnInitialized()
@@ -105,6 +107,13 @@ void UPlayerInfoWidget::NativeOnInitialized()
 
 	DynMat = UMaterialInstanceDynamic::Create(WaveMaterial, this);
 	check(DynMat);
+}
+
+void UPlayerInfoWidget::OnRunInfoButton()
+{
+	auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(); check(VM_PlayerInfo);
+
+	VM_PlayerInfo->ClickedRunInfoButton();
 }
 
 void UPlayerInfoWidget::VM_FieldChanged_Score(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -199,13 +208,13 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object,
 		PlayAnimation(Anim);
 	}
 
-	int32 Driangle = VMInstance->GetCurChip();
+	int32 CurChip = VMInstance->GetCurChip();
 
 	if (Value == 0)
 	{
 		drainageBorder->SetBrushFromMaterial(nullptr);
 	}
-	else if ((Value * Driangle) >= VMInstance->GetBlindGrade())
+	else if ((Value * CurChip) >= VMInstance->GetBlindGrade())
 	{
 		drainageBorder->SetBrushFromMaterial(DynMat);
 	}

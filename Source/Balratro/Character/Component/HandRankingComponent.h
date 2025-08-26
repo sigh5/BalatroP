@@ -15,8 +15,10 @@ class BALRATRO_API UHandRankingComponent : public UActorComponent
 protected:
 	virtual void BeginPlay() override;
 
+	void InitHandRanking();
+
 private:
 	class UVM_HandRankingCount* GetVMHandRanking();
 	class AMyPlayerState* GetPlayerState();
-
+	class UVM_PlayerInfo* GetVMPlayerInfo();
 };
