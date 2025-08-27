@@ -36,7 +36,6 @@ private:
 	UFUNCTION()
 	void  OnClicked_BlindButton();
 
-
 	UFUNCTION()
 	void  OnClicked_VoucherButton();
 

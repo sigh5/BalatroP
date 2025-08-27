@@ -79,10 +79,10 @@ void UHandRankingView::OnClicked_PokerHandButton()
 
 void UHandRankingView::OnClicked_BlindButton()
 {
-
 	HandRankingListView->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UHandRankingView::OnClicked_VoucherButton()
 {
+	HandRankingListView->SetVisibility(ESlateVisibility::Collapsed);
 }
