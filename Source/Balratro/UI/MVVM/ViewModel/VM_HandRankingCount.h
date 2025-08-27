@@ -7,6 +7,10 @@
 #include "GameData/HandRankingStat.h"
 #include "VM_HandRankingCount.generated.h"
 
+
+DECLARE_MULTICAST_DELEGATE(FOnHandRankingExitButton);
+
+
 USTRUCT(BlueprintType)
 struct FHRButton_Info 
 {
@@ -18,6 +22,7 @@ struct FHRButton_Info
 
 	UPROPERTY(BlueprintReadOnly)
 	FName	_Name;
+
 
 	FHRButton_Info(): Pos(FVector2D::ZeroVector), _Name(NAME_None){}
 
@@ -41,6 +46,9 @@ UCLASS()
 class BALRATRO_API UVM_HandRankingCount : public UMVVMViewModelBase
 {
 	GENERATED_BODY()
+
+public:
+	FOnHandRankingExitButton OnHandRankingExitButton;
 
 public:
 	const TArray<UHandRanking_Info*>& GetVM_HandRankingData() const
@@ -68,6 +76,11 @@ public:
 	{
 		UE_MVVM_SET_PROPERTY_VALUE(HRButtonInfo, InArg);
 	}
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+	void	HandRankingViewExitButtonClicked() { OnHandRankingExitButton.Broadcast(); }
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))

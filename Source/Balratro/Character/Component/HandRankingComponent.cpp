@@ -8,6 +8,7 @@
 
 #include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
+#include "UI/MVVM/ViewModel/VM_MainMenu.h"
 
 #include "Singleton/BBGameSingleton.h"
 
@@ -17,12 +18,17 @@ void UHandRankingComponent::BeginPlay()
 
 	auto PlayerState = GetPlayerState();
 	auto& Sigleton = UBBGameSingleton::Get();
+	auto VM_PlayerInfo = GetVMPlayerInfo();
+	auto VM_HandRanking = GetVMHandRanking();
 
     PlayerState->ResetMyHandRankingInfo(Sigleton.GetHandRankingStatTable());
+	
 
-
-	auto VM_PlayerInfo = GetVMPlayerInfo();
 	VM_PlayerInfo->OnClickedRunInfoButton.AddUObject(this, &UHandRankingComponent::InitHandRanking);
+	VM_HandRanking->OnHandRankingExitButton.AddUObject(this, &UHandRankingComponent::ExitHandRankingView);
+
+
+
 
 #ifdef HandRankingView_View_TEST
 	InitHandRanking();
@@ -33,13 +39,22 @@ void UHandRankingComponent::InitHandRanking()
 {
 	auto PlayerState = GetPlayerState();
 	auto VM = GetVMHandRanking();
+	auto VM_MainMenu = GetVMMainWidget();
 
+	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("HandRankingView", true));
 
 	auto FHandRankingArray = PlayerState->GetHandRankingInfo();
 	for (auto Info : FHandRankingArray)
 	{
 		VM->AddHandRankingNum(Info->_Name, Info->Info);
 	}
+}
+
+void UHandRankingComponent::ExitHandRankingView()
+{
+	auto VM_MainMenu = GetVMMainWidget();
+
+	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("HandRankingView", false));
 }
 
 UVM_HandRankingCount* UHandRankingComponent::GetVMHandRanking()
@@ -71,4 +86,16 @@ UVM_PlayerInfo* UHandRankingComponent::GetVMPlayerInfo()
 
 	const auto Found = VMCollection->FindViewModelInstance(Context);
 	return Cast<UVM_PlayerInfo>(Found);
+}
+
+UVM_MainMenu* UHandRankingComponent::GetVMMainWidget()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_MainMenu");
+	Context.ContextClass = UVM_MainMenu::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_MainMenu>(Found);
 }

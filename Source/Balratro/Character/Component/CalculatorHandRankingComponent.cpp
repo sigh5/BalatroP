@@ -26,9 +26,13 @@ void UCalculatorHandRankingComponent::BeginPlay()
 
 int32 UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat)
 {
+	auto PS = GetPlayerState();
+	PS->SetHandPlayFlag(true);
 	SetStillCards(_DeckCardStat);
 	
 	SetHandRankingType(CardNum, _DeckCardStat);
+	
+	PS->SetHandPlayFlag(false);
 
 	return ResultScore();
 }
@@ -286,7 +290,6 @@ int32 UCalculatorHandRankingComponent::ResultScore()
 	Calculator_Joker(ShowChip, ShowDrainage);
 
 	Score = static_cast<int>(static_cast<float>(ShowChip) * ShowDrainage);
-
 	return Score;
 }
 

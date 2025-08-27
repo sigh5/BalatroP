@@ -17,8 +17,10 @@ protected:
 
 	void InitHandRanking();
 
+	void ExitHandRankingView();
 private:
 	class UVM_HandRankingCount* GetVMHandRanking();
 	class AMyPlayerState* GetPlayerState();
 	class UVM_PlayerInfo* GetVMPlayerInfo();
+	class UVM_MainMenu* GetVMMainWidget();
 };

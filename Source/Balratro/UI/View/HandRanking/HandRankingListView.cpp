@@ -5,6 +5,8 @@
 
 #include <Components/TextBlock.h>
 #include <Components/Button.h>
+#include "Components/CanvasPanelSlot.h"
+#include "Components/HorizontalBoxSlot.h"
 
 #include <Engine/World.h>
 #include <MVVMGameSubsystem.h>
@@ -37,13 +39,20 @@ void UHandRankingListView::OnButtonHovered()
 {
 	auto VM = GetVMHandRanking();
 
-	FVector2D ButtonScreenPos = InfoButton->GetCachedGeometry().GetAbsolutePosition();
+	FGeometry ButtonGeo = InfoButton->GetCachedGeometry();
+	FVector2D ButtonAbs = ButtonGeo.GetAbsolutePosition();
+	FVector2D ButtonSize = ButtonGeo.GetLocalSize();
 
-	ButtonScreenPos.Y += 50.f;
+	FGeometry ViewportGeo = UWidgetLayoutLibrary::GetViewportWidgetGeometry(GetWorld());
+	FVector2D LocalPos = ViewportGeo.AbsoluteToLocal(ButtonAbs);
+	
+	LocalPos.Y += ButtonSize.Y;
+	LocalPos.X += 75.f;
 
 	FHRButton_Info Info;
-	Info.Pos = ButtonScreenPos;
+	Info.Pos = LocalPos;
 	Info._Name = MemberData->_Name;
+
 
 	VM->SetHRButtonInfo(Info);
 }

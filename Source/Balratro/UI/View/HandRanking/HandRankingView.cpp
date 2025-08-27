@@ -36,6 +36,11 @@ void UHandRankingView::NativeConstruct()
 void UHandRankingView::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	PokerHandButton->OnClicked.AddDynamic(this, &UHandRankingView::OnClicked_PokerHandButton);
+	BlindButton->OnClicked.AddDynamic(this, &UHandRankingView::OnClicked_BlindButton);
+	VoucherButton->OnClicked.AddDynamic(this, &UHandRankingView::OnClicked_VoucherButton);
+	ExitButton->OnClicked.AddDynamic(this, &UHandRankingView::OnClickedExitButton);
 }
 
 void UHandRankingView::VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -46,27 +51,38 @@ void UHandRankingView::VM_FieldChanged_Status(UObject* Object, UE::FieldNotifica
 
 void UHandRankingView::VM_FieldChanged_WidgetPos(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
-	const auto VMInstance = Cast<UVM_HandRankingCount>(Object);
+	const auto VMInstance = Cast<UVM_HandRankingCount>(Object); check(VMInstance);
 
 	IWidgetPosMoveInterface* TooltipView = Cast<IWidgetPosMoveInterface>(HandRankingToolTipWidget);
 	if (TooltipView)
 	{
 		FVector2D ButtonScreenPos = VMInstance->GetHRButtonInfo().Pos;
-		if (ButtonScreenPos.X == 0 && ButtonScreenPos.Y == 0)
-		{
-			TooltipView->SetWidgetPos(VMInstance->GetHRButtonInfo()._Name, ButtonScreenPos);
-			return;
-		}
-		
-	
-		float Scale = UWidgetLayoutLibrary::GetViewportScale(this);
-		ButtonScreenPos /= Scale;
-
-		FVector2D CanvasScreenPos = MyCanvasPanel->GetCachedGeometry().GetAbsolutePosition();
-		CanvasScreenPos /= Scale;
-		
-		FVector2D RelativePosInCanvas = ButtonScreenPos - CanvasScreenPos;
-		
-		TooltipView->SetWidgetPos(VMInstance->GetHRButtonInfo()._Name,RelativePosInCanvas);
+		TooltipView->SetHandRanking_ToolTipWidgetPos(VMInstance->GetHRButtonInfo(), ButtonScreenPos);
 	}
+}
+
+void UHandRankingView::OnClickedExitButton()
+{
+	const auto VM = TryGetViewModel<UVM_HandRankingCount>(); check(VM);
+
+	VM->HandRankingViewExitButtonClicked();
+
+}
+
+void UHandRankingView::OnClicked_PokerHandButton()
+{
+	const auto VMInstance = TryGetViewModel<UVM_HandRankingCount>();
+	
+
+	HandRankingListView->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UHandRankingView::OnClicked_BlindButton()
+{
+
+	HandRankingListView->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UHandRankingView::OnClicked_VoucherButton()
+{
 }

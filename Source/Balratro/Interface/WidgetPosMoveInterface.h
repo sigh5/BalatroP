@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
 #include "WidgetPosMoveInterface.generated.h"
 
 // This class does not need to be modified.
@@ -22,5 +23,5 @@ class BALRATRO_API IWidgetPosMoveInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void SetWidgetPos(const FName& _Name, const FVector2D& Pos) = 0;
+	virtual void SetHandRanking_ToolTipWidgetPos(const FHRButton_Info& _Info, const FVector2D& Pos) = 0;
 };

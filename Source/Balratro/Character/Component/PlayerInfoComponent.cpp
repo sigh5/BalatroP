@@ -200,21 +200,27 @@ void UPlayerInfoComponent::UpdateHandRanking()
 	VM_PI->SetHandName(Name);
 
 	int32 Level = 0, BaseChip= 0 , IncreaseChip = 0, BaseDrainage = 0 , IncreaseDrainage =0;
-	FString StrA = Name.ToString().Replace(TEXT(" "), TEXT(""));
-	auto Temp = PS->GetHandRankingInfo();
-	for (auto CurInfo : Temp)
+	FString CurHandRankingName = Name.ToString().Replace(TEXT(" "), TEXT(""));
+	auto CurMyHandRanking = PS->GetHandRankingInfoModify();
+	for (auto CurHandRankingInfo : CurMyHandRanking)
 	{
-		if (StrA == CurInfo->_Name)
+		if (CurHandRankingName == CurHandRankingInfo->_Name)
 		{
-			Level = CurInfo->Info.Level;
-			BaseChip = CurInfo->Info.Chip;
-			IncreaseChip = CurInfo->Info.IncreaseChip;
-			BaseDrainage = CurInfo->Info.Drainage;
-			IncreaseDrainage = CurInfo->Info.IncreaseDrainage;
+			Level = CurHandRankingInfo->Info.Level;
+			BaseChip = CurHandRankingInfo->Info.Chip;
+			IncreaseChip = CurHandRankingInfo->Info.IncreaseChip;
+			BaseDrainage = CurHandRankingInfo->Info.Drainage;
+			IncreaseDrainage = CurHandRankingInfo->Info.IncreaseDrainage;
+
+			if (PS->GetHandPlayFlag() == true)
+			{
+				CurHandRankingInfo->Info.UseNum++;
+			}
+
 			break;
 		}
 	}
-	
+
 	BaseChip += IncreaseChip * (Level-1);
 	BaseDrainage += IncreaseDrainage * (Level - 1);
 

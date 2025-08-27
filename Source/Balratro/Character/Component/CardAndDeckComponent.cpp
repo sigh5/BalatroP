@@ -356,9 +356,6 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<UHandInCard_Inf
 				ResultScore = InterfacePtr->CalCulatorHandRanking(CardNum, _DeckCardStat);
 				SetPlayCardEffect();
 
-				//_CurData = _DeckCardStat;
-				//_CardNum = CardNum;
-
 				FTimerDelegate Delegate;
 				Delegate.BindLambda([&](TArray<UHandInCard_Info*> T, int32 U)
 					{

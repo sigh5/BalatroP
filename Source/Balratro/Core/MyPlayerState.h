@@ -105,6 +105,8 @@ public:
 	FORCEINLINE int32 GetMaxScore() { return MaxScore; }
 	FORCEINLINE void  SetMaxScore(int32 InValue){ MaxScore = FMath::Max(MaxScore, InValue); }
 
+
+	FORCEINLINE TArray<class UHandRanking_Info*>& GetHandRankingInfoModify() { return MyHandRankingInfo; }
 	FORCEINLINE const TArray<class UHandRanking_Info*>& GetHandRankingInfo() const {return MyHandRankingInfo;}
 	void ResetMyHandRankingInfo(const TMap<const FName, FHandRankingStat*>& InHandRanking);
 
@@ -187,6 +189,10 @@ public:
 	FORCEINLINE int32 GetHaveUpStoreNum() { return HaveUpStoreNum; }
 	FORCEINLINE void  SetHaveUpStoreNum(int32 InValue) { HaveUpStoreNum = InValue; }
 
+
+	FORCEINLINE bool  GetHandPlayFlag() { return HandPlayFlag; }
+	FORCEINLINE void  SetHandPlayFlag(bool InValue) { HandPlayFlag = InValue; }
+
 private:
 	int32 RoundCount;
 	
@@ -217,6 +223,8 @@ private:
 	int32	HaveUpStoreNum = 2;
 	int32	CurrentRoundBlindGrade = 0;
 	int32	CurSelectTaroNum = 0;
+
+	uint8	HandPlayFlag : 1;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	EPlayerStateType		CurPlayerState;
