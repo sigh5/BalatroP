@@ -60,14 +60,11 @@ public:
 		return StoreJokerData;
 	}
 
-
 	void SetStoreJokerData(const TArray<UJokerCard_Info*>& InValue)
 	{
 		StoreJokerData = InValue;
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(StoreJokerData);
 	}
-
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void	NextButtonClicked() 
