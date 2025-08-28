@@ -51,6 +51,9 @@ void UMainMenuWidget::NativeConstruct()
 		CurViewName = "SelectBlindView";
 		UBBUserWidgetBase* BlindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(BlindSelectView));
 		
+		UBlindSelectView* BlindSelect = Cast<UBlindSelectView>(BlindWidget);
+		BlindSelect->SetIsToolTipView(false);
+
 #ifdef Bline_View_TEST
 		if (BlindWidget)
 		{

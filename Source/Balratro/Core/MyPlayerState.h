@@ -9,6 +9,7 @@
 #include "GameData/BlindStat.h"
 #include "GameData/JokerStat.h"
 #include "GameData/TaroStat.h"
+#include "GameData/BoucherStat.h"
 #include "MyPlayerState.generated.h"
 
 
@@ -189,9 +190,15 @@ public:
 	FORCEINLINE int32 GetHaveUpStoreNum() { return HaveUpStoreNum; }
 	FORCEINLINE void  SetHaveUpStoreNum(int32 InValue) { HaveUpStoreNum = InValue; }
 
-
 	FORCEINLINE bool  GetHandPlayFlag() { return HandPlayFlag; }
 	FORCEINLINE void  SetHandPlayFlag(bool InValue) { HandPlayFlag = InValue; }
+
+	FORCEINLINE const TArray<EBoucherType>&  GetCurBoucherInfo() const { return CurBoucherInfo; }
+	FORCEINLINE void  SetCurBoucherInfo(TArray<EBoucherType>& InValue) { CurBoucherInfo = InValue; }
+	void		AddBoucherType(EBoucherType _InValue)
+	{
+		CurBoucherInfo.Add(_InValue);
+	}
 
 private:
 	int32 RoundCount;
@@ -251,5 +258,9 @@ private:
 
 	UPROPERTY()
 	TArray<class UTaroStat_Info*>	CurTaroStatTable;   // 현재 내 타로 카드 리스트
+
+
+	UPROPERTY()
+	TArray<EBoucherType> CurBoucherInfo;
 
 };

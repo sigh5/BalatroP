@@ -33,7 +33,6 @@ private: /*VM_PlayerInfo*/
 	void VM_FieldChanged_CurPlayerHandCount(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CurHandRanking_Drainage(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-	void VM_FieldChanged_CurHandRanking_Level(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_DeckNum(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_Gold(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
@@ -50,6 +49,8 @@ private: /*VM_PlayerInfo*/
 private:
 	UWidgetAnimation* GetAnimationByName(FName& AnimName) const;
 	void			FillAnimMap();
+
+	void			StartFinishAnim();
 
 private:
 	UPROPERTY(meta = (BindWidget))

@@ -19,6 +19,8 @@ class BALRATRO_API UBlindSelectView : public UBBUserWidgetBase
 public:
 	UBlindSelectView();
 
+	void	SetIsToolTipView(bool _InValue) { IsToolTipView = _InValue; }
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
@@ -36,8 +38,8 @@ private:
 	void VM_FieldChanged_SmallBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_BigBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_BossBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
 	void VM_FieldChanged_BlindVisibleActive(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_HandRankingActive_BlindView(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -87,5 +89,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> BossBlind_RewardText;
+
+private:
+	uint8	IsToolTipView : 1;
+
 
 };

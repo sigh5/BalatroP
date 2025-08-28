@@ -88,6 +88,21 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 	
+	const bool GetHandRankingView_BlindSelectFlag() const
+	{
+		return HandRankingView_BlindSelectFlag;
+	}
+
+	void SetHandRankingView_BlindSelectFlag(bool InValue)
+	{
+		HandRankingView_BlindSelectFlag = InValue;
+
+		if (HandRankingView_BlindSelectFlag)
+		{
+			UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(HandRankingView_BlindSelectFlag);
+		}
+	}
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 SmallGrade = 0;
@@ -106,5 +121,8 @@ private:
 	
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool  SelectButtonActive = false; // 보스블라인드 끝내면 이거 호출해야됌
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool  HandRankingView_BlindSelectFlag = false; // 보스블라인드 끝내면 이거 호출해야됌
 
 };

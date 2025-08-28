@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UI/View/HandRanking/HandRankingView.h"
 
 #include <Components/TextBlock.h>
@@ -12,7 +9,11 @@
 #include "Components/CanvasPanel.h"
 
 #include "UI/MVVM/ViewModel/VM_HandRankingCount.h"
+#include "UI/MVVM/ViewModel/VM_BlindSelect.h"
+
 #include "Interface/WidgetPosMoveInterface.h"
+
+#include "UI/View/BlindSelect/BlindSelectView.h"
 
 UHandRankingView::UHandRankingView()
 {
@@ -36,6 +37,8 @@ void UHandRankingView::NativeConstruct()
 void UHandRankingView::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	BlindSelectToolTipWidget->SetVisibility(ESlateVisibility::Collapsed);
 
 	PokerHandButton->OnClicked.AddDynamic(this, &UHandRankingView::OnClicked_PokerHandButton);
 	BlindButton->OnClicked.AddDynamic(this, &UHandRankingView::OnClicked_BlindButton);
@@ -66,20 +69,24 @@ void UHandRankingView::OnClickedExitButton()
 	const auto VM = TryGetViewModel<UVM_HandRankingCount>(); check(VM);
 
 	VM->HandRankingViewExitButtonClicked();
-
 }
 
 void UHandRankingView::OnClicked_PokerHandButton()
 {
 	const auto VMInstance = TryGetViewModel<UVM_HandRankingCount>();
 	
-
+	BlindSelectToolTipWidget->SetVisibility(ESlateVisibility::Collapsed);
 	HandRankingListView->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UHandRankingView::OnClicked_BlindButton()
 {
+	const auto VM_BlindInfo = TryGetViewModel<UVM_BlindSelect>("VM_BlindSelect", UVM_BlindSelect::StaticClass()); check(VM_BlindInfo);
+
+	BlindSelectToolTipWidget->SetVisibility(ESlateVisibility::Visible);
 	HandRankingListView->SetVisibility(ESlateVisibility::Collapsed);
+
+	VM_BlindInfo->SetHandRankingView_BlindSelectFlag(true);
 }
 
 void UHandRankingView::OnClicked_VoucherButton()

@@ -46,8 +46,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UListView> HandRankingListView;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget)) 
 	TObjectPtr<class UUserWidget> HandRankingToolTipWidget;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UUserWidget> BlindSelectToolTipWidget;
 
 
 private:

@@ -14,6 +14,9 @@
 
 #include "PaperSprite.h"
 
+#include "Engine/AssetManager.h"
+
+
 void UStoreComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -29,8 +32,6 @@ void UStoreComponent::BeginPlay()
    { EBoosterPackType::JOKER_MEGA, 3 },
    { EBoosterPackType::GHOST_BASE, 2 },
    { EBoosterPackType::GHOST_MEGA, 1 }*/ };
-
-
 	auto PS = GetPlayerState();
 	auto VM = GetVMPStore();
 
@@ -38,6 +39,17 @@ void UStoreComponent::BeginPlay()
 	VM->OnReRollButton.AddUObject(this, &UStoreComponent::ReRollCostUp);
 	VM->OnBuyBoosterPack.AddUObject(this, &UStoreComponent::StartBoosterPackEvent);
 
+	if (BoucherDataAsset == nullptr)
+	{
+		FPrimaryAssetId AssetId(TEXT("BoucherStat"), TEXT("DT_BoucherStat"));
+		FAssetData AssetData;
+
+		if (UAssetManager::Get().GetPrimaryAssetData(AssetId, AssetData))
+		{
+			BoucherDataAsset = Cast<UBoucherStat>(AssetData.GetAsset());
+		}
+		check(BoucherDataAsset);
+	}
 
 #ifdef Store_View_TEST
 	SetDownStoreItem();

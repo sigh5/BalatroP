@@ -14,6 +14,8 @@ UBlindSelectView::UBlindSelectView()
 {
 	ViewModelClass = UVM_BlindSelect::StaticClass();
 	ViewModelName = TEXT("VM_BlindSelect");
+
+	IsToolTipView = true;
 }
 
 void UBlindSelectView::NativeConstruct()
@@ -34,6 +36,9 @@ void UBlindSelectView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::SelectButtonActive,
 		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_BlindVisibleActive));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::HandRankingView_BlindSelectFlag,
+		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_HandRankingActive_BlindView));
 }
 
 void UBlindSelectView::NativeOnInitialized()
@@ -42,26 +47,59 @@ void UBlindSelectView::NativeOnInitialized()
 
 	SmallBlindButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnSmallBlindButtonClicked);
 	BigBlindButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnBigBlindButtonClicked);
+
+	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+	BosslBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
 
 void UBlindSelectView::OnSmallBlindButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
 
-	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
+	SmallButtonText->SetText(FText::FromString(TEXT("Victory")));
+
+	FButtonStyle ButtonStyle = SmallBlindButton->WidgetStyle;
+	FLinearColor GrayColor = FLinearColor::Black;
+	ButtonStyle.Normal.TintColor = FSlateColor(GrayColor);
+	ButtonStyle.Hovered.TintColor = FSlateColor(GrayColor);
+	ButtonStyle.Pressed.TintColor = FSlateColor(GrayColor);
+
+	SmallBlindButton->SetStyle(ButtonStyle);
+	SmallBlindButton->SetRenderOpacity(0.3f);
+	SmallSkipButton->SetRenderOpacity(0.3f);
 
 	SmallBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	SmallSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+	BigBlindButton->SetVisibility(ESlateVisibility::Visible);
+	BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
+	
+	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
 }
 
 void UBlindSelectView::OnBigBlindButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
 
-	VMInst->SetBlindType(EPlayerStateType::BIG_BLIND);
+	BigButtonText->SetText(FText::FromString(TEXT("Victory")));
+
+	FButtonStyle ButtonStyle = BigBlindButton->WidgetStyle;
+	FLinearColor GrayColor = FLinearColor::Black;
+	ButtonStyle.Normal.TintColor = FSlateColor(GrayColor);
+	ButtonStyle.Hovered.TintColor = FSlateColor(GrayColor);
+	ButtonStyle.Pressed.TintColor = FSlateColor(GrayColor);
+
+	BigBlindButton->SetStyle(ButtonStyle);
+	BigBlindButton->SetRenderOpacity(0.3f);
+	BiglSkipButton->SetRenderOpacity(0.3f);
 
 	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+	
+	BosslBlindButton->SetVisibility(ESlateVisibility::Visible);
+
+	VMInst->SetBlindType(EPlayerStateType::BIG_BLIND);
 }
 
 void UBlindSelectView::OnBossBlindButtonClicked()
@@ -128,5 +166,21 @@ void UBlindSelectView::VM_FieldChanged_BlindVisibleActive(UObject* Object, UE::F
 		BigBlindButton->SetVisibility(ESlateVisibility::Visible);
 		BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
 		BosslBlindButton->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UBlindSelectView::VM_FieldChanged_HandRankingActive_BlindView(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	if (IsToolTipView == true)
+	{
+		SmallBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);		
+		SmallSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+		BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+		BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+		BosslBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+		SmallButtonText->SetText(FText::FromString(TEXT("Info")));
+		BigButtonText->SetText(FText::FromString(TEXT("Info")));
+		BosslButtonText->SetText(FText::FromString(TEXT("Info")));
 	}
 }

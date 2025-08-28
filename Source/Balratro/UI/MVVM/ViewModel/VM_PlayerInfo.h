@@ -107,7 +107,8 @@ public:
 
 	void SetCurChip(int32 InValue)
 	{
-		UE_MVVM_SET_PROPERTY_VALUE(CurChip, InValue);
+		CurChip = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurChip);
 	}
 
 	const int32 GetCurDrainage() const

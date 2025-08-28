@@ -53,7 +53,7 @@ private:
 	TObjectPtr<class UImage> Image5;
 
 	UPROPERTY()
-	UHandRankingToolTip_DataAsset* ToolTipDataAsset;
+	TObjectPtr<UHandRankingToolTip_DataAsset> ToolTipDataAsset;
 
 
 	TMap<FName, class UWidgetAnimation*> AnimationsMap;

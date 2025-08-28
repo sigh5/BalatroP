@@ -32,7 +32,7 @@ class BALRATRO_API UHandRankingToolTip_DataAsset : public UPrimaryDataAsset
 	
 	FPrimaryAssetId GetPrimaryAssetId() const override
 	{
-		return FPrimaryAssetId("UBoosterPackData", GetFName());
+		return FPrimaryAssetId("HandRankingToolTip", GetFName());
 	}
 
 public:

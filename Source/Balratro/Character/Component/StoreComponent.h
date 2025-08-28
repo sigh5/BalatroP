@@ -7,6 +7,7 @@
 #include "GameData/BlindStat.h"
 #include "Item/BoosterPackData.h"
 #include "GameData/JokerStat.h"
+#include "GameData/BoucherStat.h"
 #include "StoreComponent.generated.h"
 
 USTRUCT()
@@ -55,6 +56,9 @@ private:
 
 	UPROPERTY()
 	TArray<class UJokerCard_Info*> JokerCards;
+
+	UPROPERTY()
+	TObjectPtr<class UBoucherStat> BoucherDataAsset;
 
 
 	int32 BoosterPackIndex = 0;

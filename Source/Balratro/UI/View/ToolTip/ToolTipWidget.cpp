@@ -3,6 +3,9 @@
 
 #include "UI/View/ToolTip/ToolTipWidget.h"
 
+#include "Engine/AssetManager.h"
+#include "GameData/HandRankingToolTip_DataAsset.h"
+
 #include "Components/CanvasPanelSlot.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
@@ -10,21 +13,24 @@
 
 #include "Animation/WidgetAnimation.h"
 
+
 void UToolTipWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	SetVisibility(ESlateVisibility::Hidden);
 
-	ToolTipDataAsset = LoadObject<UHandRankingToolTip_DataAsset>
-		(nullptr,
-		TEXT("/Script/Balratro.HandRankingToolTip_DataAsset'/Game/Item/DT_TooltipRanking.DT_TooltipRanking'"));
-
-	if (!ToolTipDataAsset)
+	if (ToolTipDataAsset == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load DataAsset!"));
-	}
+		FPrimaryAssetId AssetId(TEXT("HandRankingToolTip"), TEXT("DT_HandRankingToolTip"));
+		FAssetData AssetData;
 
+		if (UAssetManager::Get().GetPrimaryAssetData(AssetId, AssetData))
+		{
+			ToolTipDataAsset = Cast<UHandRankingToolTip_DataAsset>(AssetData.GetAsset());
+		}
+
+	}
 	FillAnimMap();
 }
 
@@ -64,14 +70,14 @@ void UToolTipWidget::SetImageRender(class UImage* CurImage, class UPaperSprite* 
 	SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
 	SpriteBrush.SetImageSize(FVector2D(84.f, 128.f));
 	CurImage->SetBrush(SpriteBrush);
-
-	//PlayAnimation(HighCard, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
-
 }
 
 void UToolTipWidget::Set_ToolTipWidgetImage(const FHRButton_Info& _Info)
 {
 	HaneRankingText->SetText(FText::FromName(_Info._Name));
+
+
+
 
 	for (const auto & Info : ToolTipDataAsset->HandRankings)
 	{

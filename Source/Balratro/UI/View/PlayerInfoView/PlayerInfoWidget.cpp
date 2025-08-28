@@ -107,6 +107,8 @@ void UPlayerInfoWidget::NativeOnInitialized()
 
 	DynMat = UMaterialInstanceDynamic::Create(WaveMaterial, this);
 	check(DynMat);
+
+
 }
 
 void UPlayerInfoWidget::OnRunInfoButton()
@@ -151,8 +153,7 @@ void UPlayerInfoWidget::VM_FieldChanged_CurPlayerHandCount(UObject* Object, UE::
 void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {	
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
-	FString MyFString = ChipText->GetText().ToString();
-	int Value = VMInstance->GetCurChip();
+	int32 Value = VMInstance->GetCurChip();
 
 	FNumberFormattingOptions NumberFormatOptions;
 	ChipText->SetText(FText::AsNumber(Value, &NumberFormatOptions));
@@ -161,38 +162,14 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Chip(UObject* Object, UE:
 	else
 		ChipText->SetJustification(ETextJustify::Left);
 
-	
-	int PrevDrainage = FCString::Atoi(*MyFString);
-	if (Value != PrevDrainage)
-	{
-		FName CurAnimNaim = TEXT("ChipChangeEvent_INST");
-		UWidgetAnimation* Anim = GetAnimationByName(CurAnimNaim);
-		PlayAnimation(Anim);
-	}
-
-	int32 Driangle = VMInstance->GetCurDrainage();
-
-	if (Value == 0)
-	{
-		ChipBorder->SetBrushFromMaterial(nullptr);
-	}
-	else if((Value* Driangle) >= VMInstance->GetBlindGrade())
-	{ 
-		ChipBorder->SetBrushFromMaterial(DynMat);
-	}
-	else
-	{
-		ChipBorder->SetBrushFromMaterial(nullptr);
-	}
-
+	StartFinishAnim();
 }
 
 void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
 	int Value = VMInstance->GetCurDrainage();
-	FString MyFString = DrainageText->GetText().ToString();
-
+	
 	FNumberFormattingOptions NumberFormatOptions;
 	DrainageText->SetText(FText::AsNumber(Value, &NumberFormatOptions));
 	if (Value < 10000)
@@ -200,33 +177,7 @@ void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Drainage(UObject* Object,
 	else
 		DrainageText->SetJustification(ETextJustify::Left);
 
-	int PrevDrainage = FCString::Atoi(*MyFString);
-	if (Value != PrevDrainage)
-	{
-		FName CurAnimNaim = TEXT("DrainageChangeEvent_INST");
-		UWidgetAnimation* Anim = GetAnimationByName(CurAnimNaim);
-		PlayAnimation(Anim);
-	}
-
-	int32 CurChip = VMInstance->GetCurChip();
-
-	if (Value == 0)
-	{
-		drainageBorder->SetBrushFromMaterial(nullptr);
-	}
-	else if ((Value * CurChip) >= VMInstance->GetBlindGrade())
-	{
-		drainageBorder->SetBrushFromMaterial(DynMat);
-	}
-	else
-	{
-		drainageBorder->SetBrushFromMaterial(nullptr);
-	}
-}
-
-void UPlayerInfoWidget::VM_FieldChanged_CurHandRanking_Level(UObject* Object, UE::FieldNotification::FFieldId FieldId)
-{
-	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
+	StartFinishAnim();
 }
 
 void UPlayerInfoWidget::VM_FieldChanged_DeckNum(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -419,13 +370,40 @@ void UPlayerInfoWidget::FillAnimMap()
 		{
 			UObject* Obj = Prop->GetObjectPropertyValue_InContainer(this);
 			UWidgetAnimation* anim = Cast<UWidgetAnimation>(Obj);
-
-
 			FName animName = FName(*anim->GetName());
-		
-
 			AnimationsMap.Add(animName, anim);
 		}
 	}
+}
 
+void UPlayerInfoWidget::StartFinishAnim()
+{
+	auto VM = TryGetViewModel<UVM_PlayerInfo>(); check(VM);
+
+	int32 CurChip = VM->GetCurChip();
+	int32 CurDrainage = VM->GetCurDrainage();
+
+	if (CurChip == 0 || CurDrainage == 0)
+	{
+		ChipBorder->SetBrushFromMaterial(nullptr);
+		drainageBorder->SetBrushFromMaterial(nullptr);
+	}
+	else if ((CurChip * CurDrainage) >= VM->GetBlindGrade())
+	{
+		FName CurAnimName = TEXT("ChipChangeEvent_INST");
+		UWidgetAnimation* Anim = GetAnimationByName(CurAnimName);
+		PlayAnimation(Anim);
+
+		CurAnimName = TEXT("DrainageChangeEvent_INST");
+		Anim = GetAnimationByName(CurAnimName);
+		PlayAnimation(Anim);
+
+		drainageBorder->SetBrushFromMaterial(DynMat);
+		ChipBorder->SetBrushFromMaterial(DynMat);
+	}
+	else
+	{
+		ChipBorder->SetBrushFromMaterial(nullptr);
+		drainageBorder->SetBrushFromMaterial(nullptr);
+	}
 }
