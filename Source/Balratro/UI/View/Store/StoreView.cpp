@@ -37,6 +37,9 @@ void UStoreView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_Store::FFieldNotificationClassDescriptor::StoreJokerData,
 		FFieldValueChangedDelegate::CreateUObject(this, &UStoreView::VM_FieldChanged_UpStoreJoker));
 
+	VMInst->AddFieldValueChangedDelegate(UVM_Store::FFieldNotificationClassDescriptor::CurStoreBouchers,
+		FFieldValueChangedDelegate::CreateUObject(this, &UStoreView::VM_FieldChanged_BoucherCards));
+
 }
 
 void UStoreView::NativeOnInitialized()
@@ -171,6 +174,13 @@ void UStoreView::VM_FieldChanged_UpStoreJoker(UObject* Object, UE::FieldNotifica
 	{
 		RightSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
 	}
+
+
+}
+
+void UStoreView::VM_FieldChanged_BoucherCards(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_Store>(); check(VMInst);
 
 
 }

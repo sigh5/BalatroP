@@ -11,7 +11,6 @@
 #include <MVVMGameSubsystem.h>
 #include <MVVMSubsystem.h>
 #include "UI/MVVM/ViewModel/VM_Store.h"
-#include "UI/MVVM/ViewModel/VM_Boucher.h"
 
 #include "PaperSprite.h"
 #include "Styling/SlateBrush.h"
@@ -23,8 +22,7 @@
 
 UBoucherCardWidget::UBoucherCardWidget()
 {
-	ViewModelClass = UVM_Boucher::StaticClass();
-	ViewModelName = "VM_Boucher";
+
 }
 
 void UBoucherCardWidget::NativeConstruct()

@@ -33,7 +33,7 @@ void UStoreComponent::BeginPlay()
    { EBoosterPackType::GHOST_BASE, 2 },
    { EBoosterPackType::GHOST_MEGA, 1 }*/ };
 	auto PS = GetPlayerState();
-	auto VM = GetVMPStore();
+	auto VM = GetVMStore();
 
 	PS->OnSelectNextScene.AddUObject(this, &UStoreComponent::SetStoreView);
 	VM->OnReRollButton.AddUObject(this, &UStoreComponent::ReRollCostUp);
@@ -88,7 +88,7 @@ void UStoreComponent::ReRollCostUp()
 void UStoreComponent::SetUpStoreItem()
 {
 	auto PS = GetPlayerState();
-	auto VM_Stroe = GetVMPStore();
+	auto VM_Stroe = GetVMStore();
 
 	JokerCards.Empty();
 
@@ -119,13 +119,17 @@ void UStoreComponent::SetUpStoreItem()
 
 void UStoreComponent::SetBoucherItem()
 {
+	auto VM_Store = GetVMStore();
 
+	auto TestData = BoucherDataAsset.Get()->BoucherInfos[0];
+
+	VM_Store->AddCurStoreBoucher(TestData);
 }
 
 void UStoreComponent::SetDownStoreItem()
 {
 	auto PS = GetPlayerState();
-	auto VM_Stroe = GetVMPStore();
+	auto VM_Stroe = GetVMStore();
 
 	int32 BoosterPackNum = PS->GetHaveBoosterPackNum();
 	int32 MaxBoosterPackNum = PS->GetMaxHaveBoosterPackNum();
@@ -184,7 +188,7 @@ EJokerType UStoreComponent::SetJokerType()
 
 void UStoreComponent::StartBoosterPackEvent(UBoosterPackData* InData)
 {
-	auto VM_Stroe = GetVMPStore();
+	auto VM_Stroe = GetVMStore();
 	auto VM_MainMenu = GetVMMainWidget();
 	auto PS = GetPlayerState();
 	UBoosterPackData* CurBoosterPack = nullptr;
@@ -227,8 +231,7 @@ UVM_MainMenu* UStoreComponent::GetVMMainWidget()
 	return Cast<UVM_MainMenu>(Found);
 }
 
-
-UVM_Store* UStoreComponent::GetVMPStore()
+UVM_Store* UStoreComponent::GetVMStore()
 {
 	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
 

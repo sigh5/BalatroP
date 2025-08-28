@@ -43,7 +43,7 @@ private:
 
 private:
 	class UVM_PlayerInfo*	GetVMPlayerInfo();
-	class UVM_Store*		GetVMPStore();
+	class UVM_Store*		GetVMStore();
 	class AMyPlayerState*	GetPlayerState();
 	class UVM_MainMenu*		GetVMMainWidget();
 

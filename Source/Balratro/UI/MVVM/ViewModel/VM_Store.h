@@ -5,6 +5,7 @@
 #include "MVVMViewModelBase.h"
 #include "Item/BoosterPackData.h"
 #include "GameData/JokerStat.h"
+#include "GameData/BoucherStat.h"
 #include "VM_Store.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnNextButton);
@@ -84,6 +85,20 @@ public:
 	}
 
 
+	const TArray<FBoucherInfo>& GetCurStoreBouchers()  const { return CurStoreBouchers; }
+	void SetCurStoreBouchers(TArray<FBoucherInfo>& InValue)
+	{
+		CurStoreBouchers = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(MainItemNum);
+	}
+
+	void AddCurStoreBoucher(FBoucherInfo& InValue)
+	{
+		CurStoreBouchers.Add(InValue);
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(MainItemNum);
+	}
+
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 MainItemNum = 0;
@@ -99,5 +114,8 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<UJokerCard_Info*> StoreJokerData;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	TArray<FBoucherInfo> CurStoreBouchers;
 
 };

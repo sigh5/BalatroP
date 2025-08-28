@@ -22,7 +22,7 @@ void UItemSelectComponent::BeginPlay()
 	Super::BeginPlay();
 
 	auto PS = GetPlayerState();
-	auto VM_Stroe = GetVMPStore();
+	auto VM_Stroe = GetVMStore();
 	auto VM_CardDeck = GetVMCardDeck();
 
 	InitTaroInfoTable();
@@ -167,7 +167,7 @@ UVM_ItemSelect* UItemSelectComponent::GetVMItemSelect()
 	return Cast<UVM_ItemSelect>(Found);
 }
 
-UVM_Store* UItemSelectComponent::GetVMPStore()
+UVM_Store* UItemSelectComponent::GetVMStore()
 {
 	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
 

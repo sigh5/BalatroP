@@ -25,7 +25,7 @@ private:
 	void VM_FieldChanged_BoosterPacks(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 	void VM_FieldChanged_UpStoreJoker(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
+	void VM_FieldChanged_UpStoreJoker(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 private:
 	UFUNCTION()
