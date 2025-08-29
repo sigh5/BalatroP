@@ -18,8 +18,14 @@ class BALRATRO_API UCardButtonWidget : public UBBUserWidgetBase
 public:
 	UCardButtonWidget();
 
+	FWidgetAnimationDynamicEvent EndDelegate;
+
 private:
 	virtual void NativeConstruct()override;
+
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void   NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	virtual bool   NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 public:
 	FORCEINLINE void		SetCardIndex(int InValue) { CardIndex = InValue; }
@@ -39,6 +45,9 @@ private:
 	void OnCardButtonClicked();
 
 	void LoadEnhanceImage();
+
+	UFUNCTION()
+	void OnFilpAnimationFinished();
 
 private:
 	void	SetClikcedEvent();
@@ -74,8 +83,8 @@ private:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	TObjectPtr<class UWidgetAnimation> MoveEndAnim;
 
-	/*UPROPERTY(meta = (BindWidgetAnim), Transient)
-	TObjectPtr<class UWidgetAnimation> FirstDrawAnim;*/
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	TObjectPtr<class UWidgetAnimation> FilpAnim;
 
 private:
 	int CardIndex = 0;
@@ -87,4 +96,11 @@ private:
 	uint8 IsCreated : 1;
 
 	float	OriginYPos = 0.f;
+
+
+	FSlateBrush MainImageSpriteBrush;
+	FSlateBrush EnhanceImageSpriteBrush;
+
+	bool bIsDragging = false;
+	FVector2D DragOffset;
 };
