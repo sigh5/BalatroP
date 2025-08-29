@@ -38,22 +38,14 @@ void UStoreComponent::BeginPlay()
 	PS->OnSelectNextScene.AddUObject(this, &UStoreComponent::SetStoreView);
 	VM->OnReRollButton.AddUObject(this, &UStoreComponent::ReRollCostUp);
 	VM->OnBuyBoosterPack.AddUObject(this, &UStoreComponent::StartBoosterPackEvent);
+	VM->OnBuyBoucherCard.AddUObject(this, &UStoreComponent::EraseStoreBoucherCard);
 
-	if (BoucherDataAsset == nullptr)
-	{
-		FPrimaryAssetId AssetId(TEXT("BoucherStat"), TEXT("DT_BoucherStat"));
-		FAssetData AssetData;
-
-		if (UAssetManager::Get().GetPrimaryAssetData(AssetId, AssetData))
-		{
-			BoucherDataAsset = Cast<UBoucherStat>(AssetData.GetAsset());
-		}
-		check(BoucherDataAsset);
-	}
+	InitStoreData();
 
 #ifdef Store_View_TEST
 	SetDownStoreItem();
 	SetUpStoreItem();
+	SetBoucherItem();
 #endif
 }
 
@@ -121,9 +113,13 @@ void UStoreComponent::SetBoucherItem()
 {
 	auto VM_Store = GetVMStore();
 
-	auto TestData = BoucherDataAsset.Get()->BoucherInfos[0];
+	auto TestData = BoucherInfos[6];
+	auto TestData2 = BoucherInfos[5];
+	TArray<FBoucherInfo> Temp;
+	Temp.Add(TestData);
+	Temp.Add(TestData2);
 
-	VM_Store->AddCurStoreBoucher(TestData);
+	VM_Store->SetCurStoreBouchers(Temp);
 }
 
 void UStoreComponent::SetDownStoreItem()
@@ -158,6 +154,36 @@ void UStoreComponent::SetDownStoreItem()
 	}
 	
 	VM_Stroe->SetBoosterPackTypes(BoosterPacks);
+}
+
+void UStoreComponent::EraseStoreBoucherCard(FBoucherInfo& _Info)
+{
+	auto PS = GetPlayerState();
+
+	if (BoucherInfos.Contains(_Info))
+	{
+		BoucherInfos.RemoveSingle(_Info);
+	}
+
+	PS->AddBoucherType(_Info);
+}
+
+void UStoreComponent::InitStoreData()
+{
+	FPrimaryAssetId AssetId(TEXT("BoucherStat"), TEXT("DT_BoucherStat"));
+	FAssetData AssetData;
+
+	if (UAssetManager::Get().GetPrimaryAssetData(AssetId, AssetData))
+	{
+		UBoucherStat* NewStat = Cast<UBoucherStat>(AssetData.GetAsset());
+
+		for (const auto& Boucher : NewStat->BoucherInfos)
+		{
+			FBoucherInfo BoucherInfo = Boucher;
+			BoucherInfos.Add(BoucherInfo);
+		}
+	}
+	ensure(BoucherInfos.Num() > 0);
 }
 
 EBoosterPackType UStoreComponent::SetItemType()

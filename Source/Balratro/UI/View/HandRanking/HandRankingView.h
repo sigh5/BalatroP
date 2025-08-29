@@ -22,9 +22,9 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 private:
-
 	void VM_FieldChanged_Status(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_WidgetPos(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
 
 private:
 	UFUNCTION()
@@ -52,6 +52,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UUserWidget> BlindSelectToolTipWidget;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UUserWidget> BoucherWidget;
 
 private:
 	UPROPERTY(meta = (BindWidget))

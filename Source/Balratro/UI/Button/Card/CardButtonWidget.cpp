@@ -39,18 +39,28 @@ void UCardButtonWidget::SetClikcedEvent()
 	MainButton->OnClicked.AddDynamic(this, &UCardButtonWidget::OnCardButtonClicked);
 }
 
+void UCardButtonWidget::MoveAnimmation()
+{
+	PlayAnimation(MoveAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
+}
+
+void UCardButtonWidget::DrawAnimation()
+{
+	PlayAnimation(MoveEndAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
+}
 
 void UCardButtonWidget::OnCardButtonClicked()
 {
-	bSelected = !bSelected; // Toggle
-
 	const auto VM = TryGetViewModel<UVM_CardDeck>();
 	check(VM);
 
 	bool CurSelectedMax = VM->GetIsSelectedMax();
 
-	if (CurSelectedMax == true && bSelected == false) // 5장이 꽉찼고 추가적으로 더 선택할 경우 return;
+	bSelected = !bSelected; // Toggle
+
+	if (CurSelectedMax == true && bSelected == true) // 5장이 꽉찼고 추가적으로 더 선택할 경우 return;
 	{
+		bSelected = false;
 		return;
 	}
 
@@ -92,6 +102,8 @@ void UCardButtonWidget::SetInfo(UHandInCard_Info* _inValue)
 	{
 		IsCreated = true;
 	}
+	
+	
 }
 
 

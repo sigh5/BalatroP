@@ -193,12 +193,10 @@ public:
 	FORCEINLINE bool  GetHandPlayFlag() { return HandPlayFlag; }
 	FORCEINLINE void  SetHandPlayFlag(bool InValue) { HandPlayFlag = InValue; }
 
-	FORCEINLINE const TArray<EBoucherType>&  GetCurBoucherInfo() const { return CurBoucherInfo; }
-	FORCEINLINE void  SetCurBoucherInfo(TArray<EBoucherType>& InValue) { CurBoucherInfo = InValue; }
-	void		AddBoucherType(EBoucherType _InValue)
-	{
-		CurBoucherInfo.Add(_InValue);
-	}
+	FORCEINLINE const TArray<FBoucherInfo>&  GetCurBoucherInfo() const { return CurBoucherInfo; }
+	FORCEINLINE void  SetCurBoucherInfo(TArray<FBoucherInfo>& InValue) { CurBoucherInfo = InValue; }
+	void		AddBoucherType(FBoucherInfo& _InValue);
+	
 
 private:
 	int32 RoundCount;
@@ -261,6 +259,6 @@ private:
 
 
 	UPROPERTY()
-	TArray<EBoucherType> CurBoucherInfo;
+	TArray<FBoucherInfo> CurBoucherInfo;
 
 };

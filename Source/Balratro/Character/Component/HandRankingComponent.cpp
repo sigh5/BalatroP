@@ -26,7 +26,7 @@ void UHandRankingComponent::BeginPlay()
 
 	VM_PlayerInfo->OnClickedRunInfoButton.AddUObject(this, &UHandRankingComponent::InitHandRanking);
 	VM_HandRanking->OnHandRankingExitButton.AddUObject(this, &UHandRankingComponent::ExitHandRankingView);
-
+	VM_HandRanking->OnHandRankingBoucherButton.AddUObject(this, &UHandRankingComponent::ShowBoucherCard);
 
 
 
@@ -55,6 +55,15 @@ void UHandRankingComponent::ExitHandRankingView()
 	auto VM_MainMenu = GetVMMainWidget();
 
 	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("HandRankingView", false));
+}
+
+void UHandRankingComponent::ShowBoucherCard()
+{
+	auto VM = GetVMHandRanking();
+	auto PS = GetPlayerState();
+
+	auto CurBouchers = PS->GetCurBoucherInfo();
+	VM->SetCurHaveBouchers(CurBouchers);
 }
 
 UVM_HandRankingCount* UHandRankingComponent::GetVMHandRanking()

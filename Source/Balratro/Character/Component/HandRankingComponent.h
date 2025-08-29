@@ -18,6 +18,9 @@ protected:
 	void InitHandRanking();
 
 	void ExitHandRankingView();
+	void ShowBoucherCard();
+
+
 private:
 	class UVM_HandRankingCount* GetVMHandRanking();
 	class AMyPlayerState* GetPlayerState();

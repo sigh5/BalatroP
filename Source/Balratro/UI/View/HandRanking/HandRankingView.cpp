@@ -32,6 +32,8 @@ void UHandRankingView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_HandRankingCount::FFieldNotificationClassDescriptor::HRButtonInfo,
 		FFieldValueChangedDelegate::CreateUObject(this, &UHandRankingView::VM_FieldChanged_WidgetPos));
+
+	
 }
 
 void UHandRankingView::NativeOnInitialized()
@@ -76,6 +78,7 @@ void UHandRankingView::OnClicked_PokerHandButton()
 	const auto VMInstance = TryGetViewModel<UVM_HandRankingCount>();
 	
 	BlindSelectToolTipWidget->SetVisibility(ESlateVisibility::Collapsed);
+	BoucherWidget->SetVisibility(ESlateVisibility::Collapsed);
 	HandRankingListView->SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -85,11 +88,18 @@ void UHandRankingView::OnClicked_BlindButton()
 
 	BlindSelectToolTipWidget->SetVisibility(ESlateVisibility::Visible);
 	HandRankingListView->SetVisibility(ESlateVisibility::Collapsed);
+	BoucherWidget->SetVisibility(ESlateVisibility::Collapsed);
 
 	VM_BlindInfo->SetHandRankingView_BlindSelectFlag(true);
 }
 
 void UHandRankingView::OnClicked_VoucherButton()
 {
+	const auto VMInstance = TryGetViewModel<UVM_HandRankingCount>();
+
+	BlindSelectToolTipWidget->SetVisibility(ESlateVisibility::Collapsed);
 	HandRankingListView->SetVisibility(ESlateVisibility::Collapsed);
+	BoucherWidget->SetVisibility(ESlateVisibility::Visible);
+
+	VMInstance->VoucherButtonShowButton();
 }

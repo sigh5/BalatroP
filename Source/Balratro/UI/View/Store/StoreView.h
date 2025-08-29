@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/View/Core/BBUserWidgetBase.h"
+#include "GameData/BoucherStat.h"
 #include "StoreView.generated.h"
 
 /**
@@ -39,6 +40,8 @@ private:
 
 	class UJokerCardWidget* ReUseJokerWidget(int32 DataNum, int32 Index, class UJokerCard_Info* Data);
 
+	class UBoucherCardWidget* ReUseBoucherWidget(int32 DataNum, int32 Index, FBoucherInfo& Data);
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> NextButton;
@@ -59,6 +62,9 @@ private:
 	TObjectPtr<class UHorizontalBox> PackHorizontalBox;
 
 	UPROPERTY()
+	TSubclassOf<class UBoucherCardWidget> BoucherCardWidgetSubClass;
+
+	UPROPERTY()
 	TSubclassOf<class UBoosterPackWidget> BoosterPackWidgetSubClass;
 
 	UPROPERTY()
@@ -70,5 +76,8 @@ private:
 
 	UPROPERTY()
 	TArray<class UJokerCardWidget*> JokercardWidgets;
+
+	UPROPERTY()
+	TArray<class UBoucherCardWidget*> BoucherCardWidgets;
 
 };

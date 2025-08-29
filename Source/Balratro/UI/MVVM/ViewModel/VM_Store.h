@@ -13,6 +13,8 @@ DECLARE_MULTICAST_DELEGATE(FOnReRollButton);
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuyBoosterPack, UBoosterPackData*);
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuyBoucherCard, FBoucherInfo&);
+
 /**
  *
  */
@@ -26,6 +28,7 @@ public:
 	FOnNextButton	OnNextButton;
 	FOnReRollButton OnReRollButton;
 	FOnBuyBoosterPack OnBuyBoosterPack;
+	FOnBuyBoucherCard OnBuyBoucherCard;
 public:
 	const int32 GetMainItemNum()  const { return MainItemNum; }
 	void SetMainItemNum(int32 InValue) 
@@ -86,15 +89,26 @@ public:
 	void SetCurStoreBouchers(TArray<FBoucherInfo>& InValue)
 	{
 		CurStoreBouchers = InValue;
-		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(MainItemNum);
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurStoreBouchers);
 	}
 
 	void AddCurStoreBoucher(FBoucherInfo& InValue)
 	{
 		CurStoreBouchers.Add(InValue);
-		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(MainItemNum);
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurStoreBouchers);
 	}
 
+	void EraseCurStoreBoucher(FBoucherInfo& InValue)
+	{
+		if (CurStoreBouchers.Contains(InValue))
+		{
+			CurStoreBouchers.RemoveSingle(InValue); // 첫 번째 항목만 제거
+		}
+
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurStoreBouchers);
+	}
+
+	void BuyBoucherCard(FBoucherInfo& _Info) { OnBuyBoucherCard.Broadcast(_Info); }
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -114,5 +128,4 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<FBoucherInfo> CurStoreBouchers;
-
 };

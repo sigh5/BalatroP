@@ -2,6 +2,8 @@
 
 
 #include "Core/MyPlayerState.h"
+#include "GameData/BoucherStat.h"	
+
 
 AMyPlayerState::AMyPlayerState()
 	:RoundCount(0), EntiCount(0), UseHandCount(0), MaxChuckCount(3), UseChuckCount(0), CurrentScore(0),
@@ -104,4 +106,46 @@ void AMyPlayerState::SetNextRound()
 	SetCurHandCard_Type(EPokerHand::NONE);
 	
 	CurrentAllHands.Empty();
+}
+
+void AMyPlayerState::AddBoucherType(FBoucherInfo& _InValue)
+{
+	CurBoucherInfo.Add(_InValue);
+	
+	EBoucherType CurType = _InValue.Type;
+
+	UE_LOG(LogTemp, Warning, TEXT("MaxChuckCount : %d"), MaxChuckCount);
+	UE_LOG(LogTemp, Warning, TEXT("MaxHandCount : %d"), MaxHandCount);
+
+	switch (CurType)
+	{
+	case EBoucherType::NONE:
+		break;
+	case EBoucherType::BoucherType_HAND_PULS:
+		break;
+	case EBoucherType::BoucherType_BOSS_REROLL:
+		break;
+	case EBoucherType::BoucherType_ENTI_MINUS:
+		break;
+	case EBoucherType::BoucherType_INTEREST_50:
+		break;
+	case EBoucherType::BoucherType_CHUCK:
+		SetMaxChuckCount(MaxChuckCount + 1);
+		SetUseChuckCount(0);
+		break;
+	case EBoucherType::BoucherType_HAND:
+		SetMaxHandCount(MaxHandCount + 1);
+		SetUseHandCount(0);
+		break;
+	case EBoucherType::BoucherType_ORB:
+		break;
+	case EBoucherType::BoucherType_INVENTORY:
+		break;
+	case EBoucherType::BoucherType_COST_DOWN:
+		break;
+	case EBoucherType::BoucherType_INVENTORY_ORB:
+		break;
+	default:
+		break;
+	}
 }

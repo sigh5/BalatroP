@@ -30,6 +30,10 @@ public:
 	FORCEINLINE const bool	GetSelected() const { return bSelected; }
 	FORCEINLINE void		SetSelected(bool _Selected) { bSelected = _Selected; }
 
+	void					MoveAnimmation();
+
+	void					DrawAnimation();
+
 private:
 	UFUNCTION()
 	void OnCardButtonClicked();
@@ -64,6 +68,15 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UImage> Foil_Image;
 
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	TObjectPtr<class UWidgetAnimation> MoveAnimation;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	TObjectPtr<class UWidgetAnimation> MoveEndAnim;
+
+	/*UPROPERTY(meta = (BindWidgetAnim), Transient)
+	TObjectPtr<class UWidgetAnimation> FirstDrawAnim;*/
+
 private:
 	int CardIndex = 0;
 	
@@ -72,4 +85,6 @@ private:
 
 	uint8 bSelected : 1;
 	uint8 IsCreated : 1;
+
+	float	OriginYPos = 0.f;
 };

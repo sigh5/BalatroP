@@ -119,6 +119,8 @@ void UPlayerInfoComponent::UpdateUseHandCount(int32 _invalue)
 	int32 PlayHandCount = PS->GetMaxHandCount();
 	PlayHandCount -= PS->GetUseHandCount();
 
+
+
 	VM_PI->SetHandCount(PlayHandCount);
 }
 

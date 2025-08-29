@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
 #include "GameData/HandRankingStat.h"
+#include "GameData/BoucherStat.h"
 #include "VM_HandRankingCount.generated.h"
 
 
 DECLARE_MULTICAST_DELEGATE(FOnHandRankingExitButton);
+
+DECLARE_MULTICAST_DELEGATE(FOnHandRankingBoucherButton);
 
 
 USTRUCT(BlueprintType)
@@ -49,7 +52,7 @@ class BALRATRO_API UVM_HandRankingCount : public UMVVMViewModelBase
 
 public:
 	FOnHandRankingExitButton OnHandRankingExitButton;
-
+	FOnHandRankingBoucherButton	OnHandRankingBoucherButton;
 public:
 	const TArray<UHandRanking_Info*>& GetVM_HandRankingData() const
 	{
@@ -78,9 +81,22 @@ public:
 	}
 
 
+	const TArray<FBoucherInfo>& GetCurHaveBouchers() const
+	{
+		return CurHaveBouchers;
+	}
+
+	void SetCurHaveBouchers(TArray<FBoucherInfo>& InValue)
+	{
+		CurHaveBouchers = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurHaveBouchers);
+	}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 	void	HandRankingViewExitButtonClicked() { OnHandRankingExitButton.Broadcast(); }
+	void	VoucherButtonShowButton() { OnHandRankingBoucherButton.Broadcast(); }
+
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -89,5 +105,6 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	FHRButton_Info HRButtonInfo;
 
-
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	TArray<FBoucherInfo> CurHaveBouchers;
 };

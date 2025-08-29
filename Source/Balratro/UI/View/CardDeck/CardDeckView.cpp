@@ -70,19 +70,19 @@ UCardButtonWidget* UCardDeckView::ReuseCardButtonWidget(int32 CurAllCardNum, int
 	if (HandCardButtons.Num() < CurAllCardNum)
 	{
 		NewButton = CreateWidget<UCardButtonWidget>(this, CardButtonSubClass);
-		NewButton->SetInfo(CardInfo);
-		NewButton->SetCardIndex(CardIndex++);
 		HandCardButtons.Add(NewButton);
 	}
 	else
 	{
 		NewButton = HandCardButtons[CurNum];
 		NewButton->SetSelected(false);
-		NewButton->SetInfo(CardInfo);
-		NewButton->SetCardIndex(CardIndex++);
 	}
 
 	check(NewButton);
+	
+	NewButton->SetInfo(CardInfo);
+	NewButton->SetCardIndex(CardIndex++);
+
 	return NewButton;
 }
 
@@ -97,7 +97,6 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 	for (int i = 0; i < CurAllHandNum; ++i)
 	{
 		UCardButtonWidget* NewButton = ReuseCardButtonWidget(CurAllHandNum, i, CurHandInfo[i]);
-
 		UHorizontalBoxSlot* BoxSlot = CardPanel->AddChildToHorizontalBox(NewButton);
 		BoxSlot->SetSize(FSlateChildSize(ESlateSizeRule::Automatic));
 
@@ -227,6 +226,7 @@ void UCardDeckView::CardScroe_EffectText()
 			if (Card->GetCardInfoData()->Info == Data[i]->Info)
 			{
 				FDeckCardStat CurData = Data[i]->Info;
+				Card->MoveAnimmation();
 				SetCard_EffectOrder(Card, CurData);
 				break;
 			}
@@ -311,7 +311,7 @@ void UCardDeckView::SetScoreTextPos(UCardButtonWidget* CurEventCard)
 		FGeometry ParentGeo = CanvasParent->GetCachedGeometry();
 		FVector2D LocalCenter = ParentGeo.AbsoluteToLocal(AbsPos);
 
-		LocalCenter.Y -= 55.f;
+		LocalCenter.Y += 15.f;
 		LocalCenter.X -= (Size.X * 0.39f);
 
 		if (UCanvasPanelSlot* ChipSlot = Cast<UCanvasPanelSlot>(ScoreResultText->Slot))

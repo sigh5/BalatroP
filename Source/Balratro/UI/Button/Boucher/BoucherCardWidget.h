@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/View/Core/BBUserWidgetBase.h"
+#include "GameData/BoucherStat.h"
 #include "BoucherCardWidget.generated.h"
 
 /**
@@ -21,14 +22,25 @@ private:
 	virtual void NativeConstruct() override;
 
 public:
-	void	SetInfo();
-	void	SetPriceText();
+	void	SetInfo(FBoucherInfo& Data);
+
+	void	SetIsStoreHave(bool _InValue);
+
 
 private:
+	void	SetClikcedEvent();
+	
 	void	ChangeImage();
 	void	CreateImage();
 
+	UFUNCTION()
+	void	OnClickedEvent();
 
+	UFUNCTION()
+	void	OnButtonHoverEvent();
+
+	UFUNCTION()
+	void	OnBuyClickedEvent();
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -46,4 +58,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> BuyButton;
 
+private:
+	uint8 IsStoreHave : 1;
+	uint8 IsCreated : 1;
+	uint8 IsSelcte : 1;
+
+
+	FBoucherInfo BoucherInfo;
 };

@@ -14,6 +14,7 @@
 
 #include "UI/Button/BoosterPack/BoosterPackWidget.h"
 #include "UI/Button/JokerCard/JokerCardWidget.h"
+#include "UI/Button/Boucher/BoucherCardWidget.h"
 
 UStoreView::UStoreView()
 {
@@ -30,6 +31,7 @@ void UStoreView::NativeConstruct()
 
 	BoosterPackWidgetSubClass = LoadClass<UBoosterPackWidget>(nullptr, TEXT("/Game/UI/View/StoreView/WBP_BoosterButton.WBP_BoosterButton_C"));
 	JokerCardWidgetSubClass = LoadClass<UJokerCardWidget>(nullptr, TEXT("/Game/UI/View/Joker/WBP_JokerCard.WBP_JokerCard_C"));
+	BoucherCardWidgetSubClass = LoadClass<UBoucherCardWidget>(nullptr, TEXT("/Game/UI/View/StoreView/WBP_BoucherCard.WBP_BoucherCard_C"));
 
 	VMInst->AddFieldValueChangedDelegate(UVM_Store::FFieldNotificationClassDescriptor::BoosterPackTypes,
 		FFieldValueChangedDelegate::CreateUObject(this, &UStoreView::VM_FieldChanged_BoosterPacks));
@@ -106,6 +108,28 @@ UJokerCardWidget* UStoreView::ReUseJokerWidget(int32 DataNum, int32 Index, UJoke
 	return JokerCardButton;
 }
 
+UBoucherCardWidget* UStoreView::ReUseBoucherWidget(int32 DataNum, int32 Index, FBoucherInfo& Data)
+{
+	UBoucherCardWidget* BoucherButton = nullptr;
+
+	if (DataNum > BoucherCardWidgets.Num())
+	{
+		BoucherButton = CreateWidget<UBoucherCardWidget>(this, BoucherCardWidgetSubClass);
+		BoucherCardWidgets.Add(BoucherButton);
+	}
+	else
+	{
+		BoucherButton = BoucherCardWidgets[Index];
+	}
+
+	check(BoucherButton);
+	BoucherButton->SetInfo(Data);
+	BoucherButton->SetIsStoreHave(true);
+
+	return BoucherButton;
+}
+
+
 void UStoreView::VM_FieldChanged_BoosterPacks(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInst = TryGetViewModel<UVM_Store>();
@@ -181,6 +205,35 @@ void UStoreView::VM_FieldChanged_UpStoreJoker(UObject* Object, UE::FieldNotifica
 void UStoreView::VM_FieldChanged_BoucherCards(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInst = TryGetViewModel<UVM_Store>(); check(VMInst);
+	auto BoucherDatas = VMInst->GetCurStoreBouchers();
+	
+	BoucherHorizontalBox->ClearChildren();
+
+	int32 DataNum = BoucherDatas.Num();
+
+	// ¿ÞÂÊ Spacer
+	if (UHorizontalBoxSlot* LeftSlot = BoucherHorizontalBox->AddChildToHorizontalBox(NewObject<USpacer>(this)))
+	{
+		LeftSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+	}
+
+	for (int i = 0; i < DataNum; ++i)
+	{
+		UBoucherCardWidget* BoucherCard = ReUseBoucherWidget(DataNum, i, BoucherDatas[i]);
+
+		UHorizontalBoxSlot* BoxSlot = BoucherHorizontalBox->AddChildToHorizontalBox(BoucherCard);
+		BoxSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+
+	//	BoxSlot->SetHorizontalAlignment(HAlign_Center);
+		//BoxSlot->SetVerticalAlignment(VAlign_Center);
+
+		BoucherCard->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	if (UHorizontalBoxSlot* RightSlot = BoucherHorizontalBox->AddChildToHorizontalBox(NewObject<USpacer>(this)))
+	{
+		RightSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+	}
 
 
 }

@@ -40,6 +40,16 @@ struct FBoucherInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<class UPaperSprite> CardSprite;
+
+	bool operator == (const FBoucherInfo& Other) const 
+	{
+		return Type == Other.Type;
+	}
+
+	bool operator!=(const FBoucherInfo& Other) const
+	{
+		return !(*this == Other);
+	}
 };
 //
 //

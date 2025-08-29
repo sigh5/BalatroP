@@ -36,6 +36,11 @@ private:
 	void	SetUpStoreItem();
 	void	SetBoucherItem();
 	void	SetDownStoreItem();
+	
+
+	void	EraseStoreBoucherCard(FBoucherInfo& _Info);
+
+	void	InitStoreData();
 
 private:
 	EBoosterPackType	SetItemType();
@@ -57,8 +62,11 @@ private:
 	UPROPERTY()
 	TArray<class UJokerCard_Info*> JokerCards;
 
-	UPROPERTY()
-	TObjectPtr<class UBoucherStat> BoucherDataAsset;
+	//UPROPERTY()
+	//TObjectPtr<class UBoucherStat> BoucherDataAsset;
+
+
+	TArray<FBoucherInfo> BoucherInfos;
 
 
 	int32 BoosterPackIndex = 0;
