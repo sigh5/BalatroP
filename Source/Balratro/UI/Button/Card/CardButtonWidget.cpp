@@ -35,6 +35,11 @@ void UCardButtonWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	if (bIsDummyData == true)
+	{
+		return;
+	}
+
 	Ghost_Image->SetVisibility(ESlateVisibility::Collapsed);
 	Foil_Image->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -58,24 +63,23 @@ void UCardButtonWidget::NativeConstruct()
 	MainButton->SetStyle(EmptyStyle);
 
 	EndDelegate.Clear();
-	EndDelegate.BindDynamic(this, &UCardButtonWidget::OnFilpAnimationFinished); // C++ 함수
+	EndDelegate.BindDynamic(this, &UCardButtonWidget::OnFilpAnimationFinished);
 	BindToAnimationFinished(FilpAnim, EndDelegate);
-
 }
 
-FReply UCardButtonWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UCardButtonWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	FReply Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	FReply Reply = Super::NativeOnPreviewMouseButtonDown(InGeometry, InMouseEvent);
 
-	if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton) == true)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("NativeOnMouseButtonDown"));
-		// 드래그 가능 상태이면 감지 시작
-		return Reply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+	{	
+		FVector2D LocalMousePos = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
+		DragOffset = LocalMousePos; // 클릭한 위치와 위젯 좌상단 차이
+
+		return UWidgetBlueprintLibrary::DetectDragIfPressed(
+			InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("NativeOnMouseButtonDown == false"));
-
+	bIsDragging = false;
 	return Reply;
 }
 
@@ -83,35 +87,99 @@ void UCardButtonWidget::NativeOnDragDetected(const FGeometry& InGeometry, const 
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
-	UE_LOG(LogTemp, Warning, TEXT("NativeOnDragDetected"));
+	bIsDragging = true;
+
+	DragVisual->ForceSwapData(this->CardInfoData);
+	DragVisual->CardIndex = CardIndex;
 
 	UDragDropOperation* DragOp = NewObject<UDragDropOperation>();
-	DragOp->DefaultDragVisual = MainImage;        // 드래그 중 보여줄 비주얼
-	DragOp->Pivot = EDragPivot::MouseDown;   // 마우스 기준 드래그
-
+	DragOp->DefaultDragVisual = DragVisual;
+	DragOp->Payload = this;
+	DragOp->Pivot = EDragPivot::MouseDown;
 	OutOperation = DragOp;
-	
+
+	MainImage->SetRenderOpacity(0.f);
+	Enhance_Image->SetRenderOpacity(0.f);
 }
 
 bool UCardButtonWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 	
-	if (InOperation && InOperation->Payload)
-	{
-		// 예: 드래그한 위젯 가져오기
+	MainImage->SetRenderOpacity(1.f);
+	Enhance_Image->SetRenderOpacity(1.f);
 
-		UE_LOG(LogTemp, Warning, TEXT("NativeOnDrop"));
-		return true;
+	bIsDragging = false;
+	
+	if (InOperation && InOperation->Payload)
+	{	
+		if (UCardButtonWidget* DraggedWidget = Cast<UCardButtonWidget>(InOperation->Payload))
+		{
+			if (DraggedWidget->CardInfoData->Info != CardInfoData->Info)
+			{
+				const auto VM = TryGetViewModel<UVM_CardDeck>(); check(VM);
+
+				auto SwapData0 = DraggedWidget->CardInfoData;
+				auto SwapCardIndex = DraggedWidget->CardIndex;
+				auto SwapSelected = DraggedWidget->bSelected;
+
+				DraggedWidget->ForceSwapData(CardInfoData);
+				DraggedWidget->CardIndex = CardIndex;
+				DraggedWidget->bSelected = bSelected;
+				
+				ForceSwapData(SwapData0);
+				CardIndex = SwapCardIndex;
+				bSelected = SwapSelected;
+				
+				if (DraggedWidget->bSelected != bSelected)
+				{
+					DraggedWidget->ForceSwapPos();
+					ForceSwapPos();
+				}
+
+				VM->SwapCardData(DraggedWidget->CardInfoData, CardInfoData);
+			}
+
+
+			
+			DraggedWidget->MainImage->SetRenderOpacity(1.f);
+			DraggedWidget->Enhance_Image->SetRenderOpacity(1.f);
+
+			return true;
+		}
 	}
+
+
 
 	return false;
 }
 
-void UCardButtonWidget::SetClikcedEvent()
+FReply UCardButtonWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	bSelected = false;
-	MainButton->OnClicked.AddDynamic(this, &UCardButtonWidget::OnCardButtonClicked);
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		if (!bIsDragging)
+		{
+			OnCardButtonClicked();
+		}
+		MainImage->SetRenderOpacity(1.f);
+		Enhance_Image->SetRenderOpacity(1.f);
+	}
+
+	bIsDragging = false;
+	return Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+}
+
+
+void UCardButtonWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
+
+	MainImage->SetRenderOpacity(1.f);
+	Enhance_Image->SetRenderOpacity(1.f);
+
+
+	bIsDragging = false;
 }
 
 void UCardButtonWidget::MoveAnimmation()
@@ -126,11 +194,11 @@ void UCardButtonWidget::DrawAnimation()
 
 void UCardButtonWidget::OnCardButtonClicked()
 {
-	const auto VM = TryGetViewModel<UVM_CardDeck>();
-	check(VM);
+	const auto VM = TryGetViewModel<UVM_CardDeck>(); check(VM);
 
 	bool CurSelectedMax = VM->GetIsSelectedMax();
 
+	bIsDragging = false;
 	bSelected = !bSelected; // Toggle
 
 	if (CurSelectedMax == true && bSelected == true) // 5장이 꽉찼고 추가적으로 더 선택할 경우 return;
@@ -159,7 +227,6 @@ void UCardButtonWidget::OnCardButtonClicked()
 	}
 }
 
-
 void UCardButtonWidget::SetInfo(UHandInCard_Info* _inValue)
 {
 	CardInfoData = _inValue;
@@ -167,6 +234,9 @@ void UCardButtonWidget::SetInfo(UHandInCard_Info* _inValue)
 	if (IsCreated == false)
 	{
 		CreateImage();
+
+		DragVisual = CreateWidget<UCardButtonWidget>(GetWorld(), GetClass());
+		DragVisual->bIsDummyData = true;
 	}
 	else
 	{
@@ -177,7 +247,6 @@ void UCardButtonWidget::SetInfo(UHandInCard_Info* _inValue)
 	{
 		IsCreated = true;
 	}
-
 
 	PlayAnimation(FilpAnim);
 }
@@ -192,6 +261,7 @@ void UCardButtonWidget::ChangeImage()
 		MainImageSpriteBrush.SetResourceObject(Sprite);
 		MainImageSpriteBrush.DrawAs = ESlateBrushDrawType::Image;
 		MainImageSpriteBrush.SetImageSize(FVector2D(100.f, 150.f));
+		MainImage->SetBrush(MainImageSpriteBrush);
 		
 	}
 
@@ -200,21 +270,72 @@ void UCardButtonWidget::ChangeImage()
 		EnhanceImageSpriteBrush.SetResourceObject(Sprite);
 		EnhanceImageSpriteBrush.DrawAs = ESlateBrushDrawType::Image;
 		EnhanceImageSpriteBrush.SetImageSize(FVector2D(100.f, 150.f));
-	
+		Enhance_Image->SetBrush(EnhanceImageSpriteBrush);
 	}
-
 }
 
 void UCardButtonWidget::CreateImage()
 {
-	//FButtonStyle EmptyStyle;
-	//EmptyStyle.SetNormal(FSlateNoResource());
-	////EmptyStyle.SetHovered(FSlateNoResource());
-	//EmptyStyle.SetPressed(FSlateNoResource());
-	//MainButton->SetStyle(EmptyStyle);
-
 	ChangeImage();
-	SetClikcedEvent();
+	bSelected = false;
+}
+
+void UCardButtonWidget::ForceSwapData(UHandInCard_Info* CardInfoData0)
+{
+	CardInfoData = CardInfoData0;
+
+	LoadEnhanceImage();
+
+	if (UPaperSprite* Sprite = CardInfoData->Info.CardSprite.Get())
+	{
+		MainImageSpriteBrush.SetResourceObject(Sprite);
+		MainImageSpriteBrush.DrawAs = ESlateBrushDrawType::Image;
+		MainImageSpriteBrush.SetImageSize(FVector2D(100.f, 150.f));
+		MainImage->SetBrush(MainImageSpriteBrush);
+	}
+
+	if (UPaperSprite* Sprite = CardInfoData->Info.EnforceSprite.Get())
+	{
+		EnhanceImageSpriteBrush.SetResourceObject(Sprite);
+		EnhanceImageSpriteBrush.DrawAs = ESlateBrushDrawType::Image;
+		EnhanceImageSpriteBrush.SetImageSize(FVector2D(100.f, 150.f));
+		Enhance_Image->SetBrush(EnhanceImageSpriteBrush);
+	}
+
+	FButtonStyle EmptyStyle;
+	EmptyStyle.SetNormal(FSlateNoResource());
+	//EmptyStyle.SetHovered(FSlateNoResource());
+	EmptyStyle.SetPressed(FSlateNoResource());
+	MainButton->SetStyle(EmptyStyle);
+	Ghost_Image->SetVisibility(ESlateVisibility::Collapsed);
+	Foil_Image->SetVisibility(ESlateVisibility::Collapsed);
+
+	
+}
+
+void UCardButtonWidget::ForceSwapPos()
+{
+	auto VM = TryGetViewModel<UVM_CardDeck>(); check(VM);
+	bool CurSelectedMax = VM->GetIsSelectedMax();
+
+	UHorizontalBoxSlot* HSlot = Cast<UHorizontalBoxSlot>(Slot);
+	check(HSlot);
+	if (bSelected == false)
+	{
+		FMargin Margin = HSlot->GetPadding();
+		Margin.Top += 100.f;  // 선택한 카드 내리는 것
+		HSlot->SetPadding(Margin);
+
+		VM->SetIsUpCardExist(true);
+	}
+	else if (bSelected == true)
+	{
+		FMargin Margin = HSlot->GetPadding();
+		Margin.Top -= 100.f;
+		HSlot->SetPadding(Margin);
+
+		VM->SetIsUpCardExist(true);
+	}
 }
 
 void UCardButtonWidget::LoadEnhanceImage()

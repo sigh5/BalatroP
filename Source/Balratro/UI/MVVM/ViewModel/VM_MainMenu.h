@@ -57,5 +57,4 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool ClearFlag = false;
 
-
 };

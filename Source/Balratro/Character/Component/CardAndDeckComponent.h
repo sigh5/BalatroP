@@ -34,6 +34,8 @@ private:
 	void	SetVisibleCardDeckView(EPlayerStateType InValue);
 	void    FinishHandPlay(TArray<class UHandInCard_Info*> DeckCardStat, int32 CardNum);
 
+	void	SwapCardOrder(UHandInCard_Info* SwapDest, UHandInCard_Info* Source);
+
 private:
 	void	UseTaroItem(FTaroStat& TaroStat);
 	

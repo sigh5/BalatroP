@@ -23,10 +23,13 @@ public:
 private:
 	virtual void NativeConstruct()override;
 
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void   NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual bool   NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
-
+	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	
+	virtual void	NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
+	
 public:
 	FORCEINLINE void		SetCardIndex(int InValue) { CardIndex = InValue; }
 
@@ -42,18 +45,17 @@ public:
 
 private:
 	UFUNCTION()
-	void OnCardButtonClicked();
-
-	void LoadEnhanceImage();
-
-	UFUNCTION()
 	void OnFilpAnimationFinished();
 
 private:
-	void	SetClikcedEvent();
-
+	void	OnCardButtonClicked();
+	void	LoadEnhanceImage();
 	void	ChangeImage();
 	void	CreateImage();
+
+	void	 ForceSwapData(class UHandInCard_Info* CardInfoData0);
+	void	 ForceSwapPos();
+
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -89,18 +91,20 @@ private:
 private:
 	int CardIndex = 0;
 	
-	UPROPERTY()
-	class UHandInCard_Info* CardInfoData;
-
-	uint8 bSelected : 1;
-	uint8 IsCreated : 1;
-
-	float	OriginYPos = 0.f;
-
-
 	FSlateBrush MainImageSpriteBrush;
 	FSlateBrush EnhanceImageSpriteBrush;
 
-	bool bIsDragging = false;
+	uint8 bSelected : 1;
+	uint8 IsCreated : 1;
+	uint8 bIsDragging : 1;
+	uint8 bIsDummyData : 1;
+
 	FVector2D DragOffset;
+
+	UPROPERTY()
+	class UHandInCard_Info* CardInfoData;
+
+	UPROPERTY()
+	class UCardButtonWidget* DragVisual;
+
 };

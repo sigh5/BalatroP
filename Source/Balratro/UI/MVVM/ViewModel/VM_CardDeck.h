@@ -18,7 +18,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseHandPlayButton, int32, TArray<UHandIn
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCurPlayHands, int32, TArray<UHandInCard_Info*>& /*PlayCardNum*/);
 
-
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSwapCards, UHandInCard_Info*, UHandInCard_Info* /* Swap Destination, Swap Source */ );
 
 /**
  ∑πµÂ, ∞ÒµÂ, ∫Ì∑Á ∫¿¿Œ
@@ -38,7 +38,7 @@ public:
 	FOnUseHandPlayButton OnUseHandPlay;
 	FOnCurPlayHands		OnCurPlayHands;
 	FOnSkipButtonClicked OnSkipButtonClicked;
-
+	FOnSwapCards		OnSwapCards;
 public:
 	//const int32 GetDeckNum() const
 	//{
@@ -111,6 +111,11 @@ public:
 
 	void SkipButtonClicked() { OnSkipButtonClicked.Broadcast(); }
 
+	void SwapCardData( UHandInCard_Info* SwapDest, UHandInCard_Info* Source)
+	{
+		OnSwapCards.Broadcast(SwapDest, Source);
+	}
+
 private:
 	//UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	//int32 DeckNum = 0;
@@ -126,7 +131,6 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool ItemSelectFlag = false;
-
 
 	UPROPERTY()
 	bool IsSelectedMax = false;

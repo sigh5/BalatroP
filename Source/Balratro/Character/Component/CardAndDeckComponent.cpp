@@ -32,6 +32,7 @@ void UCardAndDeckComponent::BeginPlay()
 	VM->OnSortTypeChange.AddUObject(this, &UCardAndDeckComponent::SortHandInCard);
 	VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
 	VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::UpdateHandPlay);
+	VM->OnSwapCards.AddUObject(this, &UCardAndDeckComponent::SwapCardOrder);
 
 	VM_ItemSelcet->OnUseTaroCard.AddUObject(this, &UCardAndDeckComponent::UseTaroItem);
 
@@ -42,7 +43,7 @@ void UCardAndDeckComponent::UpdateCardInHand(TArray<UHandInCard_Info*>& _DeckCar
 {
 	auto PS = GetPlayerState();
 
-	auto CurHandInCard = PS->GetCurrentAllHandsModify();
+	auto CurHandInCard = PS->GetCurrentAllHands();
 	CurHandInCard.RemoveAll([&](UHandInCard_Info* HandCard)
 		{
 			if (!HandCard)
@@ -113,6 +114,26 @@ void UCardAndDeckComponent::FinishHandPlay(TArray<UHandInCard_Info*> DeckCardSta
 		UpdateCardInHand(DeckCardStat);
 		DrawCard(CardNum);
 	}
+}
+
+void UCardAndDeckComponent::SwapCardOrder(UHandInCard_Info* SwapDest, UHandInCard_Info* Source)
+{
+	auto PS = GetPlayerState();
+	//auto VM = GetVMCardDeck();
+	
+	auto CurAllHands = PS->GetCurrentAllHands();
+
+	int32 SourceIndex = CurAllHands.IndexOfByKey(Source);
+	int32 DestIndex = CurAllHands.IndexOfByKey(SwapDest);
+
+	if (SourceIndex != INDEX_NONE && DestIndex != INDEX_NONE)
+	{
+		CurAllHands.Swap(SourceIndex, DestIndex);
+	}
+
+	PS->SetCurrentAllHands(CurAllHands);
+
+	///VM->SetCurrentAllHands(PS->GetCurrentAllHands());
 }
 
 void UCardAndDeckComponent::UseTaroItem(FTaroStat& TaroStat)
@@ -386,7 +407,7 @@ void UCardAndDeckComponent::InitDeck()
 void UCardAndDeckComponent::SortHandInCard(const EHandInCardSortType& InType)
 {
 	auto PS = GetPlayerState();
-	auto& CurHandInCard = PS->GetCurrentAllHandsModify();
+	auto CurHandInCard = PS->GetCurrentAllHands();
 	const auto VM = GetVMCardDeck();
 
 	if (InType == EHandInCardSortType::SORT_RANK)
@@ -414,6 +435,8 @@ void UCardAndDeckComponent::SortHandInCard(const EHandInCardSortType& InType)
 				return A.Info.SuitGrade < B.Info.SuitGrade;
 			});
 	}
+
+	PS->SetCurrentAllHands(CurHandInCard);
 
 	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
 }

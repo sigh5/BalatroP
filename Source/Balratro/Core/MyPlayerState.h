@@ -119,7 +119,6 @@ public:
 	FORCEINLINE const TArray<class UHandInCard_Info*>& GetDeckStatTable() const { return Deck_Stat; }
 	void ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRanking);
 	
-	FORCEINLINE TArray<class UHandInCard_Info*>& GetCurrentAllHandsModify()  { return CurrentAllHands; }
 	FORCEINLINE const TArray<class UHandInCard_Info*>& GetCurrentAllHands() const {return CurrentAllHands;}
 	FORCEINLINE void SetCurrentAllHands(TArray<class UHandInCard_Info*>& InValue) { CurrentAllHands = InValue;}
 

@@ -32,15 +32,13 @@ void UMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	const auto VMInst = TryGetViewModel<UVM_MainMenu>();
-	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
+	const auto VMInst = TryGetViewModel<UVM_MainMenu>(); checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 	
 	VMInst->AddFieldValueChangedDelegate(UVM_MainMenu::FFieldNotificationClassDescriptor::CurWidgetName,
 		FFieldValueChangedDelegate::CreateUObject(this, &UMainMenuWidget::VM_FieldChanged_WidgetName));
 	
 	VMInst->AddFieldValueChangedDelegate(UVM_MainMenu::FFieldNotificationClassDescriptor::ClearFlag,
 		FFieldValueChangedDelegate::CreateUObject(this, &UMainMenuWidget::VM_FieldChanged_ClearAnimFlag));
-
 
 	WidgetPool = NewObject<UBBUserWidgetPool>(this);
 	FName CurViewName = "";
@@ -61,7 +59,6 @@ void UMainMenuWidget::NativeConstruct()
 			CanvasSlot->AddChildToCanvas(BlindWidget);
 		}
 #endif
-
 	}
 
 	if (PlayerInfoView == nullptr)
@@ -122,7 +119,6 @@ void UMainMenuWidget::NativeConstruct()
 			CanvasSlot->AddChildToCanvas(BlindWidget);
 		}
 #endif
-
 	}
 
 	if (RewardView == nullptr)
@@ -159,11 +155,8 @@ void UMainMenuWidget::NativeConstruct()
 
 void UMainMenuWidget::VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
-	const auto VMInst = TryGetViewModel<UVM_MainMenu>();
-	check(VMInst);
-
+	const auto VMInst = TryGetViewModel<UVM_MainMenu>(); check(VMInst);
 	auto WidgetInfo = VMInst->GetCurWidgetName();
-
 
 	UBBUserWidgetBase* CurWidget = WidgetPool->GetWidget(WidgetInfo.CurWidgetName);
 	if (CurWidget)

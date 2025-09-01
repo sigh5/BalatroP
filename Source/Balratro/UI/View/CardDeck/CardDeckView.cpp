@@ -92,7 +92,7 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 	auto& CurHandInfo = VMInstance->GetCurrentAllHands();
 	int32 CurAllHandNum = CurHandInfo.Num();
 	
-	CardPanel->ClearChildren(); // 기존 이미지 제거
+	//CardPanel->ClearChildren(); // 기존 이미지 제거
 
 	for (int i = 0; i < CurAllHandNum; ++i)
 	{

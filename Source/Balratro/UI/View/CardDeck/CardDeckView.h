@@ -56,6 +56,9 @@ private:
 
 private:
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UCanvasPanel> CanvasPaenl;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> SuitSortButton;
 
 	UPROPERTY(meta = (BindWidget))
