@@ -39,6 +39,9 @@ void UBlindSelectView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::HandRankingView_BlindSelectFlag,
 		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_HandRankingActive_BlindView));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::BossType,
+		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_BossTypeChanged));
 }
 
 void UBlindSelectView::NativeOnInitialized()
@@ -155,7 +158,7 @@ void UBlindSelectView::VM_FieldChanged_BossBlindGrade(UObject* Object, UE::Field
 
 void UBlindSelectView::VM_FieldChanged_BlindVisibleActive(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
-	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
+	const auto VMInst = TryGetViewModel<UVM_BlindSelect>(); check(VMInst);
 	
 	bool Active = VMInst->GetSelectButtonActive();
 
@@ -183,4 +186,9 @@ void UBlindSelectView::VM_FieldChanged_HandRankingActive_BlindView(UObject* Obje
 		BigButtonText->SetText(FText::FromString(TEXT("Info")));
 		BosslButtonText->SetText(FText::FromString(TEXT("Info")));
 	}
+}
+
+void UBlindSelectView::VM_FieldChanged_BossTypeChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_BlindSelect>(); check(VMInst);
 }

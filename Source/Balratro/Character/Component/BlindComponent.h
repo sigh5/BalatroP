@@ -29,5 +29,6 @@ private:
 	class UVM_Store* GetVMStore();
 
 private:
-
+	UPROPERTY()
+	TArray<EBossType> BossTypes;
 };

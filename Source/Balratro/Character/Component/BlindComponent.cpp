@@ -19,12 +19,15 @@
 void UBlindComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	auto VM_SelectBlind = GetVMBlindSelect();
 	VM_SelectBlind->OnSelectBlind.AddUObject(this, &UBlindComponent::BlindSelectEvent);
 
 	auto VM_Store = GetVMStore();
 	VM_Store->OnNextButton.AddUObject(this, &UBlindComponent::BlindViewActive);
+
+	BossTypes = { { EBossType::HOOK},{ EBossType::OX}, { EBossType::WALL}, { EBossType::ARM},
+				  { EBossType::PHYCHIC}, { EBossType::GOAD },{ EBossType::WATER },{ EBossType::EYE } };
 
 	InitBlindSelectView();
 }
@@ -40,6 +43,9 @@ void UBlindComponent::InitBlindSelectView()
 	VM->SetSmallGrade(BlindStatTable[EntiCnt]->SMallGrade);
 	VM->SetBigGrade(BlindStatTable[EntiCnt]->BigGrade);
 	VM->SetBossGrade(BlindStatTable[EntiCnt]->BossGrade);
+
+	
+
 }
 
 void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
@@ -51,12 +57,12 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND
 		|| InValue == EPlayerStateType::SMALL_BLIND)
 	{
-		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView",false));
+		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", false));
 		PS->SetPlayerState(InValue);
-		
+
 		auto BlindStatTable = UBBGameSingleton::Get().GetBlindStat();
 		int EntiCnt = PS->GetEntiCount();
-		
+
 		if (InValue == EPlayerStateType::SMALL_BLIND)
 		{
 			PS->SetCurrentRoundBlindGrade(BlindStatTable[EntiCnt]->SMallGrade);
@@ -69,9 +75,9 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 		{
 			PS->SetCurrentRoundBlindGrade(BlindStatTable[EntiCnt]->BossGrade);
 		}
-		
+
 	}
-	else if(InValue == EPlayerStateType::SMALL_BLIND_SKIP || InValue == EPlayerStateType::BIG_BLIND_SKIP)
+	else if (InValue == EPlayerStateType::SMALL_BLIND_SKIP || InValue == EPlayerStateType::BIG_BLIND_SKIP)
 	{
 		// 스킵 보상 수령하기
 		return;
@@ -82,7 +88,7 @@ void UBlindComponent::BlindViewActive()
 {
 	auto VM_MainWidget = GetVMMainWidget();
 	auto PS = GetPlayerState();
-	
+
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("StoreView", false));
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", true));
 

@@ -103,6 +103,18 @@ public:
 		}
 	}
 
+	const EBossType GetBossType() const
+	{
+		return BossType;
+	}
+
+	void SetBossType(EBossType InValue)
+	{
+		BossType = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BossType);
+	}
+
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 SmallGrade = 0;
@@ -112,6 +124,9 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 BossGrade = 0;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	EBossType BossType = EBossType::NONE;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 RoundCnt = 0;

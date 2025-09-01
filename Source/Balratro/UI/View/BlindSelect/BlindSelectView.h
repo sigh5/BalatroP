@@ -41,6 +41,8 @@ private:
 	void VM_FieldChanged_BlindVisibleActive(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_HandRankingActive_BlindView(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+	void VM_FieldChanged_BossTypeChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> SmallBlindButton;
