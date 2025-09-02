@@ -3,6 +3,7 @@
 
 #include "Character/Component/BlindComponent.h"
 
+#include "Kismet/GameplayStatics.h"
 #include <Engine/World.h>
 #include <MVVMGameSubsystem.h>
 #include <MVVMSubsystem.h>
@@ -26,10 +27,10 @@ void UBlindComponent::BeginPlay()
 	auto VM_Store = GetVMStore();
 	VM_Store->OnNextButton.AddUObject(this, &UBlindComponent::BlindViewActive);
 
-	BossTypes = { { EBossType::HOOK},{ EBossType::OX}, { EBossType::WALL}, { EBossType::ARM},
-				  { EBossType::PHYCHIC}, { EBossType::GOAD },{ EBossType::WATER },{ EBossType::EYE } };
+	auto PS = GetPlayerState();
+	PS->OnRestCardsSet.AddUObject(this,&UBlindComponent::UseBossSkill);
 
-	InitBlindSelectView();
+	ResetBlindSelectData();
 }
 
 void UBlindComponent::InitBlindSelectView()
@@ -44,8 +45,14 @@ void UBlindComponent::InitBlindSelectView()
 	VM->SetBigGrade(BlindStatTable[EntiCnt]->BigGrade);
 	VM->SetBossGrade(BlindStatTable[EntiCnt]->BossGrade);
 
-	
+	auto& BossType = PS->GetCurBossType();
 
+	if (BossType.Key != EntiCnt)
+	{
+		SetRandomBossType();
+	}
+
+	VM->SetBossType(BossType.Value);
 }
 
 void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
@@ -55,7 +62,7 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 	auto VM_BlindSelect = GetVMBlindSelect();
 
 	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND
-		|| InValue == EPlayerStateType::SMALL_BLIND)
+		|| InValue == EPlayerStateType::BOSS_BLIND)
 	{
 		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", false));
 		PS->SetPlayerState(InValue);
@@ -95,6 +102,116 @@ void UBlindComponent::BlindViewActive()
 	PS->SetPlayerState(EPlayerStateType::NONE);
 
 	InitBlindSelectView();
+}
+
+void UBlindComponent::ResetBlindSelectData()
+{
+	auto PS = GetPlayerState();
+	
+	BossTypes.Add(EBossType::HOOK, [this]() { HOOK_Skill(); });
+	BossTypes.Add(EBossType::OX, [this]() { OX_Skill(); });
+	BossTypes.Add(EBossType::WALL, [this]() { WALL_SKill(); });
+	BossTypes.Add(EBossType::ARM, [this]() { ARM_Skill(); });
+	BossTypes.Add(EBossType::PSYCHIC, [this]() { PSYCHIC_Skill(); });
+	BossTypes.Add(EBossType::GOAD, [this]() { GOAD_Skill(); });
+	BossTypes.Add(EBossType::WATER, [this]() { WATER_Skill(); });
+	BossTypes.Add(EBossType::EYE, [this]() { EYE_Skill(); });
+
+	for (int32 i = 1; i <= 8; i++)
+	{
+		RandomArray.Add(i);
+	}
+
+	float CurrentTime = UGameplayStatics::GetRealTimeSeconds(nullptr);
+	int32 Seed = FMath::FloorToInt(CurrentTime * 1000.0f);
+	FMath::RandInit(Seed);
+
+	int32 NumElements = RandomArray.Num();
+
+	for (int32 i = NumElements - 1; i > 0; --i)
+	{
+		int32 RandomIndex = FMath::RandRange(0, i);
+
+		if (i != RandomIndex)
+		{
+			RandomArray.Swap(i, RandomIndex);
+		}
+	}
+	
+	PS->SetCurBossType({ -1,EBossType::NONE });
+	InitBlindSelectView();
+}
+
+void UBlindComponent::SetRandomBossType()
+{
+	auto PS = GetPlayerState();
+	
+	TPair<int32, EBossType> MyBossType;
+	
+	int32 EntiCount = PS->GetEntiCount();
+	MyBossType = { EntiCount ,static_cast<EBossType>(RandomArray[EntiCount])};
+	
+	RandomArray.RemoveAt(EntiCount);
+
+	PS->SetCurBossType(MyBossType);
+}
+
+void UBlindComponent::UseBossSkill()
+{
+	auto PS = GetPlayerState();
+	
+	if (EPlayerStateType::BOSS_BLIND != PS->GetPlayerState())
+	{
+		return;
+	}
+
+	EBossType CurBossType = PS->GetCurBossType().Value;
+	BossTypes[CurBossType]();
+}
+
+void UBlindComponent::HOOK_Skill()
+{
+	auto PS = GetPlayerState();
+
+	UE_LOG(LogTemp, Warning, TEXT("HOOK_Skill"));
+
+}
+
+void UBlindComponent::OX_Skill()
+{
+	UE_LOG(LogTemp, Warning, TEXT("OX_Skill"));
+}
+
+void UBlindComponent::WALL_SKill()
+{
+	auto PS = GetPlayerState();
+
+	UE_LOG(LogTemp, Warning, TEXT("WALL_SKill"));
+}
+
+void UBlindComponent::ARM_Skill()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ARM_Skill"));
+}
+
+void UBlindComponent::PSYCHIC_Skill()
+{
+	UE_LOG(LogTemp, Warning, TEXT("PSYCHIC_Skill"));
+}
+
+void UBlindComponent::GOAD_Skill()
+{
+	UE_LOG(LogTemp, Warning, TEXT("GOAD_Skill"));
+}
+
+void UBlindComponent::WATER_Skill()
+{
+	UE_LOG(LogTemp, Warning, TEXT("WATER_Skill"));
+}
+
+void UBlindComponent::EYE_Skill()
+{
+	UE_LOG(LogTemp, Warning, TEXT("EYE_Skill"));
 }
 
 UVM_BlindSelect* UBlindComponent::GetVMBlindSelect()

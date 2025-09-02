@@ -22,6 +22,10 @@
 #define JokerSlotView_VIEW_TEST
 //#define CadDeckView_View_TEST
 //#define HandRankingView_View_TEST
+#define FASTLOGTEXT UE_LOG(LogTemp, Warning, TEXT("?"))
+
+#define FASTLOGTEXT_NUM(n) UE_LOG(LogTemp, Warning, TEXT("%d"),n)
+
 
 UENUM()
 enum class EHandInCardSortType : uint8
@@ -43,6 +47,7 @@ DECLARE_MULTICAST_DELEGATE(FOnSetCurrentGold);
 DECLARE_MULTICAST_DELEGATE(FOnSetEntiCount);
 DECLARE_MULTICAST_DELEGATE(FOnShowUIChip); 
 DECLARE_MULTICAST_DELEGATE(FOnShowUIDrainage);
+DECLARE_MULTICAST_DELEGATE(FOnRestCardsSet);
 
 
 /**
@@ -68,6 +73,7 @@ public:
 	FOnDeckCardNum				OnDeckCardNum;
 	FOnShowUIChip				OnShowUIChip;
 	FOnShowUIDrainage			OnShowUIDrainage;
+	FOnRestCardsSet				OnRestCardsSet;
 
 public:
 	FORCEINLINE int32 GetRoundCount() { return RoundCount; }
@@ -127,17 +133,20 @@ public:
 		CurrentAllHands.Add(Info);
 	}
 
+	FORCEINLINE const TArray<class UHandInCard_Info*>  GetRestCardInHands() const { return CurRestCardInHands; }
+	FORCEINLINE void  SetRestCardInHands(TArray<class UHandInCard_Info*> _InValue) {CurRestCardInHands = _InValue; OnRestCardsSet.Broadcast();
+}
+
+
 	FORCEINLINE const EHandInCardSortType& GetCurSortType() const { return CurSortType; }
 	FORCEINLINE void  SetCurSortType(EHandInCardSortType& InValue) { CurSortType = InValue; }
 
 	FORCEINLINE const EPokerHand& GetCurHandCard_Type() const { return CurHandCard_Type; }
 	FORCEINLINE void  SetCurHandCard_Type(EPokerHand InValue) { CurHandCard_Type = InValue;  OnCurrentPlayerHandRanking.Broadcast(); }
 
-
 	FORCEINLINE const TArray<class UHandInCard_Info*>& GetCurCalculatorCardInHands() const { return CurCalculatorCardInHands; }
 	void  SetCurCalculatorCardInHands(TArray<class UHandInCard_Info*>& InValue);
 	void  SetCurCalculatorCardInHands0(TArray<UHandInCard_Info*>& InValue,bool bPlay = true);
-
 
 
 	FORCEINLINE const EPlayerStateType GetPlayerState() const { return CurPlayerState; }
@@ -196,7 +205,9 @@ public:
 	FORCEINLINE void  SetCurBoucherInfo(TArray<FBoucherInfo>& InValue) { CurBoucherInfo = InValue; }
 	void		AddBoucherType(FBoucherInfo& _InValue);
 	
-
+	FORCEINLINE const TPair<int32, EBossType>& GetCurBossType() const { return CurrentBostType; }
+	FORCEINLINE void SetCurBossType(TPair<int32, EBossType> _InValue) { CurrentBostType = _InValue; }
+	
 private:
 	int32 RoundCount;
 	
@@ -235,6 +246,8 @@ private:
 	EHandInCardSortType		CurSortType;
 	EPokerHand				CurHandCard_Type;
 
+	TPair<int32, EBossType> CurrentBostType;
+
 	UPROPERTY()
 	TObjectPtr<class UBoosterPackData> CurSelcetPackType;
 
@@ -249,6 +262,9 @@ private:
 
 	UPROPERTY()
 	TArray<class UHandInCard_Info*> CurCalculatorCardInHands;  // Play시에 점수 계산할 카드들 (1~5장 사이) 단순 (Delay 시간)계산만 하므로 구조체로 만듦
+
+	UPROPERTY()
+	TArray<class UHandInCard_Info*> CurRestCardInHands;  // 플레이시도 카드 빼고 남아있는 카드들
 
 	UPROPERTY()
 	TArray<class UJokerCard_Info*> CurJokerCardInfo;  // 내가 가지고 있는 조커

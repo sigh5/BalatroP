@@ -28,7 +28,8 @@ int32 UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArr
 {
 	auto PS = GetPlayerState();
 	PS->SetHandPlayFlag(true);
-	SetStillCards(_DeckCardStat);
+	
+	SetCalRestCardInHands(_DeckCardStat); // 점수 계산 전 보스 능력 확인
 	
 	SetHandRankingType(CardNum, _DeckCardStat);
 	
@@ -293,16 +294,34 @@ int32 UCalculatorHandRankingComponent::ResultScore()
 	return Score;
 }
 
-void UCalculatorHandRankingComponent::SetStillCards(TArray<UHandInCard_Info*>& _CurPlayCards)
+void UCalculatorHandRankingComponent::SetCalRestCardInHands(TArray<UHandInCard_Info*>& _CurPlayCards)
+{
+	auto PS = GetPlayerState();
+	auto CurrentAllHands = PS->GetCurrentAllHands();
+
+	TArray<UHandInCard_Info*> RestCards;
+
+	for (auto* Card : CurrentAllHands)
+	{
+		if (!_CurPlayCards.Contains(Card))
+		{
+			RestCards.Add(Card);
+		}
+	}
+	
+	PS->SetRestCardInHands(RestCards);
+}
+
+void UCalculatorHandRankingComponent::SetStillCards()
 {
 	CurStillCard.Empty();
 
 	auto PS = GetPlayerState();
-	auto CurrentAllHands = PS->GetCurrentAllHands();
+	auto CurrentRestHands = PS->GetRestCardInHands();
 
-	for (auto* Card : CurrentAllHands)
+	for (auto* Card : CurrentRestHands)
 	{
-		if (!_CurPlayCards.Contains(Card) && Card->Info.EnforceType == EnforceStatType::STEEL)
+		if (Card->Info.EnforceType == EnforceStatType::STEEL)
 		{
 			CurStillCard.Add(Card);
 		}

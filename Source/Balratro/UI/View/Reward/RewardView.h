@@ -37,7 +37,7 @@ protected:
 
 	void VM_FieldChanged_EarnGold(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
-	void UpdateDollarAnimation(class UTextBlock* numberText, class UTextBlock* strText, int32* MaxNum);
+	void UpdateDollarAnimation(class UTextBlock* numberText, class UTextBlock* strText, int32 MaxNum);
 
 private:
 	UPROPERTY(meta = (BindWidget))

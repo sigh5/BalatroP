@@ -102,9 +102,9 @@ private:
 	FVector2D DragOffset;
 
 	UPROPERTY()
-	class UHandInCard_Info* CardInfoData;
+	TObjectPtr<class UHandInCard_Info> CardInfoData;
 
 	UPROPERTY()
-	class UCardButtonWidget* DragVisual;
+	TObjectPtr<class UCardButtonWidget> DragVisual;
 
 };

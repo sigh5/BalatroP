@@ -16,11 +16,26 @@ class BALRATRO_API UBlindComponent : public UActorComponent
 protected:
 	virtual void BeginPlay() override;
 
+private:
 	void	InitBlindSelectView();
-	
 	void	BlindSelectEvent(EPlayerStateType InValue);
-
 	void	BlindViewActive();
+	void	ResetBlindSelectData();
+	
+	void	SetRandomBossType();
+
+	void	UseBossSkill();
+
+
+private: /* Skill */
+	void	HOOK_Skill();
+	void	OX_Skill();
+	void	WALL_SKill();
+	void	ARM_Skill();
+	void	PSYCHIC_Skill();
+	void	GOAD_Skill();
+	void	WATER_Skill();
+	void    EYE_Skill();
 
 private:
 	class UVM_BlindSelect* GetVMBlindSelect();
@@ -29,6 +44,9 @@ private:
 	class UVM_Store* GetVMStore();
 
 private:
-	UPROPERTY()
-	TArray<EBossType> BossTypes;
+	//UPROPERTY()
+	TMap<EBossType, TFunction<void()>> BossTypes;
+
+	TArray<int32> RandomArray;
+
 };

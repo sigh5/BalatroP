@@ -8,6 +8,8 @@
 #include "Components/Image.h"
 #include "Components/Button.h"
 
+#include "PaperSprite.h"
+
 #include "GameData/BlindStat.h"
 
 UBlindSelectView::UBlindSelectView()
@@ -50,6 +52,7 @@ void UBlindSelectView::NativeOnInitialized()
 
 	SmallBlindButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnSmallBlindButtonClicked);
 	BigBlindButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnBigBlindButtonClicked);
+	BosslBlindButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnBossBlindButtonClicked);
 
 	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
@@ -79,6 +82,7 @@ void UBlindSelectView::OnSmallBlindButtonClicked()
 	BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
 	
 	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
+	//VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
 }
 
 void UBlindSelectView::OnBigBlindButtonClicked()
@@ -109,9 +113,9 @@ void UBlindSelectView::OnBossBlindButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
 
-	VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
-
 	BosslBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+	VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
 }
 
 void UBlindSelectView::VM_FieldChanged_SmallBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -191,4 +195,29 @@ void UBlindSelectView::VM_FieldChanged_HandRankingActive_BlindView(UObject* Obje
 void UBlindSelectView::VM_FieldChanged_BossTypeChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>(); check(VMInst);
+
+	auto CurBossType = VMInst->GetBossType();
+	FString Name = BossTypeToString(CurBossType);
+
+	BossNameText->SetText(FText::FromString(Name));
+
+	FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Boss/%s.%s"), *Name, *Name);
+	TSoftObjectPtr<UPaperSprite> AssetImage = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+	if (!AssetImage.IsValid())
+	{
+		AssetImage.LoadSynchronous();
+	}
+
+	FSlateBrush BossImageBrush;
+	BossImageBrush.SetResourceObject(AssetImage.Get());
+	BossImageBrush.DrawAs = ESlateBrushDrawType::Image;
+	//BossImageBrush.SetImageSize(FVector2D(100.f, 150.f));
+	BossBlindImage->SetBrush(BossImageBrush);
+}
+
+FString UBlindSelectView::BossTypeToString(EBossType _InType)
+{
+	const UEnum* EnumPtr = StaticEnum<EBossType>();
+	if (!EnumPtr) return TEXT("Invalid");
+	return EnumPtr->GetNameStringByValue((int64)_InType);
 }

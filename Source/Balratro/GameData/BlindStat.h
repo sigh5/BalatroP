@@ -43,14 +43,15 @@ UENUM(BlueprintType)
 enum class EBossType :uint8
 {
 	NONE =0,
-	HOOK, // 플레이할 때마다 무작위 카드 2장을 버립니다
-	OX,   // 가장 많이 플레이한 족보]를 플레이하면 돈이 $0 이 된다.
-	WALL, // 특대형 블라인드. 최소 득점이 일반 보스 블라인드보다 2배 많다.
-	ARM,  // 플레이한 족보의 레벨이 낮아집니다
-	PHYCHIC, //반드시 카드 5장을 플레이해야 합니다.
-	GOAD,    //모든 스페이드 카드가 디버프됩니다.
-	WATER,   //0 번의 버리기로 시작합니다.
-	EYE,     //이 라운드에서는 핸드 유형을 한 번씩만 플레이할 수 있습니다
+	HOOK,	 // 플레이할 때마다 무작위 카드 2장을 버립니다
+	OX,		 // 가장 많이 플레이한 족보]를 플레이하면 돈이 $0 이 된다.
+	WALL,	 // 특대형 블라인드. 최소 득점이 일반 보스 블라인드보다 2배 많다.
+	ARM,	 // 플레이한 족보의 레벨이 낮아집니다
+	PSYCHIC, // 반드시 카드 5장을 플레이해야 합니다.
+	GOAD,    // 모든 스페이드 카드가 디버프됩니다.
+	WATER,   // 0 번의 버리기로 시작합니다.
+	EYE,     // 이 라운드에서는 핸드 유형을 한 번씩만 플레이할 수 있습니다
+	FINAL
 };
 
 USTRUCT(BlueprintType)
@@ -78,5 +79,21 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32  BossReward;
+
+	bool operator == (const FBlindStat& other) const
+	{
+		return	SMallGrade == other.SMallGrade &&
+				SMallReward == other.SMallReward &&
+				BigGrade == other.BigGrade &&
+				BigReward == other.BigReward &&
+				BossGrade == other.BossGrade &&
+				BossReward == other.BossReward;
+	}
+
+	bool operator != (const FBlindStat& Other) const
+	{
+		return !(*this == Other);
+	}
+
 };
 

@@ -6,6 +6,7 @@
 #include "UI/View/Core/BBUserWidgetBase.h"
 #include "GameData/HandRankingStat.h"
 #include "GameData/DeckCardStat.h"
+#include "GameData/BlindStat.h"
 #include "BlindSelectView.generated.h"
 
 /**
@@ -42,6 +43,10 @@ private:
 	void VM_FieldChanged_HandRankingActive_BlindView(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 	void VM_FieldChanged_BossTypeChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
+private:
+	FString BossTypeToString(EBossType _InType);
+
 
 private:
 	UPROPERTY(meta = (BindWidget))

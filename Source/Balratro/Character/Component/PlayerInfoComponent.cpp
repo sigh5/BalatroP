@@ -244,7 +244,6 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		_InType = EPlayerStateType::STORE;
 	}
 
-
 	int32 EntiCnt = PS->GetEntiCount();
 	int32 RoundCnt = PS->GetRoundCount();
 	int32 BlindGrade = -1;
@@ -272,6 +271,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		++RoundCnt;
 		LinearColor = FLinearColor(0.000000, 0.289068, 1.000000, 1.000000);
 		BlindImageIndex = 0;
+		UE_LOG(LogTemp, Warning, TEXT("SMALL_BLIND : %d"), Reward);
 		break;
 	case EPlayerStateType::SMALL_BLIND_SKIP:
 		MainOrder = "Choose Your \n Next Blind";

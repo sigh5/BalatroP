@@ -19,35 +19,44 @@ public:
 	FOnCashButtonClicked	OnCashButtonClicked;
 
 public:
-	void SetBlindReward(int32 _InValue) { UE_MVVM_SET_PROPERTY_VALUE(BlindReward, _InValue); }
+	void SetBlindReward(int32 _InValue) { 
+		BlindReward = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BlindReward); 
+	}
 	const int32 GetBlindReward() const { return BlindReward; }
 
-	void SetRestHands(int32 _InValue) { UE_MVVM_SET_PROPERTY_VALUE(RestHands, _InValue); }
+	void SetRestHands(int32 _InValue) { 
+		RestHands =  _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(RestHands); }
 	const int32 GetRestHands() const { return RestHands; }
 
-	void SetRestChuck(int32 _InValue) { UE_MVVM_SET_PROPERTY_VALUE(RestChuck, _InValue); }
+	void SetRestChuck(int32 _InValue) { 
+		RestChuck = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(RestChuck); }
 	const int32 GetRestChuck() const { return RestChuck; }
 
-	void SetInterest(int32 _InValue) { UE_MVVM_SET_PROPERTY_VALUE(Interest, _InValue); }
+	void SetInterest(int32 _InValue) { 
+		Interest = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(Interest); }
 	const int32 GetInterest() const { return Interest; }
 
-	void SetBlindGrade(int32 _InValue) { UE_MVVM_SET_PROPERTY_VALUE(BlindGrade, _InValue); }
+	void SetBlindGrade(int32 _InValue) { 
+		BlindGrade = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BlindGrade); }
 	const int32 GetBlindGrade() const { return BlindGrade; }
 
-	void SetBlindImageIndex(int32 _InValue) { UE_MVVM_SET_PROPERTY_VALUE(BlindImageIndex, _InValue); }
+	void SetBlindImageIndex(int32 _InValue) { 
+		BlindImageIndex = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BlindImageIndex); }
 	const int32 GetBlindImageIndex() const { return BlindImageIndex; }
 
-	void SetEarnGold(int32 _InValue) { UE_MVVM_SET_PROPERTY_VALUE(EarnGold, _InValue); }
+	void SetEarnGold(int32 _InValue) { 
+		EarnGold = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(EarnGold); }
 	const int32 GetEarnGold() const { return EarnGold; }
 
 	void  SetNextButtonClicked() { 
 		OnCashButtonClicked.Broadcast(); 
-		BlindReward = 0;
-		RestHands = -1;
-		RestChuck = 0;
-		Interest = -1;
-		BlindGrade = 0;
-		BlindImageIndex = -1;
 	}
 
 private:

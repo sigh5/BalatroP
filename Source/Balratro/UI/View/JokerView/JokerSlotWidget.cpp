@@ -174,10 +174,6 @@ void UJokerSlotWidget::SetSkillTextPos(UJokerCardWidget* CurEventCard)
 		FGeometry ParentGeo = CanvasParent->GetCachedGeometry();
 		FVector2D LocalCenter = ParentGeo.AbsoluteToLocal(AbsPos);
 
-		//LocalCenter.X -= .f;
-
-		UE_LOG(LogTemp, Warning, TEXT("SetSkillTextPos"));
-
 		if (UCanvasPanelSlot* MySlot = Cast<UCanvasPanelSlot>(SkillText->Slot))
 		{
 			MySlot->SetPosition(LocalCenter);

@@ -46,7 +46,7 @@ void UCardAndDeckComponent::UpdateCardInHand(TArray<UHandInCard_Info*>& _DeckCar
 	auto CurHandInCard = PS->GetCurrentAllHands();
 	CurHandInCard.RemoveAll([&](UHandInCard_Info* HandCard)
 		{
-			if (!HandCard)
+			if (HandCard == nullptr)
 				return false;
 
 			return _DeckCardStat.ContainsByPredicate([&](const UHandInCard_Info* Stat)
@@ -68,9 +68,9 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 	auto VM_MainMenu = GetVMMainWidget();
 	auto VM_CardDeck = GetVMCardDeck();
 
-	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND
-		|| InValue == EPlayerStateType::SMALL_BLIND)
+	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND || InValue == EPlayerStateType::BOSS_BLIND)
 	{
+		FASTLOGTEXT;
 		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", true));
 		VM_CardDeck->SetItemSelectFlag(false);
 		InitDeck();
@@ -287,10 +287,6 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 
 	
 	_DelayTime = CurDelayTime;
-
- 
-	
-	
 }
 
 void UCardAndDeckComponent::ShuffleDeck()

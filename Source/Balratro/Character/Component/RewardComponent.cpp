@@ -38,12 +38,20 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 		int32 RestHands = PS->GetMaxHandCount() - PS->GetUseHandCount();
 		int32 RestChucks = PS->GetMaxChuckCount() - PS->GetUseChuckCount();
 		int32 CurGold = PS->GetGold();
-		int32 BlindGrade = VM_PI->GetBlindGrade();
+		int32 BlindGrade = VM_PI->GetBlindGrade();  // 여기 수정필요
 		int32 BlindReward = VM_PI->GetBlindReward();
 		int32 BlindImageIndex = VM_PI->GetBlindImageIndex();
 
+		UE_LOG(LogTemp, Warning, TEXT("RestHands : %d"), RestHands);
+		UE_LOG(LogTemp, Warning, TEXT("RestChucks : %d"), RestChucks);
+		UE_LOG(LogTemp, Warning, TEXT("CurGold : %d"), CurGold);
+		UE_LOG(LogTemp, Warning, TEXT("BlindGrade : %d"), BlindGrade);
+		UE_LOG(LogTemp, Warning, TEXT("BlindReward : %d"), BlindReward);
+
 		EarnGold = RestHands + BlindReward + (CurGold / 5);
 		VM_Reward->SetEarnGold(EarnGold);		// Order 0
+
+		UE_LOG(LogTemp, Warning, TEXT("EarnGold : %d"), EarnGold);
 
 		VM_Reward->SetBlindReward(BlindReward);  // Order 1
 		VM_Reward->SetRestHands(RestHands);		// Order 2

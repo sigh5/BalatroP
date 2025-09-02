@@ -97,7 +97,7 @@ void URewardView::VM_FieldChanged_BlindRewardText(UObject* Object, UE::FieldNoti
 	FTimerDelegate TimerDel;
 	TimerDel.BindLambda([&]()
 		{
-			UpdateDollarAnimation(nullptr, BlindReward, &RewardStep);
+			UpdateDollarAnimation(nullptr, BlindReward, RewardStep);
 		});
 
 	StartQueue.Enqueue(TimerDel);
@@ -114,13 +114,17 @@ void URewardView::VM_FieldChanged_RestHands(UObject* Object, UE::FieldNotificati
 	RestHand->SetText(FText::FromString(""));
 	HandReward->SetText(FText::FromString(""));
 
+	AnimStep = 0;
+
 	FTimerDelegate TimerDel;
 	TimerDel.BindLambda([&]()
 		{
-			UpdateDollarAnimation(RestHand,HandReward, &RestHandStep);
+			UpdateDollarAnimation(RestHand,HandReward, RestHandStep);
 		});
 
 	StartQueue.Enqueue(TimerDel);
+
+	UE_LOG(LogTemp, Warning, TEXT("VM_FieldChanged_RestHands"));
 }
 
 void URewardView::VM_FieldChanged_Interest(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -135,12 +139,13 @@ void URewardView::VM_FieldChanged_Interest(UObject* Object, UE::FieldNotificatio
 	
 	Interrest->SetText(FText::FromString(""));
 	InterestReward->SetText(FText::FromString(""));
-
+	
+	AnimStep = 0;
 
 	FTimerDelegate TimerDel;
 	TimerDel.BindLambda([&]()
 		{
-			UpdateDollarAnimation(Interrest,InterestReward, &interestStep);
+			UpdateDollarAnimation(Interrest,InterestReward, interestStep);
 		});
 
 	StartQueue.Enqueue(TimerDel);
@@ -210,16 +215,16 @@ void URewardView::VM_FieldChanged_EarnGold(UObject* Object, UE::FieldNotificatio
 	GoldText->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void URewardView::UpdateDollarAnimation(class UTextBlock* numberText, class UTextBlock* strText, int32* MaxNum)
+void URewardView::UpdateDollarAnimation(class UTextBlock* numberText, class UTextBlock* strText, int32 MaxNum)
 {
-	if (AnimStep >= *MaxNum) // 1~3 반복
+	if (AnimStep >= MaxNum) // 1~3 반복
 	{
 		GetWorld()->GetTimerManager().ClearTimer(DollarAnimTimer);
 		AnimStep = 0;
 		
 		if (numberText)
 		{
-			numberText->SetText(FText::AsNumber(*MaxNum));
+			numberText->SetText(FText::AsNumber(MaxNum));
 		}
 
 		StartQueueAnimation();
