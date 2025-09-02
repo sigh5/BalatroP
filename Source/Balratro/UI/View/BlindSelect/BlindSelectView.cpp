@@ -81,8 +81,8 @@ void UBlindSelectView::OnSmallBlindButtonClicked()
 	BigBlindButton->SetVisibility(ESlateVisibility::Visible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
 	
-	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
-	//VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
+	//VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
+	VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
 }
 
 void UBlindSelectView::OnBigBlindButtonClicked()

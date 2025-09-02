@@ -13,6 +13,7 @@
 #include "UI/MVVM/ViewModel/VM_BlindSelect.h"
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/MVVM/ViewModel/VM_Store.h"
+#include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
 #include "Core/MyPlayerState.h"
 
@@ -51,6 +52,8 @@ void UBlindComponent::InitBlindSelectView()
 	{
 		SetRandomBossType();
 	}
+
+	
 
 	VM->SetBossType(BossType.Value);
 }
@@ -148,10 +151,13 @@ void UBlindComponent::SetRandomBossType()
 	
 	TPair<int32, EBossType> MyBossType;
 	
-	int32 EntiCount = PS->GetEntiCount();
+	/*int32 EntiCount = PS->GetEntiCount();
 	MyBossType = { EntiCount ,static_cast<EBossType>(RandomArray[EntiCount])};
 	
-	RandomArray.RemoveAt(EntiCount);
+	RandomArray.RemoveAt(EntiCount);*/
+
+	// TestCode
+	MyBossType = { 0,EBossType::HOOK };
 
 	PS->SetCurBossType(MyBossType);
 }
@@ -172,9 +178,23 @@ void UBlindComponent::UseBossSkill()
 void UBlindComponent::HOOK_Skill()
 {
 	auto PS = GetPlayerState();
+	auto VM_CardDeck = GetVMCardDeck();
 
-	UE_LOG(LogTemp, Warning, TEXT("HOOK_Skill"));
+	auto RestHands = PS->GetRestCardInHands();
+	
+	if (RestHands.Num() == 0)
+		return;
 
+	if (RestHands.Num() <= 2)
+	{
+		RestHands.Empty();
+	}
+	else
+	{
+		RestHands.RemoveAt(0, 2);
+	}
+
+	PS->SetRestCardInHands(RestHands); // 남아있는 
 }
 
 void UBlindComponent::OX_Skill()
@@ -255,4 +275,16 @@ UVM_Store* UBlindComponent::GetVMStore()
 
 	const auto Found = VMCollection->FindViewModelInstance(Context);
 	return Cast<UVM_Store>(Found);
+}
+
+UVM_CardDeck* UBlindComponent::GetVMCardDeck()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_CardDeck");
+	Context.ContextClass = UVM_CardDeck::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_CardDeck>(Found);
 }

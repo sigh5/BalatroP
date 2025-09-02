@@ -39,17 +39,8 @@ public:
 	FOnCurPlayHands		OnCurPlayHands;
 	FOnSkipButtonClicked OnSkipButtonClicked;
 	FOnSwapCards		OnSwapCards;
+
 public:
-	//const int32 GetDeckNum() const
-	//{
-	//	return DeckNum;
-	//}
-
-	//void SetDeckNum(int32 InValue)
-	//{
-	//	UE_MVVM_SET_PROPERTY_VALUE(DeckNum, InValue);
-	//}
-
 	const TArray<UHandInCard_Info*>& GetCurrentAllHands() const
 	{
 		return CurrentAllHands;
@@ -98,6 +89,17 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(CurCardsData, _InValue);
 	}
 
+	const TArray<UHandInCard_Info*>& GetRemoveRestCardDatas()  const
+	{
+		return RemoveRestCardDatas;
+	}
+
+	void	SetRemoveRestCardDatas(TArray<UHandInCard_Info*>& _InValue)
+	{
+		RemoveRestCardDatas = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(RemoveRestCardDatas);
+	}
+
 	const bool GetItemSelectFlag() const
 	{
 		return ItemSelectFlag;
@@ -117,9 +119,6 @@ public:
 	}
 
 private:
-	//UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	//int32 DeckNum = 0;
-
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<UHandInCard_Info*> CurrentAllHands;
 
@@ -128,6 +127,9 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<class UHandInCard_Info*> CurCardsData;  // 핸드 플레이할 때 들어옴
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	TArray<class UHandInCard_Info*> RemoveRestCardDatas;  // 보스 능력으로 지워야하는 데이터
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool ItemSelectFlag = false;

@@ -134,8 +134,7 @@ public:
 	}
 
 	FORCEINLINE const TArray<class UHandInCard_Info*>  GetRestCardInHands() const { return CurRestCardInHands; }
-	FORCEINLINE void  SetRestCardInHands(TArray<class UHandInCard_Info*> _InValue) {CurRestCardInHands = _InValue; OnRestCardsSet.Broadcast();
-}
+	FORCEINLINE void  SetRestCardInHands(TArray<class UHandInCard_Info*> _InValue) {CurRestCardInHands = _InValue; OnRestCardsSet.Broadcast();}
 
 
 	FORCEINLINE const EHandInCardSortType& GetCurSortType() const { return CurSortType; }
@@ -207,6 +206,7 @@ public:
 	
 	FORCEINLINE const TPair<int32, EBossType>& GetCurBossType() const { return CurrentBostType; }
 	FORCEINLINE void SetCurBossType(TPair<int32, EBossType> _InValue) { CurrentBostType = _InValue; }
+
 	
 private:
 	int32 RoundCount;
@@ -240,7 +240,7 @@ private:
 	int32	CurSelectTaroNum = 0;
 
 	uint8	HandPlayFlag : 1;
-
+	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;

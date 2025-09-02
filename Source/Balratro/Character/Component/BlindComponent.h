@@ -42,7 +42,7 @@ private:
 	class UVM_MainMenu* GetVMMainWidget();
 	class AMyPlayerState* GetPlayerState();
 	class UVM_Store* GetVMStore();
-
+	class UVM_CardDeck* GetVMCardDeck();
 private:
 	//UPROPERTY()
 	TMap<EBossType, TFunction<void()>> BossTypes;

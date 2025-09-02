@@ -32,7 +32,7 @@ private:
 	void	UpdateCardInHand(TArray<class UHandInCard_Info*>& _DeckCardStat);
 
 	void	SetVisibleCardDeckView(EPlayerStateType InValue);
-	void    FinishHandPlay(TArray<class UHandInCard_Info*> DeckCardStat, int32 CardNum);
+	void    FinishHandPlay();
 
 	void	SwapCardOrder(UHandInCard_Info* SwapDest, UHandInCard_Info* Source);
 
@@ -43,12 +43,14 @@ private:
 	void	UseSealTaro(int32 SealType);
 	void	UseGhostTaro(int32 GhostType);
 
+	void	AllEffectViewFinish();
+
 private:
 	class UVM_CardDeck*		GetVMCardDeck();
 	class AMyPlayerState*	GetPlayerState();
 	class UVM_MainMenu*		GetVMMainWidget();
 	class UVM_ItemSelect* GetVMItemSelect();
-
+	class UVM_JockerSlot* GetVMJoker();
 
 private:
 	int32  CurDrawIndex = 0;
@@ -59,6 +61,12 @@ private:
 
 	FTimerHandle TotalScoreHandle;
 	FTimerHandle ItemSkipTimerHandle;
+
+
+	UPROPERTY()
+	TArray<UHandInCard_Info*> DeckCardStat;
+	
+	int32 nCardNum;
 
 	//UPROPERTY()
 	//TArray<class UHandInCard_Info*> _CurData; // 타이머를 위해 저장하는 단순 변수

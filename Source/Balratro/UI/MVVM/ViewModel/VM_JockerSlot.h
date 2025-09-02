@@ -8,6 +8,8 @@
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAddJoker , FJokerStat&)
 
+DECLARE_MULTICAST_DELEGATE(FOnEffectUIViewFinish);
+
 /**
  * 
  */
@@ -19,6 +21,7 @@ class BALRATRO_API UVM_JockerSlot : public UMVVMViewModelBase
 
 public:
 	FOnAddJoker OnAddJoker;
+	FOnEffectUIViewFinish OnEffectUIViewFinish;
 
 public:
 	const TArray<UJokerCard_Info*>& GetJokerDatas() const
@@ -42,6 +45,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 	void	SetAddJokerCard(FJokerStat& Data) { OnAddJoker.Broadcast(Data); }// JokerList에 내 조커 추가하기
 
+	void	All_EffectFinish() { OnEffectUIViewFinish.Broadcast(); }
 	
 
 private:

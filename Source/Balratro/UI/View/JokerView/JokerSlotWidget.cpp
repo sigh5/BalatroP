@@ -199,6 +199,10 @@ void UJokerSlotWidget::StartNextTimer()
 			0.5f,
 			false);
 		
+		
+		auto VM_Joker = TryGetViewModel<UVM_JockerSlot>(); check(VM_Joker);
+		VM_Joker->All_EffectFinish();
+
 		return;
 	}
 

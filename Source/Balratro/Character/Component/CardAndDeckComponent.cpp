@@ -14,6 +14,7 @@
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/MVVM/ViewModel/VM_ItemSelect.h"
+#include "UI/MVVM/ViewModel/VM_JockerSlot.h"
 
 #include "GameData/HandRankingStat.h"
 #include "Interface/CalculatorScoreInterface.h"
@@ -25,6 +26,7 @@ void UCardAndDeckComponent::BeginPlay()
 
 	const auto VM = GetVMCardDeck();
 	const auto VM_ItemSelcet = GetVMItemSelect();
+	const auto VM_Joker = GetVMJoker();
 
 	auto	PS = GetPlayerState();
 	PS->OnSelectNextScene.AddUObject(this, &UCardAndDeckComponent::SetVisibleCardDeckView);
@@ -33,6 +35,7 @@ void UCardAndDeckComponent::BeginPlay()
 	VM->OnUseChuck.AddUObject(this, &UCardAndDeckComponent::UpdateChuck);
 	VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::UpdateHandPlay);
 	VM->OnSwapCards.AddUObject(this, &UCardAndDeckComponent::SwapCardOrder);
+	VM_Joker->OnEffectUIViewFinish.AddUObject(this, &UCardAndDeckComponent::AllEffectViewFinish);
 
 	VM_ItemSelcet->OnUseTaroCard.AddUObject(this, &UCardAndDeckComponent::UseTaroItem);
 
@@ -87,7 +90,7 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 		return;
 }
 
-void UCardAndDeckComponent::FinishHandPlay(TArray<UHandInCard_Info*> DeckCardStat, int32 CardNum)
+void UCardAndDeckComponent::FinishHandPlay()
 {
 	auto PS = GetPlayerState();
 	
@@ -112,7 +115,7 @@ void UCardAndDeckComponent::FinishHandPlay(TArray<UHandInCard_Info*> DeckCardSta
 	{
 		PS->SetCurrentScore(CurrentSum);
 		UpdateCardInHand(DeckCardStat);
-		DrawCard(CardNum);
+		DrawCard(nCardNum);
 	}
 }
 
@@ -250,6 +253,19 @@ void UCardAndDeckComponent::UseGhostTaro(int32 GhostType)
 {
 }
 
+void UCardAndDeckComponent::AllEffectViewFinish()
+{
+	FTimerDelegate Delegate;
+	Delegate.BindLambda([&]()
+		{
+			FinishHandPlay();
+		});
+
+	GetWorld()->GetTimerManager().SetTimer(TotalScoreHandle, Delegate, 1.5f, false);
+
+	//FinishHandPlay();
+}
+
 void UCardAndDeckComponent::SetPlayCardEffect()
 {
 	auto PS = GetPlayerState();
@@ -257,36 +273,6 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 	
 	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
 	VM->SetCurCardsData(CurPlayCards); // 보여주는 카드 점수 계산하는거
-	
-	int32 CurCardNum = CurPlayCards.Num();
-	int32 EnforceTypeNum = 0;
-	int32 GhostTypeNum = 0;
-	for (auto Card : CurPlayCards)
-	{
-		if (Card->Info.EnforceType != EnforceStatType::NONE)
-		{
-			EnforceTypeNum++;
-		}
-
-		if (Card->Info.GhostCardType != GhostCardStatType::NONE)
-		{
-			GhostTypeNum++;
-		}
-	}
-
-	float CurDelayTime = (CurCardNum)+(EnforceTypeNum * 0.5f) + (GhostTypeNum * 0.5f);
-	
-	auto Temp = PS->GetCurrentJokerCards().Num();
-
-	CurDelayTime += (Temp * 0.5f) + 0.5f; // 나중에 점수 계산하는 조커들만 따로 빼서 시간 더하기
-
-	// 1번) 현재 패에 있는 배수 카드 계산,
-	// 2번) 현재 손패에 남은 카드에서 스틸카드 계산
-	// 3번) 조커 카드 계산
-	// 할때까지 패 안뽑고 점수 계산하게 만들어야함
-
-	
-	_DelayTime = CurDelayTime;
 }
 
 void UCardAndDeckComponent::ShuffleDeck()
@@ -373,13 +359,16 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<UHandInCard_Inf
 				ResultScore = InterfacePtr->CalCulatorHandRanking(CardNum, _DeckCardStat);
 				SetPlayCardEffect();
 
-				FTimerDelegate Delegate;
+				DeckCardStat = _DeckCardStat;
+				nCardNum = CardNum;
+
+			/*	FTimerDelegate Delegate;
 				Delegate.BindLambda([&](TArray<UHandInCard_Info*> T, int32 U)
 					{
 						FinishHandPlay(T, U);
 					}, _DeckCardStat, CardNum);
 
-				GetWorld()->GetTimerManager().SetTimer(TotalScoreHandle, Delegate, _DelayTime, false);
+				GetWorld()->GetTimerManager().SetTimer(TotalScoreHandle, Delegate, _DelayTime, false);*/
 				break;
 			}
 		}
@@ -480,4 +469,16 @@ UVM_ItemSelect* UCardAndDeckComponent::GetVMItemSelect()
 
 	const auto Found = VMCollection->FindViewModelInstance(Context);
 	return Cast<UVM_ItemSelect>(Found);
+}
+
+UVM_JockerSlot* UCardAndDeckComponent::GetVMJoker()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_JockerSlot");
+	Context.ContextClass = UVM_JockerSlot::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_JockerSlot>(Found);
 }
