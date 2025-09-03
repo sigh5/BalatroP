@@ -35,6 +35,8 @@ void UCardDeckView::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	UE_LOG(LogTemp, Warning, TEXT("UCardDeckView::NativeConstruct"));
+
 	CardButtonSubClass = LoadClass<UCardButtonWidget>(nullptr, TEXT("/Game/UI/View/CardDeck/WBP_CardButtonWidget.WBP_CardButtonWidget_C"));
 
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
@@ -61,6 +63,7 @@ void UCardDeckView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::CurrentBossType,
 		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_CurBossText));
 
+	BossSkillText->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UCardDeckView::NativeOnInitialized()

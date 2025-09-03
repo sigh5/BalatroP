@@ -25,8 +25,7 @@ private:
 	void	SetRandomBossType();
 	void	UseBossSkill();
 
-	void	SetBlindSkipReward();
-
+	void	SetBlindSkipReward(EBlindSkip_Tag CurTagType);
 
 private: /* Skill */
 	void	HOOK_Skill();
@@ -49,5 +48,8 @@ private:
 	TMap<EBossType, TFunction<void()>> BossTypes;
 
 	TArray<int32> RandomArray;
+
+	UPROPERTY()
+	TArray<EBlindSkip_Tag> BlindSkipTags;
 
 };

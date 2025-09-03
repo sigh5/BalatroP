@@ -115,6 +115,27 @@ public:
 	}
 
 
+	const EBlindSkip_Tag GetSmallBlind_SkipTag() const
+	{
+		return SmallBlind_SkipTag;
+	}
+
+	void SetSmallBlind_SkipTag(EBlindSkip_Tag InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(SmallBlind_SkipTag, InValue);
+	}
+
+	const EBlindSkip_Tag GetBigBlind_SkipTag() const
+	{
+		return BigBlind_SkipTag;
+	}
+
+	void SetBigBlind_SkipTag(EBlindSkip_Tag InValue)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(BigBlind_SkipTag, InValue);
+	}
+
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 SmallGrade = 0;
@@ -127,6 +148,12 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	EBossType BossType = EBossType::NONE;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	EBlindSkip_Tag SmallBlind_SkipTag;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	EBlindSkip_Tag BigBlind_SkipTag;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 RoundCnt = 0;

@@ -19,7 +19,6 @@ void URewardComponent::BeginPlay()
 	auto VM_Reward = GetVMReward();
 
 	PS->OnSelectNextScene.AddUObject(this, &URewardComponent::SetRewardViewData);
-	//PS->OnSelectNextScene.AddUObject(this, &URewardComponent::AddEarnGold);
 
 	VM_Reward->OnCashButtonClicked.AddUObject(this, &URewardComponent::StartStoreView);
 }

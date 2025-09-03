@@ -13,7 +13,7 @@ enum class EBlindSkip_Tag : uint8
 	NEGERTIVE_JOKER,
 	FOIL_JOKER,
 	BOSTER_PACK_FREE,
-	ADD_TEN_JOKER, // 10배수
+	ADD_TEN_JKER, // 10배수
 	MULTIPLE_JOKER, // x1.5
 	BOSS_GOLD_REWARD, // 25골 추가
 	VOUCHER_ADD,      // 바우처카드 1개추가
@@ -23,6 +23,7 @@ enum class EBlindSkip_Tag : uint8
 	STANDARD_PACK, // 카드 팩 (2장 선택)
 	ARCANA_PACK, // 타로 팩 (2장 선택)
 	ORB_PACK,   // 천체 팩 (2장 선택)
+	GHOST_PACK
 };
 
 UENUM(BlueprintType)

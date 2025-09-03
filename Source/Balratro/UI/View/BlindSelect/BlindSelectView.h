@@ -50,6 +50,10 @@ private:
 
 	void VM_FieldChanged_BossTypeChanged(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+	void VM_FieldChanged_SmallBlindSkipImage(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_BigBlindSkipImage(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	
+
 private:
 	FString BossTypeToString(EBossType _InType);
 

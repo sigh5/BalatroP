@@ -44,6 +44,13 @@ void UBlindSelectView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::BossType,
 		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_BossTypeChanged));
+
+
+	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::SmallBlind_SkipTag,
+		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_SmallBlindSkipImage));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::BigBlind_SkipTag,
+		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_BigBlindSkipImage));
 }
 
 void UBlindSelectView::NativeOnInitialized()
@@ -84,8 +91,8 @@ void UBlindSelectView::OnSmallBlindButtonClicked()
 	BigBlindButton->SetVisibility(ESlateVisibility::Visible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
 	
-	//VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
-	VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
+	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
+	//VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
 }
 
 void UBlindSelectView::OnBigBlindButtonClicked()
@@ -125,18 +132,20 @@ void UBlindSelectView::OnSmallBlindSkip_ButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
 
+	SmallBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	SmallSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 
-
+	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND_SKIP);
 }
 
 void UBlindSelectView::OnBigBlindSkip_ButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
 
+	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 
-
+	VMInst->SetBlindType(EPlayerStateType::BIG_BLIND_SKIP);
 }
 
 void UBlindSelectView::VM_FieldChanged_SmallBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -234,6 +243,63 @@ void UBlindSelectView::VM_FieldChanged_BossTypeChanged(UObject* Object, UE::Fiel
 	BossImageBrush.DrawAs = ESlateBrushDrawType::Image;
 	//BossImageBrush.SetImageSize(FVector2D(100.f, 150.f));
 	BossBlindImage->SetBrush(BossImageBrush);
+}
+
+void UBlindSelectView::VM_FieldChanged_SmallBlindSkipImage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_BlindSelect>(); check(VMInst);
+
+	int32 TagNum = static_cast<int32>(VMInst->GetSmallBlind_SkipTag());
+
+	FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/tags/Tag%d.Tag%d"), TagNum, TagNum);
+	TSoftObjectPtr<UPaperSprite> Sprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+
+	if (!Sprite.IsValid())
+	{
+		Sprite.LoadSynchronous();
+	}
+
+	FSlateBrush Brush;
+
+	Brush.SetResourceObject(Sprite.Get());  // UTexture2D or UObject
+	Brush.DrawAs = ESlateBrushDrawType::Image;
+	Brush.SetImageSize(FVector2D(64.f, 64.f));
+
+	FButtonStyle ButtonStyle = SmallSkipButton->WidgetStyle;
+	ButtonStyle.Normal = Brush;   // 기본 상태
+	ButtonStyle.Hovered = Brush;   // 마우스 오버 상태
+	ButtonStyle.Pressed = Brush;   // 눌렸을 때 상태
+
+	SmallSkipButton->SetStyle(ButtonStyle);
+}
+
+void UBlindSelectView::VM_FieldChanged_BigBlindSkipImage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_BlindSelect>(); check(VMInst);
+
+	int32 TagNum = static_cast<int32>(VMInst->GetBigBlind_SkipTag());
+
+
+	FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/tags/Tag%d.Tag%d"), TagNum, TagNum);
+	TSoftObjectPtr<UPaperSprite> Sprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+
+	if (!Sprite.IsValid())
+	{
+		Sprite.LoadSynchronous();
+	}
+
+	FSlateBrush Brush;
+
+	Brush.SetResourceObject(Sprite.Get());  // UTexture2D or UObject
+	Brush.DrawAs = ESlateBrushDrawType::Image;
+	Brush.SetImageSize(FVector2D(64.f, 64.f));
+	
+	FButtonStyle ButtonStyle = BiglSkipButton->WidgetStyle;
+	ButtonStyle.Normal = Brush;   // 기본 상태
+	ButtonStyle.Hovered = Brush;   // 마우스 오버 상태
+	ButtonStyle.Pressed = Brush;   // 눌렸을 때 상태
+	
+	BiglSkipButton->SetStyle(ButtonStyle);
 }
 
 FString UBlindSelectView::BossTypeToString(EBossType _InType)

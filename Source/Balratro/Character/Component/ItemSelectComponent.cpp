@@ -85,7 +85,10 @@ void UItemSelectComponent::SetItemList()
 	CurShowTaroInfo.Empty();
 	//// PackType == > Taro / Ghost / Orb / CardPack 에 따라 다르게 세팅
 
-	int32 IsMegaNum = (static_cast<int32>(PackType->GetType()) % 2) ? 5 : 3 ;
+	int32 IsMegaNum = (static_cast<int32>(PackType->GetType()) % 2 == 0 ) ? 5 : 3 ;
+
+	UE_LOG(LogTemp, Warning, TEXT("%d"), IsMegaNum);
+
 	// 메가 5장, 노말 3장 리스트에 올려야됌
 	// 메가면 2장 선택 아니면 1장 선택
 	if (IsMegaNum == 5)
