@@ -47,7 +47,7 @@ DECLARE_MULTICAST_DELEGATE(FOnSetCurrentGold);
 DECLARE_MULTICAST_DELEGATE(FOnSetEntiCount);
 DECLARE_MULTICAST_DELEGATE(FOnShowUIChip); 
 DECLARE_MULTICAST_DELEGATE(FOnShowUIDrainage);
-DECLARE_MULTICAST_DELEGATE(FOnRestCardsSet);
+DECLARE_MULTICAST_DELEGATE(FOnBossSkill_RestCardsSet);
 
 
 /**
@@ -73,7 +73,7 @@ public:
 	FOnDeckCardNum				OnDeckCardNum;
 	FOnShowUIChip				OnShowUIChip;
 	FOnShowUIDrainage			OnShowUIDrainage;
-	FOnRestCardsSet				OnRestCardsSet;
+	FOnBossSkill_RestCardsSet	OnBossSkill_RestCardsSet;
 
 public:
 	FORCEINLINE int32 GetRoundCount() { return RoundCount; }
@@ -134,7 +134,8 @@ public:
 	}
 
 	FORCEINLINE const TArray<class UHandInCard_Info*>  GetRestCardInHands() const { return CurRestCardInHands; }
-	FORCEINLINE void  SetRestCardInHands(TArray<class UHandInCard_Info*> _InValue) {CurRestCardInHands = _InValue; OnRestCardsSet.Broadcast();}
+	FORCEINLINE void  SetRestCardInHands(TArray<class UHandInCard_Info*> _InValue) {CurRestCardInHands = _InValue;}
+	void		UseBossSkill() { OnBossSkill_RestCardsSet.Broadcast(); }
 
 
 	FORCEINLINE const EHandInCardSortType& GetCurSortType() const { return CurSortType; }

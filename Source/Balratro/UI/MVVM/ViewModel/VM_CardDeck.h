@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
 #include "GameData/DeckCardStat.h"
+#include "GameData/BlindStat.h"
 #include "Core\MyPlayerState.h"
 #include "VM_CardDeck.generated.h"
 
@@ -89,17 +90,6 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(CurCardsData, _InValue);
 	}
 
-	const TArray<UHandInCard_Info*>& GetRemoveRestCardDatas()  const
-	{
-		return RemoveRestCardDatas;
-	}
-
-	void	SetRemoveRestCardDatas(TArray<UHandInCard_Info*>& _InValue)
-	{
-		RemoveRestCardDatas = _InValue;
-		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(RemoveRestCardDatas);
-	}
-
 	const bool GetItemSelectFlag() const
 	{
 		return ItemSelectFlag;
@@ -111,12 +101,45 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(ItemSelectFlag);
 	}
 
+	const EBossType& GetCurrentBossType() const
+	{
+		return CurrentBossType;
+	}
+
+	void SetCurrentBossType(EBossType InValue)
+	{
+		CurrentBossType = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurrentBossType);
+	}
+
+
 	void SkipButtonClicked() { OnSkipButtonClicked.Broadcast(); }
 
 	void SwapCardData( UHandInCard_Info* SwapDest, UHandInCard_Info* Source)
 	{
 		OnSwapCards.Broadcast(SwapDest, Source);
 	}
+
+	const TArray<UHandInCard_Info*>& GetRestCardDatas()  const
+	{
+		return RestCardDatas;
+	}
+
+	void	SetRestCardDatas(TArray<UHandInCard_Info*>& _InValue)
+	{
+		RestCardDatas = _InValue;
+	}
+
+
+	const bool GetRestCardEffectFlag() const { return RestCardEffectFlag; }
+	void	SetRestCardEffectFlag(bool _InValue) { RestCardEffectFlag = _InValue; UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(RestCardEffectFlag); }
+
+	const bool GetBossSkillUse() const { return BossSkillUse; }
+	void	SetBossSkillUse(bool _InValue) { BossSkillUse = _InValue; 
+	if (BossSkillUse == true)
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BossSkillUse); 
+	}
+
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -128,15 +151,22 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<class UHandInCard_Info*> CurCardsData;  // 핸드 플레이할 때 들어옴
 
-	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	TArray<class UHandInCard_Info*> RemoveRestCardDatas;  // 보스 능력으로 지워야하는 데이터
+	UPROPERTY()
+	TArray<class UHandInCard_Info*> RestCardDatas;  // 현재 손패에 남아있는 카드들
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool ItemSelectFlag = false;
 
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool RestCardEffectFlag = false;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool BossSkillUse = false;
+
 	UPROPERTY()
 	bool IsSelectedMax = false;
 
-
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	EBossType	CurrentBossType;
 
 };

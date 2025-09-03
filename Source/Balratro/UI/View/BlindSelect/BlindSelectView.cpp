@@ -53,6 +53,9 @@ void UBlindSelectView::NativeOnInitialized()
 	SmallBlindButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnSmallBlindButtonClicked);
 	BigBlindButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnBigBlindButtonClicked);
 	BosslBlindButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnBossBlindButtonClicked);
+	SmallSkipButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnSmallBlindSkip_ButtonClicked);
+	BiglSkipButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnBigBlindSkip_ButtonClicked);
+
 
 	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
@@ -116,6 +119,24 @@ void UBlindSelectView::OnBossBlindButtonClicked()
 	BosslBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 
 	VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
+}
+
+void UBlindSelectView::OnSmallBlindSkip_ButtonClicked()
+{
+	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
+
+	SmallSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+
+}
+
+void UBlindSelectView::OnBigBlindSkip_ButtonClicked()
+{
+	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
+
+	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+
 }
 
 void UBlindSelectView::VM_FieldChanged_SmallBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId)

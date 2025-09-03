@@ -30,6 +30,11 @@ protected:
 
 	void VM_FieldChanged_ItemSelectFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+	void VM_FieldChanged_RestCardData(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
+	void VM_FieldChanged_CurBossUseSkill(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_CurBossText(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+private:
 	UFUNCTION()
 	void OnSuitSortButtonClicked();
 	UFUNCTION()
@@ -41,11 +46,13 @@ protected:
 
 private:
 	void	CardScroe_EffectText(); // 점수 관련 이벤트들
-	void	SetCard_EffectOrder(class UCardButtonWidget* EventCard, FDeckCardStat& CardData);
 
+	void	SetCard_PrevEffectOrder(class UCardButtonWidget* EventCard, FDeckCardStat& CardData); // 맨앞에 효과
+	void	SetCard_EffectOrder(class UCardButtonWidget* EventCard, FDeckCardStat& CardData);     // 중간 효과
+	void	SetRestCard_EffectOrder(class UCardButtonWidget* EventCard, FDeckCardStat& CardData); // 맨뒤 효과
 
 	// 순서 BaseChip >  Chip_Plus or Drainage > 10배수 or 1.5 or 50(foil) > Ghost (retriger)
-	void SetScoreTextPos(class UCardButtonWidget* CurEventCard);
+	void SetScoreTextPos(class UCardButtonWidget* CurEventCard, bool IsUp = false);
 
 	void	StartNextTimer();
 	void	PushTimerEvent(TFunction<void(class UCardButtonWidget*,int32)> InFunc, class UCardButtonWidget* CurEventCard,int32 InValue);
@@ -85,6 +92,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> ChuckButtonText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> BossSkillText;
 
 private:
 	UPROPERTY()

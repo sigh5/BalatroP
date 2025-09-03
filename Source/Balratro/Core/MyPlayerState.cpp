@@ -45,7 +45,6 @@ void AMyPlayerState::ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRank
 
 		Deck_Stat.Add(CardInfo);
 	}
-
 }
 
 void AMyPlayerState::SetCurCalculatorCardInHands(TArray<class UHandInCard_Info*>& InValue)

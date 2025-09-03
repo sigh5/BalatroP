@@ -29,7 +29,7 @@ void UBlindComponent::BeginPlay()
 	VM_Store->OnNextButton.AddUObject(this, &UBlindComponent::BlindViewActive);
 
 	auto PS = GetPlayerState();
-	PS->OnRestCardsSet.AddUObject(this,&UBlindComponent::UseBossSkill);
+	PS->OnBossSkill_RestCardsSet.AddUObject(this,&UBlindComponent::UseBossSkill);
 
 	ResetBlindSelectData();
 }
@@ -165,14 +165,23 @@ void UBlindComponent::SetRandomBossType()
 void UBlindComponent::UseBossSkill()
 {
 	auto PS = GetPlayerState();
-	
+	UE_LOG(LogTemp, Warning, TEXT("UseBossSkill"));
+
 	if (EPlayerStateType::BOSS_BLIND != PS->GetPlayerState())
 	{
 		return;
 	}
 
 	EBossType CurBossType = PS->GetCurBossType().Value;
+
+	UE_LOG(LogTemp, Warning, TEXT("UseBossSkill2, %d"),static_cast<int>(CurBossType));
+
 	BossTypes[CurBossType]();
+}
+
+void UBlindComponent::SetBlindSkipReward()
+{
+
 }
 
 void UBlindComponent::HOOK_Skill()
@@ -182,6 +191,7 @@ void UBlindComponent::HOOK_Skill()
 
 	auto RestHands = PS->GetRestCardInHands();
 	
+	UE_LOG(LogTemp, Warning, TEXT("Before HOOK_Skill %d"), RestHands.Num());
 	if (RestHands.Num() == 0)
 		return;
 
@@ -193,6 +203,9 @@ void UBlindComponent::HOOK_Skill()
 	{
 		RestHands.RemoveAt(0, 2);
 	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("HOOK_Skill %d"), RestHands.Num());
+
 
 	PS->SetRestCardInHands(RestHands); // 남아있는 
 }

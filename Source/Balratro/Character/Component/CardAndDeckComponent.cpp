@@ -38,8 +38,6 @@ void UCardAndDeckComponent::BeginPlay()
 	VM_Joker->OnEffectUIViewFinish.AddUObject(this, &UCardAndDeckComponent::AllEffectViewFinish);
 
 	VM_ItemSelcet->OnUseTaroCard.AddUObject(this, &UCardAndDeckComponent::UseTaroItem);
-
-	//InitDeck();
 }
 
 void UCardAndDeckComponent::UpdateCardInHand(TArray<UHandInCard_Info*>& _DeckCardStat)
@@ -83,8 +81,6 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", true));
 		VM_CardDeck->SetItemSelectFlag(true);
 		InitDeck();
-
-		//UE_LOG(LogTemp, Warning, TEXT("SetVisibleCardDeckView"));
 	}
 	else
 		return;
@@ -121,9 +117,7 @@ void UCardAndDeckComponent::FinishHandPlay()
 
 void UCardAndDeckComponent::SwapCardOrder(UHandInCard_Info* SwapDest, UHandInCard_Info* Source)
 {
-	auto PS = GetPlayerState();
-	//auto VM = GetVMCardDeck();
-	
+	auto PS = GetPlayerState();	
 	auto CurAllHands = PS->GetCurrentAllHands();
 
 	int32 SourceIndex = CurAllHands.IndexOfByKey(Source);
@@ -135,8 +129,6 @@ void UCardAndDeckComponent::SwapCardOrder(UHandInCard_Info* SwapDest, UHandInCar
 	}
 
 	PS->SetCurrentAllHands(CurAllHands);
-
-	///VM->SetCurrentAllHands(PS->GetCurrentAllHands());
 }
 
 void UCardAndDeckComponent::UseTaroItem(FTaroStat& TaroStat)
@@ -262,8 +254,6 @@ void UCardAndDeckComponent::AllEffectViewFinish()
 		});
 
 	GetWorld()->GetTimerManager().SetTimer(TotalScoreHandle, Delegate, 1.5f, false);
-
-	//FinishHandPlay();
 }
 
 void UCardAndDeckComponent::SetPlayCardEffect()
@@ -272,7 +262,23 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 	auto VM = GetVMCardDeck();
 	
 	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
+	auto CurRestCards = PS->GetRestCardInHands();
+	
+
+	VM->SetRestCardDatas(CurRestCards);
+
+	if (PS->GetPlayerState() == EPlayerStateType::BOSS_BLIND)
+	{
+		auto CurBossType = PS->GetCurBossType();
+		VM->SetBossSkillUse(true); // SetRestCardDatas 이게 먼저 들어가야되네?
+	}
+	else
+	{
+		VM->SetBossSkillUse(false);
+	}
+
 	VM->SetCurCardsData(CurPlayCards); // 보여주는 카드 점수 계산하는거
+	VM->SetRestCardEffectFlag(true);
 }
 
 void UCardAndDeckComponent::ShuffleDeck()
@@ -287,9 +293,6 @@ void UCardAndDeckComponent::ShuffleDeck()
 	FMath::RandInit(Seed);
 
 	int32 NumElements = MyDeckStatTable.Num();
-
-	UE_LOG(LogTemp, Log, TEXT("NumElements %d"), NumElements);
-
 	for (int32 i = NumElements - 1; i > 0; --i)
 	{
 		int32 RandomIndex = FMath::RandRange(0, i);
@@ -387,6 +390,15 @@ void UCardAndDeckComponent::InitDeck()
 
 	ShuffleDeck();
 	DrawCard(8);
+
+	auto VM = GetVMCardDeck();
+	auto PS = GetPlayerState();
+
+	if (PS->GetPlayerState() == EPlayerStateType::BOSS_BLIND)
+	{
+		VM->SetCurrentBossType(PS->GetCurBossType().Value);
+	}
+
 }
 
 void UCardAndDeckComponent::SortHandInCard(const EHandInCardSortType& InType)

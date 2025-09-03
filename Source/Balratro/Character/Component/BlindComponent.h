@@ -23,8 +23,9 @@ private:
 	void	ResetBlindSelectData();
 	
 	void	SetRandomBossType();
-
 	void	UseBossSkill();
+
+	void	SetBlindSkipReward();
 
 
 private: /* Skill */

@@ -31,6 +31,8 @@ int32 UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArr
 	
 	SetCalRestCardInHands(_DeckCardStat); // 점수 계산 전 보스 능력 확인
 	
+	SetStillCards();					  // 스틸카드 계산
+
 	SetHandRankingType(CardNum, _DeckCardStat);
 	
 	PS->SetHandPlayFlag(false);
@@ -310,6 +312,7 @@ void UCalculatorHandRankingComponent::SetCalRestCardInHands(TArray<UHandInCard_I
 	}
 	
 	PS->SetRestCardInHands(RestCards);
+	PS->UseBossSkill();
 }
 
 void UCalculatorHandRankingComponent::SetStillCards()

@@ -40,9 +40,10 @@ public:
 	FORCEINLINE void		SetSelected(bool _Selected) { bSelected = _Selected; }
 
 	void					MoveAnimmation();
+	void					ShakeAnimation();
 
 	void					DrawAnimation();
-
+	void					ChuckAnimation();
 private:
 	UFUNCTION()
 	void OnFilpAnimationFinished();
@@ -87,6 +88,13 @@ private:
 
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	TObjectPtr<class UWidgetAnimation> FilpAnim;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	TObjectPtr<class UWidgetAnimation> ShakeAnim;
+	
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	TObjectPtr<class UWidgetAnimation> ChunkAnim;
+
 
 private:
 	int CardIndex = 0;

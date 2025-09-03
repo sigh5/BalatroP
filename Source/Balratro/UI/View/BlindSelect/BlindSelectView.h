@@ -35,6 +35,12 @@ protected:
 	UFUNCTION()
 	void OnBossBlindButtonClicked();
 
+	UFUNCTION()
+	void OnSmallBlindSkip_ButtonClicked();
+
+	UFUNCTION()
+	void OnBigBlindSkip_ButtonClicked();
+
 private:
 	void VM_FieldChanged_SmallBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_BigBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId);

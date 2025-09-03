@@ -187,9 +187,19 @@ void UCardButtonWidget::MoveAnimmation()
 	PlayAnimation(MoveAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
 }
 
+void UCardButtonWidget::ShakeAnimation()
+{
+	PlayAnimation(ShakeAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
+}
+
 void UCardButtonWidget::DrawAnimation()
 {
 	PlayAnimation(MoveEndAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
+}
+
+void UCardButtonWidget::ChuckAnimation()
+{
+	PlayAnimation(ChunkAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
 }
 
 void UCardButtonWidget::OnCardButtonClicked()
@@ -230,6 +240,8 @@ void UCardButtonWidget::OnCardButtonClicked()
 void UCardButtonWidget::SetInfo(UHandInCard_Info* _inValue)
 {
 	CardInfoData = _inValue;
+
+	MainButton->SetRenderOpacity(1.0f);
 
 	if (IsCreated == false)
 	{
