@@ -18,7 +18,7 @@
 
 #include "GameData/HandRankingStat.h"
 #include "Interface/CalculatorScoreInterface.h"
-
+#include "GameData/Utills.h"
 
 void UCardAndDeckComponent::BeginPlay()
 {
@@ -92,11 +92,12 @@ void UCardAndDeckComponent::FinishHandPlay()
 	
 	int32 SumScore = PS->GetCurrentScore();
 	int32 CurrentSum = ResultScore + SumScore;
+	
+	PS->SetMaxScore(ResultScore);
 
 	if (CurrentSum >= PS->GetCurrentRoundBlindGrade())
 	{
-		ResultScore = 0;
-		PS->SetMaxScore(CurrentSum);
+		ResultScore = 0;	
 		PS->SetCurrentScore(CurrentSum);
 
 		GetWorld()->GetTimerManager().ClearTimer(TotalScoreHandle);
@@ -109,9 +110,19 @@ void UCardAndDeckComponent::FinishHandPlay()
 	}
 	else
 	{
-		PS->SetCurrentScore(CurrentSum);
-		UpdateCardInHand(DeckCardStat);
-		DrawCard(nCardNum);
+		if (PS->GetUseHandCount() == PS->GetMaxHandCount())
+		{
+			// °ÔÀÓ Á¾·á ºä ¶ç¿ì±â
+			UE_LOG(LogTemp, Warning, TEXT("FinishHandPlay_HandPlayNumNone0"));
+			PS->SetPlayerState(EPlayerStateType::GAME_OVER);
+
+		}
+		else
+		{
+			PS->SetCurrentScore(CurrentSum);
+			UpdateCardInHand(DeckCardStat);
+			DrawCard(nCardNum);
+		}
 	}
 }
 
@@ -284,18 +295,12 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 void UCardAndDeckComponent::ShuffleDeck()
 {
 	auto PS = GetPlayerState();
-
 	auto& MyDeckStatTable = PS->GetDeckStatTableModify();
-
-	FDateTime Now = FDateTime::UtcNow();
-	int64 Milliseconds = Now.ToUnixTimestamp() * 1000 + Now.GetMillisecond();
-	int32 Seed = static_cast<int32>(Milliseconds & 0xFFFFFFFF);
-	FMath::RandInit(Seed);
 
 	int32 NumElements = MyDeckStatTable.Num();
 	for (int32 i = NumElements - 1; i > 0; --i)
 	{
-		int32 RandomIndex = FMath::RandRange(0, i);
+		int32 RandomIndex = FRandomUtils::RandomSeed.RandRange(0, i);
 		if (i != RandomIndex)
 		{
 			MyDeckStatTable.Swap(i, RandomIndex);
@@ -337,7 +342,9 @@ void UCardAndDeckComponent::UpdateChuck(int32 CardNum, TArray<UHandInCard_Info*>
 		return;
 	}
 
+	PS->SetAllChuckCount();
 	PS->SetUseChuckCount(++CurChuckCnt);
+
 	UpdateCardInHand(_DeckCardStat);
 	DrawCard(CardNum);
 }

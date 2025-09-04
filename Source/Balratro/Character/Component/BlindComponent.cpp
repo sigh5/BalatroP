@@ -16,6 +16,8 @@
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
 #include "Core/MyPlayerState.h"
+#include "ItemSelectComponent.h"
+#include "GameData/Utills.h"
 
 
 void UBlindComponent::BeginPlay()
@@ -58,7 +60,6 @@ void UBlindComponent::InitBlindSelectView()
 
 	VM->SetSmallBlind_SkipTag(BlindSkipTags[SmallSkipIndex]); // 나중에 그냥 1~8까지 깔기로 하기
 	VM->SetBigBlind_SkipTag(BlindSkipTags[BigSkipIndex]);
-
 	VM->SetBossType(BossType.Value);
 }
 
@@ -101,8 +102,9 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 		if (InValue == EPlayerStateType::BIG_BLIND_SKIP)
 			CurBlindSkipTagIndex += 1;
 		
-		SetBlindSkipReward(BlindSkipTags[CurBlindSkipTagIndex]);
 
+		SetBlindSkipReward(BlindSkipTags[CurBlindSkipTagIndex]);
+		
 		PS->SetPlayerState(EPlayerStateType::ITEM_SELECT);
 
 		return;
@@ -148,7 +150,7 @@ void UBlindComponent::ResetBlindSelectData()
 
 	for (int32 i = NumElements - 1; i > 0; --i)
 	{
-		int32 RandomIndex = FMath::RandRange(0, i);
+		int32 RandomIndex = FRandomUtils::RandomSeed.RandRange(0, i);
 
 		if (i != RandomIndex)
 		{
@@ -204,59 +206,7 @@ void UBlindComponent::SetBlindSkipReward(EBlindSkip_Tag CurTagType)
 {
 	auto PS = GetPlayerState();
 
-	switch (CurTagType)
-	{
-	case EBlindSkip_Tag::SECREAT_JOKER:
-		break;
-	case EBlindSkip_Tag::REAR_JOKER:
-		break;
-	case EBlindSkip_Tag::NEGERTIVE_JOKER:
-		break;
-	case EBlindSkip_Tag::FOIL_JOKER:
-		break;
-	case EBlindSkip_Tag::BOSTER_PACK_FREE:
-		break;
-	case EBlindSkip_Tag::ADD_TEN_JKER:
-		break;
-	case EBlindSkip_Tag::MULTIPLE_JOKER:
-		break;
-	case EBlindSkip_Tag::BOSS_GOLD_REWARD:
-		break;
-	case EBlindSkip_Tag::VOUCHER_ADD:
-		break;
-	case EBlindSkip_Tag::TWO_COMMON_JOKER:
-		break;
-	case EBlindSkip_Tag::JUGGLE:
-		break;
-	case EBlindSkip_Tag::BOSS_REROAD:
-		break;
-	case EBlindSkip_Tag::STANDARD_PACK:
-		break;
-	case EBlindSkip_Tag::ARCANA_PACK:
-	{
-		EBoosterPackType ItemType = EBoosterPackType::TARO_MEGA;
-		UBoosterPackData* CurPack = NewObject<UBoosterPackData>();
-		FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Booster/boosters_Sprite_%d.boosters_Sprite_%d"), 2, 2);
-		CurPack->PackMesh = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-		if (!CurPack->PackMesh.IsValid())
-		{
-			CurPack->PackMesh.LoadSynchronous();
-		}
-		CurPack->SetType(ItemType);
-
-		PS->SetSelectPackType(CurPack);
-
-		// 이거 여기서 만드는게 부스터 팩들은 아이템_컴포넌트에서 만들어야될듯
-
-		break;
-	}
-	case EBlindSkip_Tag::ORB_PACK:
-		break;
-	case EBlindSkip_Tag::GHOST_PACK:
-		break;
-	default:
-		break;
-	}
+	PS->SetCurBlindSkipReward(CurTagType);
 }
 
 void UBlindComponent::HOOK_Skill()

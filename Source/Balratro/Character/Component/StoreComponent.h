@@ -43,7 +43,7 @@ private:
 	void	InitStoreData();
 
 private:
-	EBoosterPackType	SetItemType();
+	EBoosterPackType	SetBoosterPackType();
 	EJokerType			SetJokerType();
 
 private:
@@ -61,9 +61,6 @@ private:
 
 	UPROPERTY()
 	TArray<class UJokerCard_Info*> JokerCards;
-
-	//UPROPERTY()
-	//TObjectPtr<class UBoucherStat> BoucherDataAsset;
 
 
 	TArray<FBoucherInfo> BoucherInfos;

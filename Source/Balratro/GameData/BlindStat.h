@@ -38,6 +38,7 @@ enum class EPlayerStateType :uint8
 	BOSS_BLIND,
 	REWARD,
 	ITEM_SELECT,
+	GAME_OVER
 };
 
 UENUM(BlueprintType)

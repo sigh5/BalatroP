@@ -39,7 +39,7 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 		int32 CurGold = PS->GetGold();
 		int32 BlindGrade = VM_PI->GetBlindGrade();  // 여기 수정필요
 		int32 BlindReward = VM_PI->GetBlindReward();
-		int32 BlindImageIndex = VM_PI->GetBlindImageIndex();
+		FString BlindImageIndex = VM_PI->GetBlindAssetPath();
 
 		UE_LOG(LogTemp, Warning, TEXT("RestHands : %d"), RestHands);
 		UE_LOG(LogTemp, Warning, TEXT("RestChucks : %d"), RestChucks);
@@ -56,7 +56,7 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 		VM_Reward->SetRestHands(RestHands);		// Order 2
 		VM_Reward->SetInterest(CurGold / 5);	// Order 3
 		VM_Reward->SetBlindGrade(BlindGrade);	// Order 4
-		VM_Reward->SetBlindImageIndex(BlindImageIndex); // Order 5
+		VM_Reward->SetBlindImageAssetPath(BlindImageIndex); // Order 5
 	}
 
 }

@@ -203,8 +203,8 @@ void UPlayerInfoComponent::UpdateHandRanking()
 
 	int32 Level = 0, BaseChip= 0 , IncreaseChip = 0, BaseDrainage = 0 , IncreaseDrainage =0;
 	FString CurHandRankingName = Name.ToString().Replace(TEXT(" "), TEXT(""));
-	auto CurMyHandRanking = PS->GetHandRankingInfoModify();
-	for (auto CurHandRankingInfo : CurMyHandRanking)
+	auto& CurMyHandRanking = PS->GetHandRankingInfoModify();
+	for (auto& CurHandRankingInfo : CurMyHandRanking)
 	{
 		if (CurHandRankingName == CurHandRankingInfo->_Name)
 		{
@@ -311,7 +311,12 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	VM_PI->SetBlindReward(Reward);
 	VM_PI->SetMainOrder(MainOrder);
 	VM_PI->SetBlindBorderColor(LinearColor);
-	VM_PI->SetBlindImageIndex(BlindImageIndex);
+		
+	if (BlindImageIndex != -1)
+	{
+		FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_%d.BlindChips_Sprite_%d"), BlindImageIndex, BlindImageIndex);
+		VM_PI->SetBlindAssetPath(AssetPath);
+	}
 }
 
 void UPlayerInfoComponent::UpdateCalculatorChip()

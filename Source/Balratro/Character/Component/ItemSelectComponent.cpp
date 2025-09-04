@@ -15,6 +15,9 @@
 #include "UI/MVVM/ViewModel/VM_Store.h"
 #include "UI/MVVM/ViewModel/VM_ItemSelect.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
+#include "UI/MVVM/ViewModel/VM_BlindSelect.h"
+
+#include "GameData/Utills.h"
 
 // Called when the game starts
 void UItemSelectComponent::BeginPlay()
@@ -24,14 +27,15 @@ void UItemSelectComponent::BeginPlay()
 	auto PS = GetPlayerState();
 	auto VM_Stroe = GetVMStore();
 	auto VM_CardDeck = GetVMCardDeck();
+	auto VM_BlindSelect = GetVMBlindSelect();
 
 	InitTaroInfoTable();
 
 	PS->OnSelectNextScene.AddUObject(this, &UItemSelectComponent::SetItemSelectView);
-
+	PS->OnBlindSkipRewardSetting.AddUObject(this, &UItemSelectComponent::SetBlindSkipReward);
 
 	VM_CardDeck->OnSkipButtonClicked.AddUObject(this, &UItemSelectComponent::ItemSelectSceneSkip);
-
+	VM_BlindSelect->OnSelectBlind.AddUObject(this, &UItemSelectComponent::SetBlindSkipButtonFlag);
 }
 
 void UItemSelectComponent::InitTaroInfoTable()
@@ -62,7 +66,80 @@ void UItemSelectComponent::ItemSelectSceneSkip()
 
 	PS->SetNextRound();
 
-	PS->SetPlayerState(EPlayerStateType::STORE);
+	if (IsClickedBlindSkip)
+	{
+		auto VM_Store = GetVMStore();
+		VM_Store->NextButtonClicked();
+		IsClickedBlindSkip = false;
+	}
+	else
+	{
+		PS->SetPlayerState(EPlayerStateType::STORE);
+	}
+}
+
+void UItemSelectComponent::SetBlindSkipReward(EBlindSkip_Tag CurTagType)
+{
+	auto VM_MainMenu = GetVMMainWidget();
+	VM_MainMenu->SetClearFlag(true);
+
+	switch (CurTagType)
+	{
+	case EBlindSkip_Tag::SECREAT_JOKER:
+		break;
+	case EBlindSkip_Tag::REAR_JOKER:
+		break;
+	case EBlindSkip_Tag::NEGERTIVE_JOKER:
+		break;
+	case EBlindSkip_Tag::FOIL_JOKER:
+		break;
+	case EBlindSkip_Tag::BOSTER_PACK_FREE:
+		break;
+	case EBlindSkip_Tag::ADD_TEN_JKER:
+		break;
+	case EBlindSkip_Tag::MULTIPLE_JOKER:
+		break;
+	case EBlindSkip_Tag::BOSS_GOLD_REWARD:
+		break;
+	case EBlindSkip_Tag::VOUCHER_ADD:
+		break;
+	case EBlindSkip_Tag::TWO_COMMON_JOKER:
+		break;
+	case EBlindSkip_Tag::JUGGLE:
+		break;
+	case EBlindSkip_Tag::BOSS_REROAD:
+		break;
+
+	case EBlindSkip_Tag::STANDARD_PACK: 
+	case EBlindSkip_Tag::ARCANA_PACK:
+	case EBlindSkip_Tag::ORB_PACK:
+	case EBlindSkip_Tag::GHOST_PACK:
+		BlindSkipReward_BoosterPackSetting(CurTagType);
+		break;
+	default:
+		break;
+	}
+
+}
+
+void UItemSelectComponent::BlindSkipReward_BoosterPackSetting(EBlindSkip_Tag CurTagType)
+{
+	auto PS = GetPlayerState();
+
+	EBoosterPackType ItemType = EBoosterPackType::TARO_MEGA;
+	UBoosterPackData* CurPack = NewObject<UBoosterPackData>();
+
+	CurPack->SetType(ItemType);
+
+	PS->SetSelectPackType(CurPack);
+}
+
+void UItemSelectComponent::SetBlindSkipButtonFlag(EPlayerStateType InType)
+{
+	if (InType == EPlayerStateType::BIG_BLIND_SKIP || InType == EPlayerStateType::SMALL_BLIND_SKIP)
+	{
+		IsClickedBlindSkip = true;
+	}
 }
 
 void UItemSelectComponent::SetItemSelectView(EPlayerStateType _InType)
@@ -129,7 +206,7 @@ TSet<int32> UItemSelectComponent::SetTaroType(int32 SetTaroNum)
 		for (auto& Elem : PS->GetTaroStatTable())
 			TotalWeight += Elem->Info.weight;
 
-		int32 RandomValue = FMath::RandRange(1, TotalWeight);
+		int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
 		int32 Accumulated = 0;
 
 		for (auto& Elem : PS->GetTaroStatTable())
@@ -199,4 +276,16 @@ UVM_CardDeck* UItemSelectComponent::GetVMCardDeck()
 
 	const auto Found = VMCollection->FindViewModelInstance(Context);
 	return Cast<UVM_CardDeck>(Found);
+}
+
+UVM_BlindSelect* UItemSelectComponent::GetVMBlindSelect()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_BlindSelect");
+	Context.ContextClass = UVM_BlindSelect::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_BlindSelect>(Found);
 }

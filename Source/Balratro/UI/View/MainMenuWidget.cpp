@@ -17,7 +17,7 @@
 #include "UI/View/Reward/RewardView.h"
 #include "UI/View/ItemSelect/ItemSelectView.h"
 #include "UI/View/HandRanking/HandRankingView.h"
-
+#include "UI/View/GameOver/GameOverView.h"
 
 // 디버그일떄만
 #include "Core/MyPlayerState.h"
@@ -175,6 +175,19 @@ void UMainMenuWidget::NativeConstruct()
 			CanvasSlot->AddChildToCanvas(BindWidget);
 		}
 	}
+
+	if (GameOverView == nullptr)
+	{
+		GameOverView = LoadClass<UGameOverView>(nullptr, TEXT("/Game/UI/View/GameOver/WBP_GameOver.WBP_GameOver_C"));
+		CurViewName = "GameOverView";
+		UBBUserWidgetBase* BindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(GameOverView));
+		if (BindWidget)
+		{
+			CanvasSlot->AddChildToCanvas(BindWidget);
+			BindWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+
 
 	
 }

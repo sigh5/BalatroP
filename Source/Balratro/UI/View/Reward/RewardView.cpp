@@ -38,7 +38,7 @@ void URewardView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::BlindGrade,
 		FFieldValueChangedDelegate::CreateUObject(this, &URewardView::VM_FieldChanged_BlindGrade));
 
-	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::BlindImageIndex,
+	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::BlindImageAssetPath,
 		FFieldValueChangedDelegate::CreateUObject(this, &URewardView::VM_FieldChanged_BlindImageIndex));
 
 	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::EarnGold,
@@ -168,25 +168,25 @@ void URewardView::VM_FieldChanged_BlindImageIndex(UObject* Object, UE::FieldNoti
 	const auto VMInst = TryGetViewModel<UVM_Reward>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
-	int32 ImageIndex = VMInst->GetBlindImageIndex();
-	FString AssetPath = "";
+	FString AssetPath = VMInst->GetBlindImageAssetPath();
+	
 	TSoftObjectPtr<UPaperSprite> MyAsset;
-	if (ImageIndex == 0)
-	{
-		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_0.BlindChips_Sprite_0"));
-	}
-	else if (ImageIndex == 1)
-	{
-		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_21.BlindChips_Sprite_21"));
-	}
-	else if (ImageIndex == 2) // 상점 이미지
-	{
-		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Shop/ShopSignAnimation_Sprite_3.ShopSignAnimation_Sprite_3"));
-	}
-	else if (ImageIndex == 3) /// 보스 블라인드 이미지가 달라서
-	{
+	//if (ImageIndex == 0)
+	//{
+	//	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_0.BlindChips_Sprite_0"));
+	//}
+	//else if (ImageIndex == 1)
+	//{
+	//	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_21.BlindChips_Sprite_21"));
+	//}
+	//else if (ImageIndex == 2) // 상점 이미지
+	//{
+	//	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Shop/ShopSignAnimation_Sprite_3.ShopSignAnimation_Sprite_3"));
+	//}
+	//else if (ImageIndex == 3) /// 보스 블라인드 이미지가 달라서
+	//{
 
-	}
+	//}
 
 	MyAsset = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
 	if (MyAsset.IsValid())

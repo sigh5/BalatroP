@@ -58,6 +58,8 @@ private:
     UPROPERTY()
     TSubclassOf<class UHandRankingView> HandRankingView;
 
+    UPROPERTY()
+    TSubclassOf<class UGameOverView> GameOverView;
 
     UPROPERTY()
     TObjectPtr<class UBBUserWidgetPool> WidgetPool;

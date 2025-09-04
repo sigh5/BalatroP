@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -11,7 +9,7 @@
 #include "GameData/TaroStat.h"
 #include "GameData/BoucherStat.h"
 #include "MyPlayerState.generated.h"
-
+//#include "GameData/Utills.h"
 
 // First  Test
 // 디버그일때만 사용 릴리즈 일때 꺼야됌
@@ -37,6 +35,7 @@ enum class EHandInCardSortType : uint8
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseChuck, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseHandPlay, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectNextScene, EPlayerStateType);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnBlindSkipRewardSetting, EBlindSkip_Tag);
 
 DECLARE_MULTICAST_DELEGATE(FOnDeckCardNum);
 DECLARE_MULTICAST_DELEGATE(FOnCurrentPlayerHandRanking);
@@ -74,6 +73,7 @@ public:
 	FOnShowUIChip				OnShowUIChip;
 	FOnShowUIDrainage			OnShowUIDrainage;
 	FOnBossSkill_RestCardsSet	OnBossSkill_RestCardsSet;
+	FOnBlindSkipRewardSetting	OnBlindSkipRewardSetting;
 
 public:
 	FORCEINLINE int32 GetRoundCount() { return RoundCount; }
@@ -101,7 +101,7 @@ public:
 	FORCEINLINE void  SetUseChuckCount(int32 InValue) { UseChuckCount = InValue;  OnPlayerUseChuck.Broadcast(UseChuckCount); }
 
 	FORCEINLINE int32 GetCurrentScore() { return CurrentScore; }
-	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; SetMaxScore(CurrentScore);   OnSetCurrentScore.Broadcast();}
+	FORCEINLINE void  SetCurrentScore(int32 InValue) { CurrentScore = InValue; OnSetCurrentScore.Broadcast();}
 
 	FORCEINLINE int32 GetCardInHand() { return CardInHand; }
 	FORCEINLINE void  SetCardInHand(int32 InValue) { CardInHand = InValue; }
@@ -110,7 +110,7 @@ public:
 	FORCEINLINE void  SetCardInDeckNum(int32 InValue) { CardInDeckNum = InValue;  OnDeckCardNum.Broadcast(); }
 
 	FORCEINLINE int32 GetMaxScore() { return MaxScore; }
-	FORCEINLINE void  SetMaxScore(int32 InValue){ MaxScore = FMath::Max(MaxScore, InValue); }
+	FORCEINLINE void  SetMaxScore(int32 InValue) { MaxScore = FMath::Max(MaxScore, InValue); AllPlayCount++; }
 
 
 	FORCEINLINE TArray<class UHandRanking_Info*>& GetHandRankingInfoModify() { return MyHandRankingInfo; }
@@ -208,7 +208,13 @@ public:
 	FORCEINLINE const TPair<int32, EBossType>& GetCurBossType() const { return CurrentBostType; }
 	FORCEINLINE void SetCurBossType(TPair<int32, EBossType> _InValue) { CurrentBostType = _InValue; }
 
+	FORCEINLINE void  SetCurBlindSkipReward(EBlindSkip_Tag _InValue) {OnBlindSkipRewardSetting.Broadcast(_InValue);BlindSkipCount++;}
+
+	FORCEINLINE int32 GetAllPlayCount() { return AllPlayCount; }
 	
+	FORCEINLINE void SetAllChuckCount() { AllChuckCount++; }
+	FORCEINLINE int32 GetAllChuckCount() { return AllChuckCount; }
+
 private:
 	int32 RoundCount;
 	
@@ -229,10 +235,14 @@ private:
 	int32 CurrentScore;
 	int32 MaxScore;
 
+	int32 AllPlayCount = 0;
+	int32 AllChuckCount = 0;
+
+
 	int32	CurrentShowChip;	 // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 칩
 	int32	CurrentShowDrainage; // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 배수
 
-	int32	RerollCost = 5;
+	int32	RerollCost = 3;
 	int32	HaveBoosterPackNum = 2;
 	int32	MaxHaveBoosterPackNum = 2;
 
@@ -273,8 +283,11 @@ private:
 	UPROPERTY()
 	TArray<class UTaroStat_Info*>	CurTaroStatTable;   // 현재 내 타로 카드 리스트
 
+	UPROPERTY()
+	int32	BlindSkipCount = 0;
 
 	UPROPERTY()
 	TArray<FBoucherInfo> CurBoucherInfo;
+
 
 };

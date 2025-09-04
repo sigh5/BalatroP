@@ -24,6 +24,13 @@ protected:
 	void    InitTaroInfoTable();
 	void	ItemSelectSceneSkip();
 
+
+	void	SetBlindSkipReward(EBlindSkip_Tag CurTagType);
+
+	void	BlindSkipReward_BoosterPackSetting(EBlindSkip_Tag CurTagType);
+
+	void	SetBlindSkipButtonFlag(EPlayerStateType InType);
+
 private:
 	TSet<int32>	 SetTaroType(int32 SetTaroNum);
 
@@ -34,8 +41,11 @@ private:
 	class UVM_MainMenu* GetVMMainWidget();
 	class UVM_ItemSelect* GetVMItemSelect();
 	class UVM_CardDeck* GetVMCardDeck();
+	class UVM_BlindSelect* GetVMBlindSelect();
 
 private:
 	TArray<FTaroStat>   CurShowTaroInfo; // UI 에 보여지는 타로 리스트
+
+	uint8 IsClickedBlindSkip : 1;
 
 };

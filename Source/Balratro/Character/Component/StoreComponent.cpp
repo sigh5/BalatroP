@@ -5,17 +5,15 @@
 #include <Engine/World.h>
 #include <MVVMGameSubsystem.h>
 #include <MVVMSubsystem.h>
-
+#include "PaperSprite.h"
 
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/MVVM/ViewModel/VM_Store.h"
 
 #include "Item/BoosterPackData.h"
 
-#include "PaperSprite.h"
-
 #include "Engine/AssetManager.h"
-
+#include "GameData/Utills.h"
 
 void UStoreComponent::BeginPlay()
 {
@@ -135,7 +133,7 @@ void UStoreComponent::SetDownStoreItem()
 		BoosterPacks.Empty();
 		for (int i = 0; i < BoosterPackNum; ++i)
 		{
-			EBoosterPackType ItemType = SetItemType();
+			EBoosterPackType ItemType = SetBoosterPackType();
 			UBoosterPackData* CurPack = NewObject<UBoosterPackData>();
 
 			int32 ItemIndex = static_cast<int32>(ItemType);
@@ -186,13 +184,13 @@ void UStoreComponent::InitStoreData()
 	ensure(BoucherInfos.Num() > 0);
 }
 
-EBoosterPackType UStoreComponent::SetItemType()
+EBoosterPackType UStoreComponent::SetBoosterPackType()
 {
 	int32 TotalWeight = 0;
 	for (auto& Elem : ItemWeights)
 		TotalWeight += Elem.Weight;
 
-	int32 RandomValue = FMath::RandRange(1, TotalWeight);
+	int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
 	int32 Accumulated = 0;
 
 	for (auto& Elem : ItemWeights)

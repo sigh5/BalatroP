@@ -94,7 +94,7 @@ void UPlayerInfoWidget::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindBorderColor,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_BlindNameBorderColor));
 
-	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindImageIndex,
+	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindAssetPath,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage));
 
 
@@ -310,31 +310,24 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindNameBorderColor(UObject* Object, UE
 void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
-	int Index = VMInstance->GetBlindImageIndex();
+	FString AssetPath = VMInstance->GetBlindAssetPath();
 
-	FString AssetPath = "";
+	
 	TSoftObjectPtr<UPaperSprite> MyAsset;
-	if (Index == 0)
-	{
-		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_0.BlindChips_Sprite_0"));
-	}
-	else if (Index == 1)
-	{
-		AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_21.BlindChips_Sprite_21"));
-	}
-	else if (Index == 2) // 상점 이미지
-	{
-		ShopImage->SetVisibility(ESlateVisibility::Visible);
-		return;
-	}
-	else if (Index == 3) /// 보스 블라인드 이미지가 달라서
-	{
-		
-	}
-	else
-	{
-		return;
-	}
+	
+	//if (Index == 2) // 상점 이미지
+	//{
+	//	ShopImage->SetVisibility(ESlateVisibility::Visible);
+	//	return;
+	//}
+	//else if (Index == 3) /// 보스 블라인드 이미지가 달라서
+	//{
+	//	
+	//}
+	//else
+	//{
+	//	return;
+	//}
 	
 	MyAsset = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
 	if (!MyAsset.IsValid())

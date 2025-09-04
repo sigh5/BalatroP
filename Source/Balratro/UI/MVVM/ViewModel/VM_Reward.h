@@ -45,10 +45,10 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BlindGrade); }
 	const int32 GetBlindGrade() const { return BlindGrade; }
 
-	void SetBlindImageIndex(int32 _InValue) { 
-		BlindImageIndex = _InValue;
-		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BlindImageIndex); }
-	const int32 GetBlindImageIndex() const { return BlindImageIndex; }
+	void SetBlindImageAssetPath(FString _InValue) {
+		BlindImageAssetPath = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BlindImageAssetPath); }
+	const FString GetBlindImageAssetPath() const { return BlindImageAssetPath; }
 
 	void SetEarnGold(int32 _InValue) { 
 		EarnGold = _InValue;
@@ -76,7 +76,7 @@ private:
 	int32 BlindGrade = 0;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	int32 BlindImageIndex = -1;
+	FString BlindImageAssetPath ;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 EarnGold = 0;

@@ -135,6 +135,9 @@ void UBlindSelectView::OnSmallBlindSkip_ButtonClicked()
 	SmallBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	SmallSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 
+	BigBlindButton->SetVisibility(ESlateVisibility::Visible);
+	BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
+
 	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND_SKIP);
 }
 

@@ -8,6 +8,7 @@
 #include "Character/Component/StoreComponent.h"
 #include "Character/Component/RewardComponent.h"
 #include "Character/Component/ItemSelectComponent.h"
+#include "Character/Component/GameOverComponent.h"
 
 // Sets default values
 AMyPawn::AMyPawn()
@@ -21,4 +22,5 @@ AMyPawn::AMyPawn()
 	const auto StoreComponent = CreateDefaultSubobject<UStoreComponent>("StoreComponent");
 	const auto RewardComponent = CreateDefaultSubobject<URewardComponent>("RewardComponent");
 	const auto ItemSelectComponent = CreateDefaultSubobject<UItemSelectComponent>("ItemSelectComponent");
+	const auto GameOverComponent = CreateDefaultSubobject<UGameOverComponent>("GameOverComponent");
 }

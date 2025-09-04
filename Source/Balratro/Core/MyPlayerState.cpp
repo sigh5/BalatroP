@@ -3,13 +3,14 @@
 
 #include "Core/MyPlayerState.h"
 #include "GameData/BoucherStat.h"	
-
+#include "GameData/Utills.h"
 
 AMyPlayerState::AMyPlayerState()
 	:RoundCount(0), EntiCount(0), UseHandCount(0), MaxChuckCount(3), UseChuckCount(0), CurrentScore(0),
 	 MaxScore(0), MaxHandCount(4), MaxGold(4), Gold(4), CurrentShowChip(0), CurrentShowDrainage(0),
 	 CurSortType(EHandInCardSortType::SORT_RANK)
 {
+	FRandomUtils::Init();
 }
 
 void AMyPlayerState::ResetMyHandRankingInfo(const TMap<const FName, FHandRankingStat*>& InHandRanking)
