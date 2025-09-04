@@ -38,7 +38,7 @@ void URewardView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::BlindGrade,
 		FFieldValueChangedDelegate::CreateUObject(this, &URewardView::VM_FieldChanged_BlindGrade));
 
-	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::BlindImageAssetPath,
+	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::BlindMaterialPath,
 		FFieldValueChangedDelegate::CreateUObject(this, &URewardView::VM_FieldChanged_BlindImageIndex));
 
 	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::EarnGold,
@@ -168,38 +168,16 @@ void URewardView::VM_FieldChanged_BlindImageIndex(UObject* Object, UE::FieldNoti
 	const auto VMInst = TryGetViewModel<UVM_Reward>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
-	FString AssetPath = VMInst->GetBlindImageAssetPath();
+	FString MaterialPath = VMInst->GetBlindMaterialPath();
 	
-	TSoftObjectPtr<UPaperSprite> MyAsset;
-	//if (ImageIndex == 0)
-	//{
-	//	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_0.BlindChips_Sprite_0"));
-	//}
-	//else if (ImageIndex == 1)
-	//{
-	//	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_21.BlindChips_Sprite_21"));
-	//}
-	//else if (ImageIndex == 2) // 상점 이미지
-	//{
-	//	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Shop/ShopSignAnimation_Sprite_3.ShopSignAnimation_Sprite_3"));
-	//}
-	//else if (ImageIndex == 3) /// 보스 블라인드 이미지가 달라서
-	//{
-
-	//}
-
-	MyAsset = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-	if (MyAsset.IsValid())
+	FStringAssetReference MatRef = MaterialPath;
+	UMaterialInterface* LoadedMat = Cast<UMaterialInterface>(MatRef.TryLoad());
+	if (LoadedMat)
 	{
-		MyAsset.LoadSynchronous();
+		FSlateBrush Brush;
+		Brush.SetResourceObject(LoadedMat);
+		BlindImage->SetBrush(Brush);
 	}
-
-	UPaperSprite* Sprite = MyAsset.Get();
-	FSlateBrush SpriteBrush;
-	SpriteBrush.SetResourceObject(Sprite);
-	SpriteBrush.ImageSize = FVector2D(100.f, 150.f);
-	SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
-	BlindImage->SetBrush(SpriteBrush);
 }
 
 void URewardView::VM_FieldChanged_EarnGold(UObject* Object, UE::FieldNotification::FFieldId FieldId)

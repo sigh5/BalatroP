@@ -49,9 +49,16 @@ void UGameOverView::VM_FieldChanged_GameOver_INT_Data(UObject* Object, UE::Field
 	RoundNumText->SetText(FText::AsNumber(CurIntData.RoundCount));
 
 	auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>("VM_PlayerInfo", UVM_PlayerInfo::StaticClass()); check(VM_PlayerInfo);
-	//int32 Idx = VM_PlayerInfo->GetBlindImageIndex();
+	FString MaterialPath = VM_PlayerInfo->GetBlindMaterialPath();
 
-
+	FStringAssetReference MatRef = MaterialPath;
+	UMaterialInterface* LoadedMat = Cast<UMaterialInterface>(MatRef.TryLoad());
+	if (LoadedMat)
+	{
+		FSlateBrush Brush;
+		Brush.SetResourceObject(LoadedMat);
+		DefeatImage->SetBrush(Brush);
+	}
 }
 
 void UGameOverView::VM_FieldChanged_MostHandRankingName(UObject* Object, UE::FieldNotification::FFieldId FieldId)

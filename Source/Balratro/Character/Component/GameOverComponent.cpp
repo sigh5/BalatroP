@@ -40,7 +40,6 @@ void UGameOverComponent::SetGameOverView(EPlayerStateType InType)
 		});
 
 	
-	
 	FGameOverInfo Infos;
 
 	Infos.BestHandScore =  PS->GetMaxScore();

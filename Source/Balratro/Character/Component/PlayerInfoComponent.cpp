@@ -248,7 +248,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	int32 RoundCnt = PS->GetRoundCount();
 	int32 BlindGrade = -1;
 	int32 Reward = -1;
-	int32 BlindImageIndex = -1;
+	FString BlindImageMatPath = TEXT("");
 	FLinearColor LinearColor(0.0f, 0.f, 0.0f, 1.0f);
 	FName MainOrder = "";
 	bool  BlindInfoActive = false;
@@ -261,7 +261,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	case EPlayerStateType::STORE:
 		MainOrder = "UPGRADE RUN!!";
 		BlindInfoActive = false;
-		BlindImageIndex = 2;
+		BlindImageMatPath = TEXT("Store");
 		break;
 	case EPlayerStateType::SMALL_BLIND:
 		MainOrder = "Small Blind";
@@ -270,7 +270,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		BlindGrade = Sigleton.GetBlindStat()[EntiCnt]->SMallGrade;
 		++RoundCnt;
 		LinearColor = FLinearColor(0.000000, 0.289068, 1.000000, 1.000000);
-		BlindImageIndex = 0;
+		BlindImageMatPath = TEXT("/Game/UI/View/PlayerInfo/M_SmallBlind.M_SmallBlind");
 		UE_LOG(LogTemp, Warning, TEXT("SMALL_BLIND : %d"), Reward);
 		break;
 	case EPlayerStateType::SMALL_BLIND_SKIP:
@@ -284,7 +284,7 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		BlindGrade = Sigleton.GetBlindStat()[EntiCnt]->BigGrade;
 		++RoundCnt;
 		LinearColor = FLinearColor(1.000000, 0.928203, 0.000000, 1.000000);
-		BlindImageIndex = 1;
+		BlindImageMatPath = TEXT("/Game/UI/View/PlayerInfo/M_BigBlind.M_BigBlind");
 		break;
 	case EPlayerStateType::BIG_BLIND_SKIP:
 		MainOrder = "Choose Your \n Next Blind";
@@ -311,11 +311,10 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 	VM_PI->SetBlindReward(Reward);
 	VM_PI->SetMainOrder(MainOrder);
 	VM_PI->SetBlindBorderColor(LinearColor);
-		
-	if (BlindImageIndex != -1)
+	
+	if (BlindImageMatPath != "")
 	{
-		FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Blind/BlindChips_Sprite_%d.BlindChips_Sprite_%d"), BlindImageIndex, BlindImageIndex);
-		VM_PI->SetBlindAssetPath(AssetPath);
+		VM_PI->SetBlindMaterialPath(BlindImageMatPath);
 	}
 }
 

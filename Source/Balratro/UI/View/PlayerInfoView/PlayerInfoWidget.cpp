@@ -94,7 +94,7 @@ void UPlayerInfoWidget::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindBorderColor,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_BlindNameBorderColor));
 
-	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindAssetPath,
+	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindMaterialPath,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage));
 
 
@@ -310,37 +310,25 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindNameBorderColor(UObject* Object, UE
 void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
-	FString AssetPath = VMInstance->GetBlindAssetPath();
-
+	FString MaterialPath = VMInstance->GetBlindMaterialPath();
 	
-	TSoftObjectPtr<UPaperSprite> MyAsset;
-	
-	//if (Index == 2) // 상점 이미지
-	//{
-	//	ShopImage->SetVisibility(ESlateVisibility::Visible);
-	//	return;
-	//}
-	//else if (Index == 3) /// 보스 블라인드 이미지가 달라서
-	//{
-	//	
-	//}
-	//else
-	//{
-	//	return;
-	//}
-	
-	MyAsset = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-	if (!MyAsset.IsValid())
+	if (TEXT("Store") == MaterialPath)
 	{
-		MyAsset.LoadSynchronous();
+		ShopImage->SetVisibility(ESlateVisibility::Visible);
+		return;
 	}
 
-	UPaperSprite* Sprite = MyAsset.Get();
-	FSlateBrush SpriteBrush;
-	SpriteBrush.SetResourceObject(Sprite);
-	SpriteBrush.ImageSize = FVector2D(100.f, 150.f);
-	SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
-	CurBlindPresentImage->SetBrush(SpriteBrush);
+	FStringAssetReference MatRef = MaterialPath;
+	UMaterialInterface* LoadedMat = Cast<UMaterialInterface>(MatRef.TryLoad());
+	if (LoadedMat)
+	{
+		FSlateBrush Brush;
+		Brush.SetResourceObject(LoadedMat);
+		CurBlindPresentImage->SetBrush(Brush);
+	}
+
+	
+
 }
 
 UWidgetAnimation* UPlayerInfoWidget::GetAnimationByName(FName& AnimName) const

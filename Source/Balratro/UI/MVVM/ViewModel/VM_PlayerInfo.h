@@ -176,23 +176,16 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(BlindGrade, InValue);
 	}
 
-	/*const int32 GetBlindImageIndex() const
+	const FString GetBlindMaterialPath() const
 	{
-		return BlindImageIndex;
+		return BlindMaterialPath;
 	}
 
-	void SetBlindImageIndex(int32 InValue)
+	void SetBlindMaterialPath(FString InValue)
 	{
-		UE_MVVM_SET_PROPERTY_VALUE(BlindImageIndex, InValue);
-	}*/
-
-	const FString GetBlindAssetPath() const { return BlindAssetPath; }
-
-	void SetBlindAssetPath(FString InValue)
-	{
-		UE_MVVM_SET_PROPERTY_VALUE(BlindAssetPath, InValue);
+		BlindMaterialPath = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BlindMaterialPath);
 	}
-
 
 	const FLinearColor GetBlindBorderColor() const
 	{
@@ -256,8 +249,6 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	FLinearColor BlindBorderColor = FColor::White;
 
-	//UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	//int32 BlindImageIndex = -1;
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	FString BlindAssetPath;
+	FString BlindMaterialPath ;
 };
