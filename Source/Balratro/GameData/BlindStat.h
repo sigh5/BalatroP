@@ -30,6 +30,7 @@ UENUM(BlueprintType)
 enum class EPlayerStateType :uint8
 {
 	NONE,
+	BLINDSELECT,
 	STORE,
 	SMALL_BLIND,
 	SMALL_BLIND_SKIP,

@@ -18,6 +18,8 @@ protected:
 
 	void	 SetGameOverView(EPlayerStateType InType);
 
+	void	SetNewRunEvent();
+
 private:
 	class UVM_Store* GetVMStore();
 	class AMyPlayerState* GetPlayerState();

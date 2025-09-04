@@ -19,6 +19,10 @@ protected:
 private:
 	void	InitBlindSelectView();
 	void	BlindSelectEvent(EPlayerStateType InValue);
+	
+	void	NewtSceneEvent(EPlayerStateType InValue);
+	void	StoreNextButtonClicked();
+	
 	void	BlindViewActive();
 	void	ResetBlindSelectData();
 	

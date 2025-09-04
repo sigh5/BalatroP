@@ -23,10 +23,13 @@ protected:
 
 private:
 	void VM_FieldChanged_GameOver_INT_Data(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
 	void VM_FieldChanged_MostHandRankingName(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
 	void VM_FieldChanged_SeedName(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
+private:
+	UFUNCTION()
+	void  OnClicked_NewRunButton();
+
 
 private:
 	UPROPERTY(meta = (BindWidget))

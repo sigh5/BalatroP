@@ -8,6 +8,8 @@
 /**
  *
  */
+DECLARE_MULTICAST_DELEGATE(FOnNewRunButtonEvent);
+
 
 USTRUCT(BlueprintType)
 struct FGameOverInfo
@@ -32,6 +34,9 @@ class BALRATRO_API UVM_GameOver : public UMVVMViewModelBase
 	GENERATED_BODY()
 
 public:
+	FOnNewRunButtonEvent	OnNewRunButtonEvent;
+
+public:
 	const FName GetMostHandRankingName()  const { return MostHandRankingName; }
 	void SetMostHandRankingName(FName InValue)
 	{
@@ -54,6 +59,8 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GameOver_Infos);
 	}
 
+
+	void	SetNewRunButtonEvent() { OnNewRunButtonEvent.Broadcast(); }
 
 
 private:

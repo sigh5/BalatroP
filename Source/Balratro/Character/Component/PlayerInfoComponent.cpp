@@ -258,6 +258,10 @@ void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
 		MainOrder = "Choose Your \n Next Blind";
 		BlindInfoActive = false;
 		break;
+	case EPlayerStateType::BLINDSELECT:
+		MainOrder = "Choose Your \n Next Blind";
+		BlindInfoActive = false;
+		break;
 	case EPlayerStateType::STORE:
 		MainOrder = "UPGRADE RUN!!";
 		BlindInfoActive = false;

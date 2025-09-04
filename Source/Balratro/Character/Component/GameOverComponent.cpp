@@ -18,8 +18,11 @@ void UGameOverComponent::BeginPlay()
 	Super::BeginPlay();
 
 	auto PS = GetPlayerState();
+	auto VM = GetVMGameOver();
 
 	PS->OnSelectNextScene.AddUObject(this, &UGameOverComponent::SetGameOverView);
+
+	VM->OnNewRunButtonEvent.AddUObject(this, &UGameOverComponent::SetNewRunEvent);
 }
 
 void UGameOverComponent::SetGameOverView(EPlayerStateType InType)
@@ -57,6 +60,21 @@ void UGameOverComponent::SetGameOverView(EPlayerStateType InType)
 	VM_GameOver->SetSeedName(SeedNum);
 	VM_GameOver->SetMostHandRankingName(MostHandRankingName);
 	VM_GameOver->SetGameOver_Infos(Infos);
+
+}
+
+void UGameOverComponent::SetNewRunEvent()
+{
+	auto PS = GetPlayerState();
+	
+	// 전부다 초기화 필요
+
+	auto VM_MainMenu = GetVMMainWidget();
+
+	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("GameOverView", false));
+	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", false));
+
+	PS->SetPlayerState(EPlayerStateType::BLINDSELECT);
 
 }
 

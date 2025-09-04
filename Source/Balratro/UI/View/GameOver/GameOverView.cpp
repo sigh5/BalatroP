@@ -34,6 +34,8 @@ void UGameOverView::NativeConstruct()
 void UGameOverView::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	NewRunButton->OnClicked.AddDynamic(this, &UGameOverView::OnClicked_NewRunButton);
 }
 
 void UGameOverView::VM_FieldChanged_GameOver_INT_Data(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -78,4 +80,11 @@ void UGameOverView::VM_FieldChanged_SeedName(UObject* Object, UE::FieldNotificat
 	int32 CurName = VMInst->GetSeedName();
 
 	SeedText->SetText(FText::AsNumber(CurName));
+}
+
+void UGameOverView::OnClicked_NewRunButton()
+{
+	const auto VMInst = TryGetViewModel<UVM_GameOver>(); checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
+
+	VMInst->SetNewRunButtonEvent();
 }

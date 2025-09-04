@@ -28,10 +28,13 @@ void UBlindComponent::BeginPlay()
 	VM_SelectBlind->OnSelectBlind.AddUObject(this, &UBlindComponent::BlindSelectEvent);
 
 	auto VM_Store = GetVMStore();
-	VM_Store->OnNextButton.AddUObject(this, &UBlindComponent::BlindViewActive);
+	VM_Store->OnNextButton.AddUObject(this, &UBlindComponent::StoreNextButtonClicked);
 
 	auto PS = GetPlayerState();
 	PS->OnBossSkill_RestCardsSet.AddUObject(this,&UBlindComponent::UseBossSkill);
+	PS->OnSelectNextScene.AddUObject(this, &UBlindComponent::NewtSceneEvent);
+
+
 
 	ResetBlindSelectData();
 }
@@ -111,6 +114,23 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 	}
 }
 
+void UBlindComponent::NewtSceneEvent(EPlayerStateType InValue)
+{
+	if (InValue == EPlayerStateType::BLINDSELECT)
+	{
+		BlindViewActive();
+	}
+
+}
+
+void UBlindComponent::StoreNextButtonClicked()
+{
+	auto PS = GetPlayerState();
+	PS->SetPlayerState(EPlayerStateType::BLINDSELECT);
+
+	UE_LOG(LogTemp, Warning, TEXT("StoreNextButtonClicked"));
+}
+
 void UBlindComponent::BlindViewActive()
 {
 	auto VM_MainWidget = GetVMMainWidget();
@@ -119,7 +139,9 @@ void UBlindComponent::BlindViewActive()
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("StoreView", false));
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", true));
 
-	PS->SetPlayerState(EPlayerStateType::NONE);
+	//PS->SetPlayerState(EPlayerStateType::NONE);
+
+	UE_LOG(LogTemp, Warning, TEXT("BlindViewActive"));
 
 	InitBlindSelectView();
 }
