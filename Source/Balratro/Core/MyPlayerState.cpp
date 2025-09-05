@@ -15,6 +15,8 @@ AMyPlayerState::AMyPlayerState()
 
 void AMyPlayerState::ResetMyHandRankingInfo(const TMap<const FName, FHandRankingStat*>& InHandRanking)
 {
+	MyHandRankingInfo.Empty();
+
 	for (const auto& Info : InHandRanking)
 	{
 		UHandRanking_Info* MyInfo = NewObject<UHandRanking_Info>();
@@ -32,6 +34,8 @@ void AMyPlayerState::ResetMyHandRankingInfo(const TMap<const FName, FHandRanking
 
 void AMyPlayerState::ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRanking)
 {
+	Deck_Stat.Empty();
+
 	for (auto& Info : InHandRanking)
 	{
 		UHandInCard_Info* CardInfo = NewObject<UHandInCard_Info>();
@@ -148,4 +152,36 @@ void AMyPlayerState::AddBoucherType(FBoucherInfo& _InValue)
 	default:
 		break;
 	}
+}
+
+void AMyPlayerState::ResetInfos()
+{
+	FRandomUtils::Init();
+	
+	SetRoundCount(0);
+	SetEntiCount(0);
+	SetGold(4);
+	SetMaxGold(4);
+	SetUseHandCount(0);
+	SetMaxHandCount(1); // 나중에 4로 바꾸기
+	SetMaxChuckCount(3);
+	SetUseChuckCount(0);
+	SetCurrentScore(0);
+	SetCardInHand(0);
+	SetMaxScore(0);
+	SetCurrentShowChip(0);
+	SetCurrentShowDrainage(0);
+	SetCurrentRoundBlindGrade(0);
+	SetCurHandCard_Type(EPokerHand::NONE);
+
+	MyHandRankingInfo.Empty();
+	CurrentAllHands.Empty();
+	CurSelcetPackType = nullptr;
+	Deck_Stat.Empty();
+	CurCalculatorCardInHands.Empty();
+	CurRestCardInHands.Empty();
+	CurJokerCardInfo.Empty();
+	CurTaroStatTable.Empty();
+
+	SetPlayerState(EPlayerStateType::RESET_GAME);
 }

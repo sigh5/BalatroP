@@ -19,7 +19,6 @@ void URewardComponent::BeginPlay()
 	auto VM_Reward = GetVMReward();
 
 	PS->OnSelectNextScene.AddUObject(this, &URewardComponent::SetRewardViewData);
-
 	VM_Reward->OnCashButtonClicked.AddUObject(this, &URewardComponent::StartStoreView);
 }
 
@@ -58,7 +57,10 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 		VM_Reward->SetBlindGrade(BlindGrade);	// Order 4
 		VM_Reward->SetBlindMaterialPath(BlindImageIndex); // Order 5
 	}
-
+	else if (EPlayerStateType::RESET_GAME == InType)
+	{
+		EarnGold = 0;
+	}
 }
 
 void URewardComponent::StartStoreView()

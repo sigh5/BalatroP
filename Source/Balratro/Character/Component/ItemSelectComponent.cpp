@@ -144,13 +144,18 @@ void UItemSelectComponent::SetBlindSkipButtonFlag(EPlayerStateType InType)
 
 void UItemSelectComponent::SetItemSelectView(EPlayerStateType _InType)
 {
-	if (_InType != EPlayerStateType::ITEM_SELECT)
-		return;
+	if (_InType == EPlayerStateType::ITEM_SELECT)
+	{
+		auto VM_MainMenu = GetVMMainWidget();
+		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("ItemSelectView", true));
 
-	auto VM_MainMenu = GetVMMainWidget();
-	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("ItemSelectView", true));
-
-	SetItemList();
+		SetItemList();
+	}
+	else if (_InType == EPlayerStateType::RESET_GAME)
+	{
+		InitTaroInfoTable();
+		IsClickedBlindSkip = false;
+	}
 }
 
 void UItemSelectComponent::SetItemList()

@@ -36,7 +36,6 @@ void UCardAndDeckComponent::BeginPlay()
 	VM->OnUseHandPlay.AddUObject(this, &UCardAndDeckComponent::UpdateHandPlay);
 	VM->OnSwapCards.AddUObject(this, &UCardAndDeckComponent::SwapCardOrder);
 	VM_Joker->OnEffectUIViewFinish.AddUObject(this, &UCardAndDeckComponent::AllEffectViewFinish);
-
 	VM_ItemSelcet->OnUseTaroCard.AddUObject(this, &UCardAndDeckComponent::UseTaroItem);
 }
 
@@ -81,6 +80,14 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", true));
 		VM_CardDeck->SetItemSelectFlag(true);
 		InitDeck();
+	}
+	else if (InValue == EPlayerStateType::RESET_GAME)
+	{
+		DeckCardStat.Empty();
+		CurDrawIndex = 0;
+		_DelayTime = 0.f;
+		ResultScore = 0.f;
+		nCardNum = 0;
 	}
 	else
 		return;
@@ -325,7 +332,6 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 	}
 	SortHandInCard(PS->GetCurSortType());
 
-	//VM->SetCurrentAllHands(PS->GetCurrentAllHands());
 	VM->SetIsSelectedMax(false);
 
 	PS->SetCardInDeckNum(PS->GetCardInDeckNum() - DrawCardNum);
@@ -372,13 +378,6 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<UHandInCard_Inf
 				DeckCardStat = _DeckCardStat;
 				nCardNum = CardNum;
 
-			/*	FTimerDelegate Delegate;
-				Delegate.BindLambda([&](TArray<UHandInCard_Info*> T, int32 U)
-					{
-						FinishHandPlay(T, U);
-					}, _DeckCardStat, CardNum);
-
-				GetWorld()->GetTimerManager().SetTimer(TotalScoreHandle, Delegate, _DelayTime, false);*/
 				break;
 			}
 		}
@@ -390,8 +389,6 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<UHandInCard_Inf
 void UCardAndDeckComponent::InitDeck()
 {
 	CurDrawIndex = 0;
-	//_CardNum = 0;
-	//_CurData.Empty();
 	_DelayTime = 0.f;
 	ResultScore = 0;
 

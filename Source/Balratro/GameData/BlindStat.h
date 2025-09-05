@@ -30,6 +30,7 @@ UENUM(BlueprintType)
 enum class EPlayerStateType :uint8
 {
 	NONE,
+	LOGO,
 	BLINDSELECT,
 	STORE,
 	SMALL_BLIND,
@@ -39,7 +40,9 @@ enum class EPlayerStateType :uint8
 	BOSS_BLIND,
 	REWARD,
 	ITEM_SELECT,
-	GAME_OVER
+	GAME_OVER,
+	RESET_GAME,
+	
 };
 
 UENUM(BlueprintType)

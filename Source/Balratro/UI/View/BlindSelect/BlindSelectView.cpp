@@ -45,12 +45,15 @@ void UBlindSelectView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::BossType,
 		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_BossTypeChanged));
 
-
 	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::SmallBlind_SkipTag,
 		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_SmallBlindSkipImage));
 
 	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::BigBlind_SkipTag,
 		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_BigBlindSkipImage));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::ResetBlindView,
+		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_ResetBlindView));
+	
 }
 
 void UBlindSelectView::NativeOnInitialized()
@@ -132,6 +135,7 @@ void UBlindSelectView::OnSmallBlindSkip_ButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
 
+	SmallButtonText->SetText(FText::FromString(TEXT("Skip")));
 	SmallBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	SmallSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 
@@ -145,6 +149,7 @@ void UBlindSelectView::OnBigBlindSkip_ButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
 
+	BigButtonText->SetText(FText::FromString(TEXT("Skip")));
 	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 
@@ -303,6 +308,28 @@ void UBlindSelectView::VM_FieldChanged_BigBlindSkipImage(UObject* Object, UE::Fi
 	ButtonStyle.Pressed = Brush;   // 눌렸을 때 상태
 	
 	BiglSkipButton->SetStyle(ButtonStyle);
+}
+
+void UBlindSelectView::VM_FieldChanged_ResetBlindView(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_BlindSelect>(); check(VMInst);
+
+	if (VMInst->GetResetBlindView() == false)
+		return;
+
+	SmallButtonText->SetText(FText::FromString(TEXT("Select")));
+	SmallBlindButton->SetVisibility(ESlateVisibility::Visible);
+	SmallSkipButton->SetVisibility(ESlateVisibility::Visible);
+
+	BigButtonText->SetText(FText::FromString(TEXT("Select")));
+	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+	SmallBlindButton->SetRenderOpacity(1.f);
+	SmallSkipButton->SetRenderOpacity(1.f);
+	BigBlindButton->SetRenderOpacity(1.f);
+	BiglSkipButton->SetRenderOpacity(1.f);
+
 }
 
 FString UBlindSelectView::BossTypeToString(EBossType _InType)

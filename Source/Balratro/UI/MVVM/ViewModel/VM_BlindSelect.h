@@ -135,6 +135,16 @@ public:
 		UE_MVVM_SET_PROPERTY_VALUE(BigBlind_SkipTag, InValue);
 	}
 
+	const bool GetResetBlindView() const
+	{
+		return ResetBlindView;
+	}
+
+	void SetResetBlindView(bool InValue)
+	{
+		ResetBlindView = InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(ResetBlindView);	
+	}
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -167,4 +177,6 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool  HandRankingView_BlindSelectFlag = false; // 보스블라인드 끝내면 이거 호출해야됌
 
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool  ResetBlindView = false; // 보스블라인드 끝내면 이거 호출해야됌
 };

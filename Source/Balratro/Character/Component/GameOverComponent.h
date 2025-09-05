@@ -25,4 +25,7 @@ private:
 	class AMyPlayerState* GetPlayerState();
 	class UVM_MainMenu* GetVMMainWidget();
 	class UVM_GameOver* GetVMGameOver();
+	class UVM_BlindSelect* GetVMBlindSelect();
+
+	
 };

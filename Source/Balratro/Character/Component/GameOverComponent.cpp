@@ -3,6 +3,7 @@
 #include "UI/MVVM/ViewModel/VM_GameOver.h"
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/MVVM/ViewModel/VM_Store.h"
+#include "UI/MVVM/ViewModel/VM_BlindSelect.h"
 
 #include <Engine/World.h>
 #include <MVVMGameSubsystem.h>
@@ -66,16 +67,17 @@ void UGameOverComponent::SetGameOverView(EPlayerStateType InType)
 void UGameOverComponent::SetNewRunEvent()
 {
 	auto PS = GetPlayerState();
+	PS->ResetInfos();
 	
-	// 전부다 초기화 필요
-
 	auto VM_MainMenu = GetVMMainWidget();
 
 	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("GameOverView", false));
 	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", false));
 
-	PS->SetPlayerState(EPlayerStateType::BLINDSELECT);
-
+	// 나중에 LOGO로 바꾸면서 아래쪽에 있는 코드도 수정 필요
+	PS->SetPlayerState(EPlayerStateType::BLINDSELECT); 
+	auto VM = GetVMBlindSelect();
+	VM->SetResetBlindView(true);
 }
 
 
@@ -120,4 +122,16 @@ AMyPlayerState* UGameOverComponent::GetPlayerState()
 	const auto Pawn = Cast<APawn>(GetOwner());
 	auto PlayerState = Pawn->GetController()->GetPlayerState<AMyPlayerState>();
 	return PlayerState;
+}
+
+UVM_BlindSelect* UGameOverComponent::GetVMBlindSelect()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_BlindSelect");
+	Context.ContextClass = UVM_BlindSelect::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_BlindSelect>(Found);
 }

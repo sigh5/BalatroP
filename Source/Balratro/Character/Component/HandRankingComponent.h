@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Interface/CalculatorScoreInterface.h"
+#include "GameData/BlindStat.h"
 #include "HandRankingComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -20,6 +21,7 @@ protected:
 	void ExitHandRankingView();
 	void ShowBoucherCard();
 
+	void ResetComponentData(EPlayerStateType _InValue);
 
 private:
 	class UVM_HandRankingCount* GetVMHandRanking();

@@ -120,6 +120,10 @@ void UBlindComponent::NewtSceneEvent(EPlayerStateType InValue)
 	{
 		BlindViewActive();
 	}
+	else if (InValue == EPlayerStateType::RESET_GAME)
+	{
+		ResetBlindSelectData();
+	}
 
 }
 
@@ -127,8 +131,6 @@ void UBlindComponent::StoreNextButtonClicked()
 {
 	auto PS = GetPlayerState();
 	PS->SetPlayerState(EPlayerStateType::BLINDSELECT);
-
-	UE_LOG(LogTemp, Warning, TEXT("StoreNextButtonClicked"));
 }
 
 void UBlindComponent::BlindViewActive()
@@ -139,17 +141,16 @@ void UBlindComponent::BlindViewActive()
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("StoreView", false));
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", true));
 
-	//PS->SetPlayerState(EPlayerStateType::NONE);
-
-	UE_LOG(LogTemp, Warning, TEXT("BlindViewActive"));
-
 	InitBlindSelectView();
 }
 
 void UBlindComponent::ResetBlindSelectData()
 {
+	BossTypes.Empty();
+	RandomArray.Empty();
+	BlindSkipTags.Empty();
+
 	auto PS = GetPlayerState();
-	
 	BossTypes.Add(EBossType::HOOK, [this]() { HOOK_Skill(); });
 	BossTypes.Add(EBossType::OX, [this]() { OX_Skill(); });
 	BossTypes.Add(EBossType::WALL, [this]() { WALL_SKill(); });
@@ -182,8 +183,6 @@ void UBlindComponent::ResetBlindSelectData()
 	
 	PS->SetCurBossType({ -1,EBossType::NONE });
 	
-	BlindSkipTags.Empty();
-
 	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);  // 일단 그 테스트용
 	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);
 	

@@ -13,12 +13,7 @@ void UPlayerInfoComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto& Sigleton = UBBGameSingleton::Get();
 	auto PS = GetPlayerState();
-
-	auto DataTable = Sigleton.GetDeckStatTable();
-	PS->ResetDeckStatTable(DataTable);
-	PS->SetCardInDeckNum(DataTable.Num());
 
 	PS->OnSetRoundCount.AddUObject(this, &UPlayerInfoComponent::UpdateRoundCount);
 	PS->OnSetEntiCount.AddUObject(this, &UPlayerInfoComponent::UpdateEntiCount);
@@ -27,12 +22,10 @@ void UPlayerInfoComponent::BeginPlay()
 	PS->OnPlayerUseChuck.AddUObject(this, &UPlayerInfoComponent::UpdateUseChuckCount);
 	PS->OnCurrentPlayerHandRanking.AddUObject(this, &UPlayerInfoComponent::UpdateHandRanking);
 	PS->OnDeckCardNum.AddUObject(this, &UPlayerInfoComponent::UpdateCardInDeck);
-	PS->OnSelectNextScene.AddUObject(this, &UPlayerInfoComponent::UpdateBlindInfo);
+	PS->OnSelectNextScene.AddUObject(this, &UPlayerInfoComponent::UpdateScene_PlayerInfo);
 	PS->OnSetCurrentScore.AddUObject(this, &UPlayerInfoComponent::UpdateCurrentScore);
-
 	PS->OnShowUIChip.AddUObject(this, &UPlayerInfoComponent::UpdateCalculatorChip);
 	PS->OnShowUIDrainage.AddUObject(this, &UPlayerInfoComponent::UpdateCalculatorDrainage);
-
 
 	Init_PlayerInfo();
 }
@@ -40,14 +33,19 @@ void UPlayerInfoComponent::BeginPlay()
 void UPlayerInfoComponent::Init_PlayerInfo()
 {
 	auto PS = GetPlayerState();
+	auto& Sigleton = UBBGameSingleton::Get();
+	auto DataTable = Sigleton.GetDeckStatTable();
 	
+	PS->ResetDeckStatTable(DataTable);
+	PS->SetCardInDeckNum(DataTable.Num());
+
 	UpdateRoundCount();;
 	UpdateEntiCount();
 	UpdateGold();
 	UpdateUseChuckCount(PS->GetMaxChuckCount());
 	UpdateUseHandCount(PS->GetMaxHandCount());
 	UpdateCardInDeck();
-	UpdateBlindInfo(EPlayerStateType::NONE);
+	UpdateScene_PlayerInfo(EPlayerStateType::NONE);
 	UpdateCurrentScore();
 }
 
@@ -230,8 +228,14 @@ void UPlayerInfoComponent::UpdateHandRanking()
 	PS->SetCurrentShowDrainage(BaseDrainage);
 }
 
-void UPlayerInfoComponent::UpdateBlindInfo(EPlayerStateType _InType)
+void UPlayerInfoComponent::UpdateScene_PlayerInfo(EPlayerStateType _InType)
 {
+	if (_InType == EPlayerStateType::RESET_GAME)
+	{
+		Init_PlayerInfo();
+		return;
+	}
+	
 	auto VM_PI = GetVMPlayerInfo();
 	auto PS = GetPlayerState();
 	auto& Sigleton = UBBGameSingleton::Get();

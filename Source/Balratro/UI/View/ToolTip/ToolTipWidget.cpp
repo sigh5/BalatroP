@@ -76,9 +76,6 @@ void UToolTipWidget::Set_ToolTipWidgetImage(const FHRButton_Info& _Info)
 {
 	HaneRankingText->SetText(FText::FromName(_Info._Name));
 
-
-
-
 	for (const auto & Info : ToolTipDataAsset->HandRankings)
 	{
 		if (Info.Name == _Info._Name)
@@ -100,7 +97,8 @@ void UToolTipWidget::Set_ToolTipWidgetImage(const FHRButton_Info& _Info)
 						SetImageRender(Image5, Sprite);
 				}
 			}
-			
+			StopAllAnimations();
+
 			UWidgetAnimation* Anim = GetAnimationByName(Info.Animmation_Name);
 			PlayAnimation(Anim);
 		}

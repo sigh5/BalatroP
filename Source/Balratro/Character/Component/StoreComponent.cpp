@@ -49,6 +49,12 @@ void UStoreComponent::BeginPlay()
 
 void UStoreComponent::SetStoreView(EPlayerStateType _InType)
 {
+	if (_InType == EPlayerStateType::RESET_GAME)
+	{
+		InitStoreData();
+		return;
+	}
+
 	auto PS = GetPlayerState();
 	auto VM_MainMenu = GetVMMainWidget();
 
@@ -168,6 +174,11 @@ void UStoreComponent::EraseStoreBoucherCard(FBoucherInfo& _Info)
 
 void UStoreComponent::InitStoreData()
 {
+	BoucherInfos.Empty();
+	BoosterPackIndex = 0;
+	JokerCards.Empty();
+	BoosterPacks.Empty();
+
 	FPrimaryAssetId AssetId(TEXT("BoucherStat"), TEXT("DT_BoucherStat"));
 	FAssetData AssetData;
 

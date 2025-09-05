@@ -16,12 +16,14 @@ void UCalculatorHandRankingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	auto PS = GetPlayerState();
 	const auto VM_CardDeck = GetVMCardDeck();
+	
 	VM_CardDeck->OnCurPlayHands.AddUObject(this, &UCalculatorHandRankingComponent::SetHandRankName);
+	PS->OnSelectNextScene.AddUObject(this, &UCalculatorHandRankingComponent::ResetComponentInfo);
 
 	TArray<UHandInCard_Info*> none; // 초기값 세팅을 위해
 	SetHandRankName(0, none);
-	
 }
 
 int32 UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArray<UHandInCard_Info*>& _DeckCardStat)
@@ -294,6 +296,15 @@ int32 UCalculatorHandRankingComponent::ResultScore()
 
 	Score = static_cast<int>(static_cast<float>(ShowChip) * ShowDrainage);
 	return Score;
+}
+
+void UCalculatorHandRankingComponent::ResetComponentInfo(EPlayerStateType InValue)
+{
+	if (InValue == EPlayerStateType::RESET_GAME)
+	{
+		TArray<UHandInCard_Info*> none; // 초기값 세팅을 위해
+		SetHandRankName(0, none);
+	}
 }
 
 void UCalculatorHandRankingComponent::SetCalRestCardInHands(TArray<UHandInCard_Info*>& _CurPlayCards)

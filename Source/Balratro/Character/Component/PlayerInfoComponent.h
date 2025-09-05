@@ -27,7 +27,7 @@ public:
 	void UpdateMaxScore(int32 _invalue);
 
 	void UpdateHandRanking();
-	void UpdateBlindInfo(EPlayerStateType _InType);
+	void UpdateScene_PlayerInfo(EPlayerStateType _InType);
 
 	void UpdateCalculatorChip();
 	void UpdateCalculatorDrainage();

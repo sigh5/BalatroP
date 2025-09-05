@@ -215,6 +215,9 @@ public:
 	FORCEINLINE void SetAllChuckCount() { AllChuckCount++; }
 	FORCEINLINE int32 GetAllChuckCount() { return AllChuckCount; }
 
+
+	void		ResetInfos();
+
 private:
 	int32 RoundCount;
 	

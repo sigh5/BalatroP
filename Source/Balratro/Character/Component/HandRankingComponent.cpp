@@ -17,18 +17,15 @@ void UHandRankingComponent::BeginPlay()
 	Super::BeginPlay();
 
 	auto PlayerState = GetPlayerState();
-	auto& Sigleton = UBBGameSingleton::Get();
 	auto VM_PlayerInfo = GetVMPlayerInfo();
 	auto VM_HandRanking = GetVMHandRanking();
 
-    PlayerState->ResetMyHandRankingInfo(Sigleton.GetHandRankingStatTable());
+	ResetComponentData(EPlayerStateType::RESET_GAME);
 	
-
+	PlayerState->OnSelectNextScene.AddUObject(this, &UHandRankingComponent::ResetComponentData);
 	VM_PlayerInfo->OnClickedRunInfoButton.AddUObject(this, &UHandRankingComponent::InitHandRanking);
 	VM_HandRanking->OnHandRankingExitButton.AddUObject(this, &UHandRankingComponent::ExitHandRankingView);
 	VM_HandRanking->OnHandRankingBoucherButton.AddUObject(this, &UHandRankingComponent::ShowBoucherCard);
-
-
 
 #ifdef HandRankingView_View_TEST
 	InitHandRanking();
@@ -64,6 +61,16 @@ void UHandRankingComponent::ShowBoucherCard()
 
 	auto CurBouchers = PS->GetCurBoucherInfo();
 	VM->SetCurHaveBouchers(CurBouchers);
+}
+
+void UHandRankingComponent::ResetComponentData(EPlayerStateType _InValue)
+{
+	if (_InValue == EPlayerStateType::RESET_GAME)
+	{
+		auto& Sigleton = UBBGameSingleton::Get();
+		auto PS = GetPlayerState();
+		PS->ResetMyHandRankingInfo(Sigleton.GetHandRankingStatTable());
+	}
 }
 
 UVM_HandRankingCount* UHandRankingComponent::GetVMHandRanking()
