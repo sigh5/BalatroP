@@ -8,29 +8,27 @@
 #include "GameData/JokerStat.h"
 #include "GameData/TaroStat.h"
 #include "GameData/BoucherStat.h"
+#include "GameData/EnumDatas.h"
+
 #include "MyPlayerState.generated.h"
-//#include "GameData/Utills.h"
+
 
 // First  Test
 // 디버그일때만 사용 릴리즈 일때 꺼야됌
 // 초기 시작  Bline_View_TEST, PlayerInfoView_VIEW_TEST ,JokerSlotView_VIEW_TEST
-#define Bline_View_TEST
+//#define Bline_View_TEST
 //#define Store_View_TEST
-#define PlayerInfoView_VIEW_TEST
-#define JokerSlotView_VIEW_TEST
+//#define PlayerInfoView_VIEW_TEST
+//#define JokerSlotView_VIEW_TEST
 //#define CadDeckView_View_TEST
 //#define HandRankingView_View_TEST
-#define FASTLOGTEXT UE_LOG(LogTemp, Warning, TEXT("?"))
 
+#define FASTLOGTEXT UE_LOG(LogTemp, Warning, TEXT("?"))
 #define FASTLOGTEXT_NUM(n) UE_LOG(LogTemp, Warning, TEXT("%d"),n)
 
 
-UENUM()
-enum class EHandInCardSortType : uint8
-{
-	SORT_RANK = 0,
-	SORT_SUIT,
-};
+
+
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseChuck, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseHandPlay, int32);

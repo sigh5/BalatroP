@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Core/MyPlayerState.h"
+#include "GameData/EnumDatas.h"
 #include "PlayerInfoComponent.generated.h"
 
 

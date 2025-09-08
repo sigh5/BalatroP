@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "GameData/BlindStat.h"
+#include "GameData/EnumDatas.h"
 #include "Item/BoosterPackData.h"
 #include "GameData/JokerStat.h"
 #include "GameData/BoucherStat.h"

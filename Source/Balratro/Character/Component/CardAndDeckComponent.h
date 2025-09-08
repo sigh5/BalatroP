@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Core\MyPlayerState.h"
+#include "GameData/TaroStat.h"
+#include "GameData/EnumDatas.h"
 #include "CardAndDeckComponent.generated.h"
 
 

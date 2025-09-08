@@ -18,22 +18,59 @@ public:
     UMainMenuWidget();
 
 protected:
-    void NativeConstruct() override;
-
+    virtual void NativeOnInitialized() override;
+    virtual void NativeConstruct() override;
+    
 protected:
     void VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotification::FFieldId FieldId);
     void VM_FieldChanged_ClearAnimFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+    void VM_FieldChanged_MainLogoFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
+private:
+    UFUNCTION()
+    void    OnMain_PlayButtonClicked();
+
+    UFUNCTION()
+    void    OnMain_OptionButtonClicked();
+
+    UFUNCTION()
+    void    OnMain_ExitButtonClicked();
+
+    UFUNCTION()
+    void    OnMain_CollectionClicked();
+
 
 private:
     UPROPERTY(meta = (BindWidget))
     class UCanvasPanel* CanvasSlot;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UImage> BackGroundImage;
+    TObjectPtr<class UImage> BackGroundImage0;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> BackGroundImage1;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UHorizontalBox> ButtonBox;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UButton> PlayButton;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UButton> OptionButton;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UButton> ExitButton;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UButton> CollectionButton;
+
+
 
     UPROPERTY(meta = (BindWidgetAnim), Transient)
     TObjectPtr<class UWidgetAnimation> ClearAnimation;
 
+private:
     UPROPERTY()
     TSubclassOf<class UBlindSelectView> BlindSelectView;
 

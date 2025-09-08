@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
-#include "GameData/BlindStat.h"
+#include "Core/MyPlayerState.h"
 #include "VM_BlindSelect.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectBlind, EPlayerStateType /*BlindSelectType*/);

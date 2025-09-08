@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "GameData/BlindStat.h"
+#include "GameData/EnumDatas.h"
 #include "GameData/TaroStat.h"
 #include "ItemSelectComponent.generated.h"
 

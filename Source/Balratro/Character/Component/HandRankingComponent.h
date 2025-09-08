@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Interface/CalculatorScoreInterface.h"
-#include "GameData/BlindStat.h"
+#include "GameData/EnumDatas.h"
 #include "HandRankingComponent.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

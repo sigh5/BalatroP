@@ -6,7 +6,7 @@
 #include "UI/View/Core/BBUserWidgetBase.h"
 #include "GameData/HandRankingStat.h"
 #include "GameData/DeckCardStat.h"
-#include "GameData/BlindStat.h"
+#include "GameData/EnumDatas.h"
 #include "BlindSelectView.generated.h"
 
 /**

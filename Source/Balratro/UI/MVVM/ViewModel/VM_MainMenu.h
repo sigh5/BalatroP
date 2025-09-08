@@ -6,6 +6,8 @@
 #include "MVVMViewModelBase.h"
 #include "VM_MainMenu.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnMainPlayButtonClicked);
+
 /**
  * 
  */
@@ -38,6 +40,9 @@ class BALRATRO_API UVM_MainMenu : public UMVVMViewModelBase
 	GENERATED_BODY()
 
 public:
+	FOnMainPlayButtonClicked	OnMainPlayButtonClicked;
+
+public:
 	void SetCurWidgetName(const FWidgetFlag_Info&  _InValue)
 	{
 		UE_MVVM_SET_PROPERTY_VALUE(CurWidgetName, _InValue);
@@ -49,6 +54,12 @@ public:
 	void SetClearFlag(bool _InValue) { ClearFlag = _InValue; UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(ClearFlag); }
 	const bool GetClearFlag() const { return ClearFlag; }
 
+	void SetMainLogoFlag(bool _InValue) { MainLogoFlag = _InValue; UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(MainLogoFlag); }
+	const bool GetMainLogoFlag() const { return MainLogoFlag; }
+
+
+	void	ToMain_FromBlindSelectView() { OnMainPlayButtonClicked.Broadcast(); }
+
 private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -56,5 +67,8 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool ClearFlag = false;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool MainLogoFlag = false;
 
 };

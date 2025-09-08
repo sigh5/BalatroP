@@ -66,7 +66,6 @@ void UBlindSelectView::NativeOnInitialized()
 	SmallSkipButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnSmallBlindSkip_ButtonClicked);
 	BiglSkipButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnBigBlindSkip_ButtonClicked);
 
-
 	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BosslBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);

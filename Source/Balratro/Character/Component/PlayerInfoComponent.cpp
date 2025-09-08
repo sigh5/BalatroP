@@ -4,6 +4,7 @@
 #include <MVVMGameSubsystem.h>
 #include <MVVMSubsystem.h>
 
+#include "Core/MyPlayerState.h"
 
 #include "Singleton/BBGameSingleton.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"

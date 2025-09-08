@@ -5,27 +5,26 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameData/EnumDatas.h"
-#include "GameOverComponent.generated.h"
+#include "MainLogoComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BALRATRO_API UGameOverComponent : public UActorComponent
+class BALRATRO_API UMainLogoComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 protected:
 	virtual void BeginPlay() override;
 
-	void	 SetGameOverView(EPlayerStateType InType);
-
-	void	SetNewRunEvent();
+private:
+	void  BlindSelctViewStart();
+	void  InitLogoView(EPlayerStateType _InValue);
 
 private:
-	class UVM_Store* GetVMStore();
-	class AMyPlayerState* GetPlayerState();
-	class UVM_MainMenu* GetVMMainWidget();
-	class UVM_GameOver* GetVMGameOver();
 	class UVM_BlindSelect* GetVMBlindSelect();
-
-	
+	class UVM_MainMenu* GetVMMainWidget();
+	class AMyPlayerState* GetPlayerState();
+	class UVM_Store* GetVMStore();
+	class UVM_CardDeck* GetVMCardDeck();
+		
 };

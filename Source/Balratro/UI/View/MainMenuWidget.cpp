@@ -3,8 +3,14 @@
 
 #include "UI/View/MainMenuWidget.h"
 
+#include "Kismet/KismetSystemLibrary.h"
+
 #include "Components/CanvasPanel.h"
 #include "Components/Border.h"
+#include "Components/BUtton.h"
+#include "Components/HorizontalBox.h"
+#include "Components/TextBlock.h"
+#include "Components/Image.h"
 
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/WidgetPool/BBUserWidgetPool.h"
@@ -31,24 +37,31 @@ UMainMenuWidget::UMainMenuWidget()
 void UMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+void UMainMenuWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 
 	const auto VMInst = TryGetViewModel<UVM_MainMenu>(); checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
-	
+
 	VMInst->AddFieldValueChangedDelegate(UVM_MainMenu::FFieldNotificationClassDescriptor::CurWidgetName,
 		FFieldValueChangedDelegate::CreateUObject(this, &UMainMenuWidget::VM_FieldChanged_WidgetName));
-	
+
 	VMInst->AddFieldValueChangedDelegate(UVM_MainMenu::FFieldNotificationClassDescriptor::ClearFlag,
 		FFieldValueChangedDelegate::CreateUObject(this, &UMainMenuWidget::VM_FieldChanged_ClearAnimFlag));
 
+	VMInst->AddFieldValueChangedDelegate(UVM_MainMenu::FFieldNotificationClassDescriptor::MainLogoFlag,
+		FFieldValueChangedDelegate::CreateUObject(this, &UMainMenuWidget::VM_FieldChanged_MainLogoFlag));
+
 	WidgetPool = NewObject<UBBUserWidgetPool>(this);
 	FName CurViewName = "";
-
 	if (BlindSelectView == nullptr)
 	{
 		BlindSelectView = LoadClass<UBlindSelectView>(nullptr, TEXT("/Game/UI/View/SelectBlind/WBP_SelectBlind.WBP_SelectBlind_C"));
 		CurViewName = "SelectBlindView";
 		UBBUserWidgetBase* BindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(BlindSelectView));
-		
+
 		UBlindSelectView* BlindSelect = Cast<UBlindSelectView>(BindWidget);
 		BlindSelect->SetIsToolTipView(false);
 
@@ -68,7 +81,7 @@ void UMainMenuWidget::NativeConstruct()
 		PlayerInfoView = LoadClass<UPlayerInfoWidget>(nullptr, TEXT("/Game/UI/View/PlayerInfo/WBP_PlayerInfo.WBP_PlayerInfo_C"));
 		CurViewName = "PlayerInfoView";
 		UBBUserWidgetBase* BindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(PlayerInfoView));
-		
+
 		if (BindWidget)
 		{
 #ifdef PlayerInfoView_VIEW_TEST
@@ -85,7 +98,7 @@ void UMainMenuWidget::NativeConstruct()
 		JokerSlotView = LoadClass<UJokerSlotWidget>(nullptr, TEXT("/Game/UI/View/Joker/WBP_JokerSlot.WBP_JokerSlot_C"));
 		CurViewName = "JokerSlotView";
 		UBBUserWidgetBase* BindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(JokerSlotView));
-	
+
 		if (BindWidget)
 		{
 			CanvasSlot->AddChildToCanvas(BindWidget);
@@ -102,7 +115,7 @@ void UMainMenuWidget::NativeConstruct()
 		CadDeckView = LoadClass<UCardDeckView>(nullptr, TEXT("/Game/UI/View/CardDeck/WBP_CardDeck.WBP_CardDeck_C"));
 		CurViewName = "CardDeckView";
 		UBBUserWidgetBase* BindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(CadDeckView));
-		
+
 
 		if (BindWidget)
 		{
@@ -121,14 +134,14 @@ void UMainMenuWidget::NativeConstruct()
 		StoreView = LoadClass<UStoreView>(nullptr, TEXT("/Game/UI/View/StoreView/WBP_Stroe.WBP_Stroe_C"));
 		CurViewName = "StoreView";
 		UBBUserWidgetBase* BindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(StoreView));
-	
+
 		if (BindWidget)
 		{
 			CanvasSlot->AddChildToCanvas(BindWidget);
 #ifdef Store_View_TEST
-		BindWidget->SetVisibility(ESlateVisibility::Visible);
+			BindWidget->SetVisibility(ESlateVisibility::Visible);
 #else
-		BindWidget->SetVisibility(ESlateVisibility::Collapsed);
+			BindWidget->SetVisibility(ESlateVisibility::Collapsed);
 #endif
 		}
 	}
@@ -138,20 +151,20 @@ void UMainMenuWidget::NativeConstruct()
 		RewardView = LoadClass<URewardView>(nullptr, TEXT("/Game/UI/View/Reward/WBP_Reward.WBP_Reward_C"));
 		CurViewName = "RewardView";
 		UBBUserWidgetBase* BindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(RewardView));
-		
+
 		if (BindWidget)
 		{
 			CanvasSlot->AddChildToCanvas(BindWidget);
 			BindWidget->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
-	
+
 	if (ItemSelectView == nullptr)
 	{
 		ItemSelectView = LoadClass<UItemSelectView>(nullptr, TEXT("/Game/UI/View/ItemSelectView/WBP_ItemSelect.WBP_ItemSelect_C"));
 		CurViewName = "ItemSelectView";
 		UBBUserWidgetBase* BindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(ItemSelectView));
-		
+
 		if (BindWidget)
 		{
 			CanvasSlot->AddChildToCanvas(BindWidget);
@@ -188,8 +201,11 @@ void UMainMenuWidget::NativeConstruct()
 		}
 	}
 
+	PlayButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_PlayButtonClicked);
+	OptionButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_OptionButtonClicked);
+	ExitButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_ExitButtonClicked);
+	CollectionButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_CollectionClicked);
 
-	
 }
 
 void UMainMenuWidget::VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -210,4 +226,48 @@ void UMainMenuWidget::VM_FieldChanged_ClearAnimFlag(UObject* Object, UE::FieldNo
 	check(VMInst);
 	
 	PlayAnimation(ClearAnimation);
+}
+
+void UMainMenuWidget::VM_FieldChanged_MainLogoFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_MainMenu>(); check(VMInst);
+
+	ButtonBox->SetVisibility(ESlateVisibility::Visible);
+	BackGroundImage0->SetVisibility(ESlateVisibility::Visible);
+	BackGroundImage1->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMainMenuWidget::OnMain_PlayButtonClicked()
+{
+	const auto VMInst = TryGetViewModel<UVM_MainMenu>(); check(VMInst);
+
+	ButtonBox->SetVisibility(ESlateVisibility::Collapsed);
+	BackGroundImage0->SetVisibility(ESlateVisibility::Collapsed);
+	BackGroundImage1->SetVisibility(ESlateVisibility::Collapsed);
+
+	PlayAnimation(ClearAnimation);
+
+	VMInst->ToMain_FromBlindSelectView();
+
+}
+
+void UMainMenuWidget::OnMain_OptionButtonClicked()
+{
+
+}
+
+void UMainMenuWidget::OnMain_ExitButtonClicked()
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnMain_ExitButtonClicked"));
+	UKismetSystemLibrary::QuitGame(
+		GetWorld(),
+		nullptr,                 // PlayerController (보통 nullptr 가능)
+		EQuitPreference::Quit,   // 종료 방식
+		false                    // Force
+	);
+}
+
+void UMainMenuWidget::OnMain_CollectionClicked()
+{
+
 }

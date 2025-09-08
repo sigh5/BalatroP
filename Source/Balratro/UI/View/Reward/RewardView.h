@@ -67,8 +67,14 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> InterestReward;  // $
 	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> DotLine;  // $
+	
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	TObjectPtr<class UWidgetAnimation> GoldTextAnimation;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	TObjectPtr<class UWidgetAnimation> DotLineAnim;
 
 	FTimerHandle DollarAnimTimer;
 	int32 AnimStep = 0;
@@ -78,6 +84,6 @@ private:
 	int32 RewardStep = 0;
 	int32 RestHandStep = 0;
 	int32 interestStep = 0;
-
-	//
+	uint8 isFirst : 1;
+	
 };

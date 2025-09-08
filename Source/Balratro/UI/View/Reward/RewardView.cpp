@@ -22,6 +22,11 @@ URewardView::URewardView()
 void URewardView::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+void URewardView::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 
 	const auto VMInst = TryGetViewModel<UVM_Reward>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
@@ -43,13 +48,11 @@ void URewardView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::EarnGold,
 		FFieldValueChangedDelegate::CreateUObject(this, &URewardView::VM_FieldChanged_EarnGold));
-}
 
-void URewardView::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-
+	isFirst = false;
 	CashOutButton->OnClicked.AddDynamic(this, &URewardView::OnCashOutButton);
+
+	DotLine->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void URewardView::OnCashOutButton()
@@ -74,6 +77,12 @@ void URewardView::StartQueueAnimation()
 	}
 	else
 	{
+		if (isFirst)
+		{
+			DotLine->SetVisibility(ESlateVisibility::Visible);
+			PlayAnimation(DotLineAnim);
+			isFirst = false;
+		}
 		FTimerDelegate CurDelegator;
 		StartQueue.Peek(CurDelegator);
 		GetWorld()->GetTimerManager().SetTimer(DollarAnimTimer, CurDelegator, 0.3f, true);
@@ -161,6 +170,7 @@ void URewardView::VM_FieldChanged_BlindGrade(UObject* Object, UE::FieldNotificat
 	int32 Grade = VMInst->GetBlindGrade();
 	FNumberFormattingOptions NumberFormatOptions;
 	BlindGradeText->SetText(FText::AsNumber(Grade, &NumberFormatOptions));
+
 }
 
 void URewardView::VM_FieldChanged_BlindImageIndex(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -191,6 +201,7 @@ void URewardView::VM_FieldChanged_EarnGold(UObject* Object, UE::FieldNotificatio
 	GoldText->SetText(FText::FromString(str));
 
 	GoldText->SetVisibility(ESlateVisibility::Collapsed);
+	DotLine->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void URewardView::UpdateDollarAnimation(class UTextBlock* numberText, class UTextBlock* strText, int32 MaxNum)
@@ -203,6 +214,10 @@ void URewardView::UpdateDollarAnimation(class UTextBlock* numberText, class UTex
 		if (numberText)
 		{
 			numberText->SetText(FText::AsNumber(MaxNum));
+		}
+		else
+		{
+			isFirst = true;// 보스 리워드 텍스트만
 		}
 
 		StartQueueAnimation();
