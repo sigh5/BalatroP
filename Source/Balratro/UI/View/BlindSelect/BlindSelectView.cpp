@@ -23,6 +23,11 @@ UBlindSelectView::UBlindSelectView()
 void UBlindSelectView::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+void UBlindSelectView::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
@@ -53,12 +58,6 @@ void UBlindSelectView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_BlindSelect::FFieldNotificationClassDescriptor::ResetBlindView,
 		FFieldValueChangedDelegate::CreateUObject(this, &UBlindSelectView::VM_FieldChanged_ResetBlindView));
-	
-}
-
-void UBlindSelectView::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
 
 	SmallBlindButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnSmallBlindButtonClicked);
 	BigBlindButton->OnClicked.AddDynamic(this, &UBlindSelectView::OnBigBlindButtonClicked);
@@ -69,6 +68,16 @@ void UBlindSelectView::NativeOnInitialized()
 	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BosslBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+	
+	
+	FLinearColor BlackColor = FLinearColor::Black;
+	ButtonColor[0] = ButtonColor[1] = FSlateColor(BlackColor);;
+
+	FButtonStyle ButtonStyle = SmallBlindButton->WidgetStyle;
+	ButtonColor[2] = ButtonStyle.Normal.TintColor;
+
+	ButtonStyle = BigBlindButton->WidgetStyle;
+	ButtonColor[3] = ButtonStyle.Normal.TintColor;
 }
 
 void UBlindSelectView::OnSmallBlindButtonClicked()
@@ -77,14 +86,7 @@ void UBlindSelectView::OnSmallBlindButtonClicked()
 
 	SmallButtonText->SetText(FText::FromString(TEXT("Victory")));
 
-	FButtonStyle ButtonStyle = SmallBlindButton->WidgetStyle;
-	FLinearColor GrayColor = FLinearColor::Black;
-	ButtonStyle.Normal.TintColor = FSlateColor(GrayColor);
-	ButtonStyle.Hovered.TintColor = FSlateColor(GrayColor);
-	ButtonStyle.Pressed.TintColor = FSlateColor(GrayColor);
-
-	SmallBlindButton->SetStyle(ButtonStyle);
-	SmallBlindButton->SetRenderOpacity(0.3f);
+	SetButtonColorAndOpacity(SmallBlindButton, ButtonColor[0], 0.3f);
 	SmallSkipButton->SetRenderOpacity(0.3f);
 
 	SmallBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
@@ -94,7 +96,6 @@ void UBlindSelectView::OnSmallBlindButtonClicked()
 	BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
 	
 	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
-	//VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
 }
 
 void UBlindSelectView::OnBigBlindButtonClicked()
@@ -103,14 +104,8 @@ void UBlindSelectView::OnBigBlindButtonClicked()
 
 	BigButtonText->SetText(FText::FromString(TEXT("Victory")));
 
-	FButtonStyle ButtonStyle = BigBlindButton->WidgetStyle;
-	FLinearColor GrayColor = FLinearColor::Black;
-	ButtonStyle.Normal.TintColor = FSlateColor(GrayColor);
-	ButtonStyle.Hovered.TintColor = FSlateColor(GrayColor);
-	ButtonStyle.Pressed.TintColor = FSlateColor(GrayColor);
+	SetButtonColorAndOpacity(BigBlindButton, ButtonColor[1], 0.3f);
 
-	BigBlindButton->SetStyle(ButtonStyle);
-	BigBlindButton->SetRenderOpacity(0.3f);
 	BiglSkipButton->SetRenderOpacity(0.3f);
 
 	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
@@ -324,11 +319,10 @@ void UBlindSelectView::VM_FieldChanged_ResetBlindView(UObject* Object, UE::Field
 	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 
-	SmallBlindButton->SetRenderOpacity(1.f);
-	SmallSkipButton->SetRenderOpacity(1.f);
-	BigBlindButton->SetRenderOpacity(1.f);
+	SetButtonColorAndOpacity(SmallBlindButton, ButtonColor[2], 1.f);
+	SetButtonColorAndOpacity(BigBlindButton, ButtonColor[3], 1.f);
 	BiglSkipButton->SetRenderOpacity(1.f);
-
+	SmallSkipButton->SetRenderOpacity(1.f);
 }
 
 FString UBlindSelectView::BossTypeToString(EBossType _InType)
@@ -336,4 +330,16 @@ FString UBlindSelectView::BossTypeToString(EBossType _InType)
 	const UEnum* EnumPtr = StaticEnum<EBossType>();
 	if (!EnumPtr) return TEXT("Invalid");
 	return EnumPtr->GetNameStringByValue((int64)_InType);
+}
+
+void UBlindSelectView::SetButtonColorAndOpacity(UButton* Button, FSlateColor _InColor, float _Ratio)
+{
+	FButtonStyle ButtonStyle = Button->WidgetStyle;
+	
+	ButtonStyle.Normal.TintColor = _InColor;
+	ButtonStyle.Hovered.TintColor = _InColor;
+	ButtonStyle.Pressed.TintColor = _InColor;
+
+	Button->SetStyle(ButtonStyle);
+	Button->SetRenderOpacity(_Ratio);
 }

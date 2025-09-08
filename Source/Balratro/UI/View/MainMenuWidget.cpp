@@ -205,6 +205,10 @@ void UMainMenuWidget::NativeOnInitialized()
 	OptionButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_OptionButtonClicked);
 	ExitButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_ExitButtonClicked);
 	CollectionButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_CollectionClicked);
+
+	BackGroundImage->SetVisibility(ESlateVisibility::Collapsed);
+
+	PlayAnimation(LogoAnimation);
 }
 
 void UMainMenuWidget::VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -230,10 +234,18 @@ void UMainMenuWidget::VM_FieldChanged_ClearAnimFlag(UObject* Object, UE::FieldNo
 void UMainMenuWidget::VM_FieldChanged_MainLogoFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInst = TryGetViewModel<UVM_MainMenu>(); check(VMInst);
-
+	
 	ButtonBox->SetVisibility(ESlateVisibility::Visible);
 	BackGroundImage0->SetVisibility(ESlateVisibility::Visible);
 	BackGroundImage1->SetVisibility(ESlateVisibility::Visible);
+	LogoImage->SetVisibility(ESlateVisibility::Visible);
+	BackGroundImage->SetVisibility(ESlateVisibility::Collapsed);
+
+	StopAllAnimations();
+
+	UE_LOG(LogTemp, Warning, TEXT("???"));
+	ClearBorder2->SetVisibility(ESlateVisibility::Visible);
+	PlayAnimation(LogoAnimation);
 }
 
 void UMainMenuWidget::OnMain_PlayButtonClicked()
@@ -243,7 +255,8 @@ void UMainMenuWidget::OnMain_PlayButtonClicked()
 	ButtonBox->SetVisibility(ESlateVisibility::Collapsed);
 	BackGroundImage0->SetVisibility(ESlateVisibility::Collapsed);
 	BackGroundImage1->SetVisibility(ESlateVisibility::Collapsed);
-
+	LogoImage->SetVisibility(ESlateVisibility::Collapsed);
+	BackGroundImage->SetVisibility(ESlateVisibility::Visible);
 	PlayAnimation(ClearAnimation);
 
 	VMInst->ToMain_FromBlindSelectView();

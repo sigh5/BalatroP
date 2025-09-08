@@ -23,7 +23,7 @@ void UGameOverComponent::BeginPlay()
 
 	PS->OnSelectNextScene.AddUObject(this, &UGameOverComponent::SetGameOverView);
 
-	VM->OnNewRunButtonEvent.AddUObject(this, &UGameOverComponent::SetNewRunEvent);
+	VM->OnNewRunButtonEvent.AddUObject(this, &UGameOverComponent::SetGameOverNextEvent);
 }
 
 void UGameOverComponent::SetGameOverView(EPlayerStateType InType)
@@ -64,7 +64,7 @@ void UGameOverComponent::SetGameOverView(EPlayerStateType InType)
 
 }
 
-void UGameOverComponent::SetNewRunEvent()
+void UGameOverComponent::SetGameOverNextEvent(EPlayerStateType InType)
 {
 	auto PS = GetPlayerState();
 	PS->ResetInfos();
@@ -74,10 +74,20 @@ void UGameOverComponent::SetNewRunEvent()
 	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("GameOverView", false));
 	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", false));
 
-	// 나중에 LOGO로 바꾸면서 아래쪽에 있는 코드도 수정 필요
-	PS->SetPlayerState(EPlayerStateType::BLINDSELECT); 
 	auto VM = GetVMBlindSelect();
 	VM->SetResetBlindView(true);
+
+	if (InType == EPlayerStateType::BLINDSELECT)
+	{
+		PS->SetPlayerState(InType);	
+	}
+	else if(InType == EPlayerStateType::LOGO)
+	{
+		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("PlayerInfoView", false));
+		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("JokerSlotView", false));
+
+		PS->SetPlayerState(InType);
+	}
 }
 
 

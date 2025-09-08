@@ -36,6 +36,8 @@ void UMainLogoComponent::InitLogoView(EPlayerStateType _InValue)
 	if (_InValue != EPlayerStateType::LOGO)
 		return;
 
+
+
 	auto VM = GetVMMainWidget();
 	VM->SetMainLogoFlag(true);
 }

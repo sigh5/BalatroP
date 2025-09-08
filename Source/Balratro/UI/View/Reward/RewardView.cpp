@@ -96,6 +96,8 @@ void URewardView::VM_FieldChanged_BlindRewardText(UObject* Object, UE::FieldNoti
 	const auto VMInst = TryGetViewModel<UVM_Reward>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
+	CashOutButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+
 	RewardStep = VMInst->GetBlindReward();
 	if (RewardStep == -1)
 		return;

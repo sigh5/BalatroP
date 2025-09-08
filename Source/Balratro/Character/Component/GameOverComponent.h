@@ -18,7 +18,7 @@ protected:
 
 	void	 SetGameOverView(EPlayerStateType InType);
 
-	void	SetNewRunEvent();
+	void	SetGameOverNextEvent(EPlayerStateType InType);
 
 private:
 	class UVM_Store* GetVMStore();

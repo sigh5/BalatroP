@@ -54,9 +54,11 @@ private:
 	void VM_FieldChanged_BigBlindSkipImage(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	
 	void VM_FieldChanged_ResetBlindView(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
 private:
 	FString BossTypeToString(EBossType _InType);
 
+	void	SetButtonColorAndOpacity(class UButton* Button, FSlateColor _InColor, float _Ratio);
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -110,5 +112,5 @@ private:
 private:
 	uint8	IsToolTipView : 1;
 
-
+	FSlateColor ButtonColor[4];
 };

@@ -3,12 +3,13 @@
 
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
+#include "GameData/EnumDatas.h"
 #include "VM_GameOver.generated.h"
 
 /**
  *
  */
-DECLARE_MULTICAST_DELEGATE(FOnNewRunButtonEvent);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnNewRunButtonEvent, EPlayerStateType);
 
 
 USTRUCT(BlueprintType)
@@ -60,7 +61,7 @@ public:
 	}
 
 
-	void	SetNewRunButtonEvent() { OnNewRunButtonEvent.Broadcast(); }
+	void	SetGameOverButtonEvent(EPlayerStateType _InType) { OnNewRunButtonEvent.Broadcast(_InType); }
 
 
 private:

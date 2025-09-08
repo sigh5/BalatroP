@@ -51,6 +51,16 @@ private:
     TObjectPtr<class UImage> BackGroundImage1;
 
     UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> LogoImage;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> BackGroundImage;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UBorder> ClearBorder2;
+
+
+    UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UHorizontalBox> ButtonBox;
 
     UPROPERTY(meta = (BindWidget))
@@ -67,8 +77,12 @@ private:
 
 
 
+
     UPROPERTY(meta = (BindWidgetAnim), Transient)
     TObjectPtr<class UWidgetAnimation> ClearAnimation;
+
+    UPROPERTY(meta = (BindWidgetAnim), Transient)
+    TObjectPtr<class UWidgetAnimation> LogoAnimation;
 
 private:
     UPROPERTY()

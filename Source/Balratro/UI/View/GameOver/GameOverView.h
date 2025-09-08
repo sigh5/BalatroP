@@ -30,6 +30,8 @@ private:
 	UFUNCTION()
 	void  OnClicked_NewRunButton();
 
+	UFUNCTION()
+	void  OnClicked_MainMenuButton();
 
 private:
 	UPROPERTY(meta = (BindWidget))

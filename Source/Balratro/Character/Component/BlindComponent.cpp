@@ -105,7 +105,6 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 		if (InValue == EPlayerStateType::BIG_BLIND_SKIP)
 			CurBlindSkipTagIndex += 1;
 		
-
 		SetBlindSkipReward(BlindSkipTags[CurBlindSkipTagIndex]);
 		
 		PS->SetPlayerState(EPlayerStateType::ITEM_SELECT);
@@ -140,6 +139,13 @@ void UBlindComponent::BlindViewActive()
 
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("StoreView", false));
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", true));
+
+	//auto VM = GetVMBlindSelect();
+	//if (VM->GetResetBlindView())
+	//{
+	//	auto VM = GetVMBlindSelect();
+	//	VM->SetResetBlindView(true);
+	//}
 
 	InitBlindSelectView();
 }

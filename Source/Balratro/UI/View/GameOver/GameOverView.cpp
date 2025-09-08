@@ -17,6 +17,11 @@ UGameOverView::UGameOverView()
 void UGameOverView::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+void UGameOverView::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 
 	const auto VMInst = TryGetViewModel<UVM_GameOver>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
@@ -29,13 +34,9 @@ void UGameOverView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_GameOver::FFieldNotificationClassDescriptor::SeedName,
 		FFieldValueChangedDelegate::CreateUObject(this, &UGameOverView::VM_FieldChanged_SeedName));
-}
-
-void UGameOverView::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
 
 	NewRunButton->OnClicked.AddDynamic(this, &UGameOverView::OnClicked_NewRunButton);
+	MainMenuButton->OnClicked.AddDynamic(this, &UGameOverView::OnClicked_MainMenuButton);
 }
 
 void UGameOverView::VM_FieldChanged_GameOver_INT_Data(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -86,5 +87,12 @@ void UGameOverView::OnClicked_NewRunButton()
 {
 	const auto VMInst = TryGetViewModel<UVM_GameOver>(); checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
-	VMInst->SetNewRunButtonEvent();
+	VMInst->SetGameOverButtonEvent(EPlayerStateType::BLINDSELECT);
+}
+
+void UGameOverView::OnClicked_MainMenuButton()
+{
+	const auto VMInst = TryGetViewModel<UVM_GameOver>(); checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
+
+	VMInst->SetGameOverButtonEvent(EPlayerStateType::LOGO);
 }
