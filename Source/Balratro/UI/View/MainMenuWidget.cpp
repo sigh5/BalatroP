@@ -205,7 +205,6 @@ void UMainMenuWidget::NativeOnInitialized()
 	OptionButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_OptionButtonClicked);
 	ExitButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_ExitButtonClicked);
 	CollectionButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_CollectionClicked);
-
 }
 
 void UMainMenuWidget::VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -248,7 +247,6 @@ void UMainMenuWidget::OnMain_PlayButtonClicked()
 	PlayAnimation(ClearAnimation);
 
 	VMInst->ToMain_FromBlindSelectView();
-
 }
 
 void UMainMenuWidget::OnMain_OptionButtonClicked()
