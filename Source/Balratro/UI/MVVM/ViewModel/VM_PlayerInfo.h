@@ -204,6 +204,26 @@ public:
 
 	void	RefreshPlayerInfoViewEvent() { OnRefreshPlayerInfoViewData.Broadcast(); }
 
+	const TArray<ETaroSkillType>& GetUseBoxData() const
+	{
+		return UseBoxData;
+	}
+
+	void SetUseBoxData(TArray<ETaroSkillType>& InValue)
+	{
+		//UE_MVVM_SET_PROPERTY_VALUE(BlindGrade, InValue);
+		UseBoxData = InValue;
+
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(UseBoxData);
+	}
+
+	void AddUseBoxData(ETaroSkillType& Datas)
+	{
+		UseBoxData.Add(Datas);
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(UseBoxData);
+	}
+
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 RoundCnt = 0;
@@ -252,4 +272,8 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	FString BlindMaterialPath ;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	TArray<ETaroSkillType> UseBoxData;
+
 };

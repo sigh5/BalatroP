@@ -15,6 +15,7 @@
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/MVVM/ViewModel/VM_ItemSelect.h"
 #include "UI/MVVM/ViewModel/VM_JockerSlot.h"
+#include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 
 #include "GameData/HandRankingStat.h"
 #include "Interface/CalculatorScoreInterface.h"
@@ -96,15 +97,15 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 void UCardAndDeckComponent::FinishHandPlay()
 {
 	auto PS = GetPlayerState();
-	
+
 	int32 SumScore = PS->GetCurrentScore();
 	int32 CurrentSum = ResultScore + SumScore;
-	
+
 	PS->SetMaxScore(ResultScore);
 
 	if (CurrentSum >= PS->GetCurrentRoundBlindGrade())
 	{
-		ResultScore = 0;	
+		ResultScore = 0;
 		PS->SetCurrentScore(CurrentSum);
 
 		GetWorld()->GetTimerManager().ClearTimer(TotalScoreHandle);
@@ -135,7 +136,7 @@ void UCardAndDeckComponent::FinishHandPlay()
 
 void UCardAndDeckComponent::SwapCardOrder(UHandInCard_Info* SwapDest, UHandInCard_Info* Source)
 {
-	auto PS = GetPlayerState();	
+	auto PS = GetPlayerState();
 	auto CurAllHands = PS->GetCurrentAllHands();
 
 	int32 SourceIndex = CurAllHands.IndexOfByKey(Source);
@@ -166,24 +167,22 @@ void UCardAndDeckComponent::UseTaroItem(FTaroStat& TaroStat)
 			break;
 		}
 	}
-	
-	if (TaroStat.EnforceType != 0)
-	{
-		UseEnhanceTaro(TaroStat.EnforceType);
-	}
-	else if (TaroStat.SealType != 0)
+
+	UseTaroCard(TaroStat.EnforceType);
+
+	/*else if (TaroStat.SealType != 0)
 	{
 		UseSealTaro(TaroStat.SealType);
 	}
 	else if (TaroStat.GhostCardType != 0)
 	{
 		UseGhostTaro(TaroStat.GhostCardType);
-	}
+	}*/
 
 	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
 
 	// 현재 부스터팩에서 사용할 타로 횟수가 끝나면 자동으로 상점으로 변환
-	if (TaroSelectCount - 1 == 0) 
+	if (TaroSelectCount - 1 == 0)
 	{
 		GetWorld()->GetTimerManager().SetTimer(
 			ItemSkipTimerHandle,
@@ -206,54 +205,92 @@ void UCardAndDeckComponent::UseTaroItem(FTaroStat& TaroStat)
 
 }
 
-void UCardAndDeckComponent::UseEnhanceTaro(int32 EnhanceType)
+void UCardAndDeckComponent::UseTaroCard(int32 EnhanceType)
 {
-	auto PS = GetPlayerState();
-	auto& Cards = PS->GetCurCalculatorCardInHands();
-
-	for (auto& Card : Cards)
+	if (EnhanceType <= 12)
 	{
-		if (EnhanceType >= 9)
+		UseTaroSkillInCard(EnhanceType);
+
+		PrevUseTaroCard = static_cast<ETaroSkillType>(EnhanceType);
+	}
+	else
+	{
+		ETaroSkillType CurType = static_cast<ETaroSkillType>(EnhanceType);
+
+		auto VM_PlayerInfo = GetVMPlayerInfo(); check(VM_PlayerInfo);
+
+		if (CurType == ETaroSkillType::FOOL)
 		{
-			FName CurName = Card->Info.Name;
-			FString NameStr = CurName.ToString();
+			if (PrevUseTaroCard == ETaroSkillType::NONE)
+				return;
 
-			if (static_cast<ETaroSkillType>(EnhanceType) == ETaroSkillType::CHANGE_HEART)
-			{
-				NameStr[0] = 'H';
-				Card->Info.SuitGrade = 3;
-			}
-			else if (static_cast<ETaroSkillType>(EnhanceType) == ETaroSkillType::CHANGE_SPADE)
-			{
-				NameStr[0] = 'S';
-				Card->Info.SuitGrade = 1;
-			}
-			else if (static_cast<ETaroSkillType>(EnhanceType) == ETaroSkillType::CHANGE_CLOVER)
-			{
-				NameStr[0] = 'C';
-				Card->Info.SuitGrade = 4;
-			}
-			else if (static_cast<ETaroSkillType>(EnhanceType) == ETaroSkillType::CHANGE_DIAMOND)
-			{
-				NameStr[0] = 'D';
-				Card->Info.SuitGrade = 2;
-			}
+			VM_PlayerInfo->AddUseBoxData(PrevUseTaroCard);
 
-			Card->Info.Name = FName(*NameStr);
-			
-			FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Card/%s.%s"), *Card->Info.Name.ToString(), *Card->Info.Name.ToString());
-			Card->Info.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-			
-			if (!Card->Info.CardSprite.IsValid())
-				Card->Info.CardSprite.LoadSynchronous();
+			PrevUseTaroCard = ETaroSkillType::NONE;
+		}
+		else if (CurType == ETaroSkillType::ORB)
+		{
+			// 보류
+		}
+		else if (CurType == ETaroSkillType::CREATE_TARO_TWO)
+		{
+			ETaroSkillType Temp0 = ETaroSkillType::FOOL;
+			ETaroSkillType Temp1 = ETaroSkillType::CHANGE_CLOVER;
+
+			VM_PlayerInfo->AddUseBoxData(Temp0);
+			VM_PlayerInfo->AddUseBoxData(Temp1);
+		}
+		else if (CurType == ETaroSkillType::GOLD_MUL_2)
+		{
+			auto PS = GetPlayerState();
+
+			int32 CurGold = PS->GetGold();
+
+			if (CurGold >= 20)
+				CurGold += 20;
+			else
+				CurGold *= 2;
+
+			PS->SetGold(CurGold);
+		}
+		else if (CurType == ETaroSkillType::RANK_UP)
+		{
+			auto PS = GetPlayerState();
+			auto& Cards = PS->GetCurCalculatorCardInHands();
+
+			for (auto& Card : Cards)
+			{
+				// 카드 랭크업 하기
+				// 그리고 애니메이션 넣기
+			}
 
 		}
-		else
+		else if (CurType == ETaroSkillType::DELETE_CARD)
 		{
-			Card->Info.EnforceType = static_cast<ETaroSkillType>(EnhanceType);
+			auto PS = GetPlayerState();
+			auto& Cards = PS->GetCurCalculatorCardInHands();
+
+			for (auto& Card : Cards)
+			{
+				// 카드 삭제하기
+				// 그리고 애니메이션 넣기
+			}
 		}
+		else if (CurType == ETaroSkillType::CARD_CHANGE)
+		{
+			auto PS = GetPlayerState();
+			auto& Cards = PS->GetCurCalculatorCardInHands();
+
+			for (auto& Card : Cards)
+			{
+				// 위치 스왑하기
+				// 그리고 애니메이션 넣기
+			}
+		}
+
 	}
 }
+
 
 void UCardAndDeckComponent::UseSealTaro(int32 SealType)
 {
@@ -274,28 +311,65 @@ void UCardAndDeckComponent::AllEffectViewFinish()
 	GetWorld()->GetTimerManager().SetTimer(TotalScoreHandle, Delegate, 1.5f, false);
 }
 
+void UCardAndDeckComponent::UseTaroSkillInCard(int32 EnhanceType)
+{
+	auto PS = GetPlayerState();
+	auto& Cards = PS->GetCurCalculatorCardInHands();
+
+	TMap<ETaroSkillType, FSuitChangeInfo> SuitChangeMap = {
+	   { ETaroSkillType::CHANGE_HEART,   { 'H', 3 } },
+	   { ETaroSkillType::CHANGE_SPADE,   { 'S', 1 } },
+	   { ETaroSkillType::CHANGE_CLOVER,  { 'C', 4 } },
+	   { ETaroSkillType::CHANGE_DIAMOND, { 'D', 2 } }
+	};
+
+	ETaroSkillType CurType = static_cast<ETaroSkillType>(EnhanceType);
+
+	for (auto& Card : Cards)
+	{
+		if (EnhanceType >= 9)
+		{
+			FName CurName = Card->Info.Name;
+			FString NameStr = CurName.ToString();
+
+			NameStr[0] = SuitChangeMap[CurType].Prefix;
+			Card->Info.SuitGrade = SuitChangeMap[CurType].SuitGrade;
+
+			Card->Info.Name = FName(*NameStr);
+
+			FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Card/%s.%s"), *Card->Info.Name.ToString(), *Card->Info.Name.ToString());
+			Card->Info.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+
+			if (!Card->Info.CardSprite.IsValid())
+				Card->Info.CardSprite.LoadSynchronous();
+		}
+		else
+			Card->Info.EnforceType = static_cast<ETaroSkillType>(EnhanceType);
+	}
+}
+
 void UCardAndDeckComponent::SetPlayCardEffect()
 {
 	auto PS = GetPlayerState();
 	auto VM = GetVMCardDeck();
-	
+
 	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
 	auto CurRestCards = PS->GetRestCardInHands();
-	
+
 	VM->SetIsHandPlayFlag(PS->GetHandPlayFlag());
 	VM->SetRestCardDatas(CurRestCards);
 
 	if (PS->GetPlayerState() == EPlayerStateType::BOSS_BLIND)
 	{
 		auto CurBossType = PS->GetCurBossType();
-		VM->SetBossSkillUse(true); 
+		VM->SetBossSkillUse(true);
 	}
 	else
 	{
 		VM->SetBossSkillUse(false);
 	}
 
-	VM->SetCurCardsData(CurPlayCards); 
+	VM->SetCurCardsData(CurPlayCards);
 	VM->SetRestCardEffectFlag(true);
 
 	PS->SetHandPlayFlag(false);
@@ -503,4 +577,16 @@ UVM_JockerSlot* UCardAndDeckComponent::GetVMJoker()
 
 	const auto Found = VMCollection->FindViewModelInstance(Context);
 	return Cast<UVM_JockerSlot>(Found);
+}
+
+UVM_PlayerInfo* UCardAndDeckComponent::GetVMPlayerInfo()
+{
+	const auto VMCollection = GetWorld()->GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>()->GetViewModelCollection();
+
+	FMVVMViewModelContext Context;
+	Context.ContextName = TEXT("VM_PlayerInfo");
+	Context.ContextClass = UVM_PlayerInfo::StaticClass();
+
+	const auto Found = VMCollection->FindViewModelInstance(Context);
+	return Cast<UVM_PlayerInfo>(Found);
 }

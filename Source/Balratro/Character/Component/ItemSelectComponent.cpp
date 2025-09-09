@@ -228,7 +228,8 @@ TSet<int32> UItemSelectComponent::SetTaroType(int32 SetTaroNum)
 	// 미구현 목록 0,2,4,9,11,12,13   
 	// 조커 카드 구현 하고 해야되는것 10,14,20,22
 
-	TSet<int32> IndexArr = {0,2,4,9,11};
+	//  // 스톤카드 수정필요 
+	TSet<int32> IndexArr = { 0,2,4,9,11 };
 
 	
 	return IndexArr;

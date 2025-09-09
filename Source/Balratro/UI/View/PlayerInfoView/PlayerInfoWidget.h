@@ -47,6 +47,9 @@ private: /*VM_PlayerInfo*/
 	void VM_FieldChanged_BlindNameBorderColor(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_BlindPresentImage(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
+	void VM_FieldChanged_UseBoxData(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
+
 private:
 	UWidgetAnimation* GetAnimationByName(FName& AnimName) const;
 	void			FillAnimMap();
@@ -93,6 +96,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UBorder> drainageBorder;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UWrapBox> UseTaroWrapBox;
 
 
 	/* 블라인드 이미지 */

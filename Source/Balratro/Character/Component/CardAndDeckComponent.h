@@ -8,6 +8,14 @@
 #include "GameData/EnumDatas.h"
 #include "CardAndDeckComponent.generated.h"
 
+USTRUCT()
+struct FSuitChangeInfo
+{
+	GENERATED_BODY()
+
+	TCHAR Prefix;
+	int32 SuitGrade;
+};
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -40,23 +48,28 @@ private:
 private:
 	void	UseTaroItem(FTaroStat& TaroStat);
 	
-	void	UseEnhanceTaro(int32 EnhanceType);
+	void	UseTaroCard(int32 EnhanceType);
 	void	UseSealTaro(int32 SealType);
 	void	UseGhostTaro(int32 GhostType);
 
 	void	AllEffectViewFinish();
+
+	void	UseTaroSkillInCard(int32 EnhanceType);
+
 
 private:
 	class UVM_CardDeck*		GetVMCardDeck();
 	class AMyPlayerState*	GetPlayerState();
 	class UVM_MainMenu*		GetVMMainWidget();
 	class UVM_ItemSelect* GetVMItemSelect();
+
+	class UVM_PlayerInfo* GetVMPlayerInfo();
+
 	class UVM_JockerSlot* GetVMJoker();
 
 private:
 	int32  CurDrawIndex = 0;
 	
-	//int32 _CardNum = 0;
 	float _DelayTime = 0.f;
 	int32 ResultScore = 0;
 
@@ -69,6 +82,6 @@ private:
 	
 	int32 nCardNum;
 
-	//UPROPERTY()
-	//TArray<class UHandInCard_Info*> _CurData; // 타이머를 위해 저장하는 단순 변수
+	ETaroSkillType PrevUseTaroCard;
+
 };

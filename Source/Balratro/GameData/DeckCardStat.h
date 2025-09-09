@@ -17,18 +17,25 @@ UENUM(BlueprintType)
 enum class ETaroSkillType : uint8
 {
 	NONE = 0,
-	STONE,
-	GOLD,
-	CHIP_PLUS,
-	DRAINAGE,
-	WILD,
-	LUCKY,
-	GLASS,
-	STEEL,
-	CHANGE_HEART,
-	CHANGE_SPADE,
-	CHANGE_CLOVER,
-	CHANGE_DIAMOND,
+	STONE =1,
+	GOLD =2 ,
+	CHIP_PLUS =3 ,
+	DRAINAGE =4 ,
+	WILD =5  ,
+	LUCKY = 6,
+	GLASS =7 ,
+	STEEL = 8 ,
+	CHANGE_HEART  =9,
+	CHANGE_SPADE = 10,
+	CHANGE_CLOVER = 11,
+	CHANGE_DIAMOND =12,
+	FOOL = 13,
+	ORB = 14, // 보류
+	CREATE_TARO_TWO = 15,
+	GOLD_MUL_2 = 16,
+	RANK_UP= 17,
+	DELETE_CARD = 18,
+	CARD_CHANGE = 19,
 };
 
 UENUM(BlueprintType)
@@ -53,7 +60,7 @@ enum class ETaroType : uint8
 	WILD,      //  1장까지 와일드로					// 0
 	STEEL,		// 스틸카드 1장생성					// 0
 	GLASS,      // 글래스 카드 1장생성				// 0
-	GOLD_20,    // 골드 2배 최대 20원 x2
+	GOLD_MUL_2,    // 골드 2배 최대 20원 x2
 	JOKER_FOIL, // 조커 포일, 1.5 ,10배수, 꽝 중 1개  => 조커 카드 구현먼저 하고
 	RANK_UP,	// 최대 2장 랭크업
 	DELETE_CARD , // 카드 2장 파괴

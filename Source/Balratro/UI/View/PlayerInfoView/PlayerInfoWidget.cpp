@@ -103,6 +103,10 @@ void UPlayerInfoWidget::NativeOnInitialized()
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage));
 
 
+	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::UseBoxData,
+		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_UseBoxData));
+
+
 	RunInfoBtn->OnClicked.AddDynamic(this, &UPlayerInfoWidget::OnRunInfoButton);
 
 	DynMat = UMaterialInstanceDynamic::Create(WaveMaterial, this);
@@ -324,6 +328,16 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 		Brush.SetResourceObject(LoadedMat);
 		CurBlindPresentImage->SetBrush(Brush);
 	}
+}
+
+void UPlayerInfoWidget::VM_FieldChanged_UseBoxData(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
+
+
+
+
+
 }
 
 UWidgetAnimation* UPlayerInfoWidget::GetAnimationByName(FName& AnimName) const
