@@ -18,17 +18,13 @@ protected:
 	virtual void BeginPlay() override;
 
 	void	SetItemSelectView(EPlayerStateType _InType);
-	
 	void	SetItemList();
 
 	void    InitTaroInfoTable();
 	void	ItemSelectSceneSkip();
 
-
 	void	SetBlindSkipReward(EBlindSkip_Tag CurTagType);
-
 	void	BlindSkipReward_BoosterPackSetting(EBlindSkip_Tag CurTagType);
-
 	void	SetBlindSkipButtonFlag(EPlayerStateType InType);
 
 private:

@@ -48,8 +48,7 @@ public:
 			&& maxUseCardNum == Other.maxUseCardNum
 			&& SealType == Other.SealType
 			&& EnforceType == Other.EnforceType
-			&& GhostCardType == Other.GhostCardType
-			&& SpriteAsset == Other.SpriteAsset;
+			&& GhostCardType == Other.GhostCardType;
 	}
 
 	bool operator!=(const FTaroStat& Other) const

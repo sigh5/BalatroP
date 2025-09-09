@@ -121,7 +121,7 @@ void UStoreComponent::SetBoucherItem()
 	auto TestData2 = BoucherInfos[5];
 	TArray<FBoucherInfo> Temp;
 	Temp.Add(TestData);
-	Temp.Add(TestData2);
+	//Temp.Add(TestData2);
 
 	VM_Store->SetCurStoreBouchers(Temp);
 }
@@ -216,8 +216,6 @@ EBoosterPackType UStoreComponent::SetBoosterPackType()
 
 EJokerType UStoreComponent::SetJokerType()
 {
-
-
 	return EJokerType::BASE_JOKER;
 }
 

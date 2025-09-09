@@ -199,7 +199,7 @@ void UCardDeckView::VM_FieldChanged_RestCardData(UObject* Object, UE::FieldNotif
 	{
 		for (auto& Card : HandCardButtons)
 		{
-			if (Card->GetCardInfoData()->Info.EnforceType == EnforceStatType::STEEL 
+			if (Card->GetCardInfoData()->Info.EnforceType == ETaroSkillType::STEEL 
 				&& Card->GetCardInfoData()->Info == Data[i]->Info && 
 				UseLess_EmblemType != Card->GetCardInfoData()->Info.SuitGrade)
 			{
@@ -398,7 +398,7 @@ void UCardDeckView::SetCard_EffectOrder(UCardButtonWidget* EventCard, FDeckCardS
 		}, EventCard, CardData.BaseChip);
 
 		
-		if (CardData.EnforceType == EnforceStatType::DRAINAGE)
+		if (CardData.EnforceType == ETaroSkillType::DRAINAGE)
 		{
 			PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
 				{
@@ -418,7 +418,7 @@ void UCardDeckView::SetCard_EffectOrder(UCardButtonWidget* EventCard, FDeckCardS
 					SetScoreTextPos(CurEventCard,false);
 				}, EventCard, 4);
 		}
-		else if (CardData.EnforceType == EnforceStatType::CHIP_PLUS)
+		else if (CardData.EnforceType == ETaroSkillType::CHIP_PLUS)
 		{
 			PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
 				{
@@ -443,7 +443,7 @@ void UCardDeckView::SetCard_EffectOrder(UCardButtonWidget* EventCard, FDeckCardS
 
 void UCardDeckView::SetRestCard_EffectOrder(UCardButtonWidget* EventCard, FDeckCardStat& CardData)
 {
-	if (CardData.EnforceType == EnforceStatType::STEEL)
+	if (CardData.EnforceType == ETaroSkillType::STEEL)
 	{
 		PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
 			{

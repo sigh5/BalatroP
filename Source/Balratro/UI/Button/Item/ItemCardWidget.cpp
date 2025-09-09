@@ -102,7 +102,7 @@ void UItemCardWidget::OnItemUseClicked()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CurCardsdNum : %d"), CurCards.Num());
 
-		if (TaroData.maxUseCardNum >= CurCards.Num())
+		if (TaroData.maxUseCardNum >= CurCards.Num() && CurCards.Num() != 0)
 		{
 			// 0이 아니고 제한 개수에 안걸림
 			VM_Inst->UseTaroItem(TaroData);

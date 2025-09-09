@@ -66,7 +66,7 @@ void AMyPlayerState::ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRank
 		CardInfo->Info.Name = Info->Name;
 		CardInfo->Info.BaseChip = Info->BaseChip;
 		CardInfo->Info.SealType = Info->SealType;
-		CardInfo->Info.EnforceType = Info->EnforceType; // EnforceStatType
+		CardInfo->Info.EnforceType = Info->EnforceType; // ETaroSkillType
 		CardInfo->Info.GhostCardType = Info->GhostCardType;
 		CardInfo->Info.RankGrade = Info->RankGrade;
 		CardInfo->Info.SuitGrade = Info->SuitGrade;

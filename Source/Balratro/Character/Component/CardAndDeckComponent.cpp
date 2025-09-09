@@ -194,7 +194,7 @@ void UCardAndDeckComponent::UseTaroItem(FTaroStat& TaroStat)
 					VM->SkipButtonClicked();
 				}
 			},
-			1.f,
+			2.5f,
 			false
 		);
 	}
@@ -215,42 +215,42 @@ void UCardAndDeckComponent::UseEnhanceTaro(int32 EnhanceType)
 	{
 		if (EnhanceType >= 9)
 		{
-			if (static_cast<EnforceStatType>(EnhanceType) == EnforceStatType::CHANGE_HEART)
+			FName CurName = Card->Info.Name;
+			FString NameStr = CurName.ToString();
+
+			if (static_cast<ETaroSkillType>(EnhanceType) == ETaroSkillType::CHANGE_HEART)
 			{
-				FName CurName = Card->Info.Name;
-				FString NameStr = CurName.ToString();
-
-				if (!NameStr.IsEmpty())
-				{
-					NameStr[0] = 'H';
-				}
-
-				Card->Info.Name = FName(*NameStr);
+				NameStr[0] = 'H';
 				Card->Info.SuitGrade = 3;
 			}
-			else if (static_cast<EnforceStatType>(EnhanceType) == EnforceStatType::CHANGE_SPADE)
+			else if (static_cast<ETaroSkillType>(EnhanceType) == ETaroSkillType::CHANGE_SPADE)
 			{
-				FName CurName = Card->Info.Name;
-				FString NameStr = CurName.ToString();
-
-				if (!NameStr.IsEmpty())
-				{
-					NameStr[0] = 'D';
-				}
-
-				Card->Info.Name = FName(*NameStr);
+				NameStr[0] = 'S';
 				Card->Info.SuitGrade = 1;
 			}
+			else if (static_cast<ETaroSkillType>(EnhanceType) == ETaroSkillType::CHANGE_CLOVER)
+			{
+				NameStr[0] = 'C';
+				Card->Info.SuitGrade = 4;
+			}
+			else if (static_cast<ETaroSkillType>(EnhanceType) == ETaroSkillType::CHANGE_DIAMOND)
+			{
+				NameStr[0] = 'D';
+				Card->Info.SuitGrade = 2;
+			}
 
+			Card->Info.Name = FName(*NameStr);
 			
 			FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Card/%s.%s"), *Card->Info.Name.ToString(), *Card->Info.Name.ToString());
 			Card->Info.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
 			
+			if (!Card->Info.CardSprite.IsValid())
+				Card->Info.CardSprite.LoadSynchronous();
 
 		}
 		else
 		{
-			Card->Info.EnforceType = static_cast<EnforceStatType>(EnhanceType);
+			Card->Info.EnforceType = static_cast<ETaroSkillType>(EnhanceType);
 		}
 	}
 }

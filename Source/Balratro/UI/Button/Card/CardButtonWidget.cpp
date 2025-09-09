@@ -359,7 +359,7 @@ void UCardButtonWidget::SetGoadEvent()
 	int32 Useless_Emblem = VM->GetUseless_EmblemType();
 
 	if (VM->GetCurrentBossType() == EBossType::GOAD &&
-		(Useless_Emblem == CardInfoData->Info.SuitGrade || CardInfoData->Info.EnforceType == EnforceStatType::WILD))
+		(Useless_Emblem == CardInfoData->Info.SuitGrade || CardInfoData->Info.EnforceType == ETaroSkillType::WILD))
 	{
 		SetRenderOpacity(0.3f);
 	}

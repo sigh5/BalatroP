@@ -299,11 +299,11 @@ int32 UCalculatorHandRankingComponent::ResultScore()
 			}
 
 			ShowChip += cardInfo->Info.BaseChip;
-			if (cardInfo->Info.EnforceType == EnforceStatType::DRAINAGE)
+			if (cardInfo->Info.EnforceType == ETaroSkillType::DRAINAGE)
 			{
 				ShowDrainage += 4;
 			}
-			else if (cardInfo->Info.EnforceType == EnforceStatType::CHIP_PLUS)
+			else if (cardInfo->Info.EnforceType == ETaroSkillType::CHIP_PLUS)
 			{
 				ShowChip += 30;
 			}
@@ -355,7 +355,7 @@ void UCalculatorHandRankingComponent::SetStillCards()
 
 	for (auto* Card : CurrentRestHands)
 	{
-		if (Card->Info.EnforceType == EnforceStatType::STEEL)
+		if (Card->Info.EnforceType == ETaroSkillType::STEEL)
 		{
 			CurStillCard.Add(Card);
 		}
