@@ -39,6 +39,11 @@ UPlayerInfoWidget::UPlayerInfoWidget()
 void UPlayerInfoWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+void UPlayerInfoWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 
 	FillAnimMap();
 
@@ -75,7 +80,7 @@ void UPlayerInfoWidget::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindInfoActive,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_BlindInfoActive));
-	
+
 	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindReward,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_BlindReward));
 
@@ -99,11 +104,6 @@ void UPlayerInfoWidget::NativeConstruct()
 
 
 	RunInfoBtn->OnClicked.AddDynamic(this, &UPlayerInfoWidget::OnRunInfoButton);
-}
-
-void UPlayerInfoWidget::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
 
 	DynMat = UMaterialInstanceDynamic::Create(WaveMaterial, this);
 	check(DynMat);
@@ -326,9 +326,6 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 		Brush.SetResourceObject(LoadedMat);
 		CurBlindPresentImage->SetBrush(Brush);
 	}
-
-	
-
 }
 
 UWidgetAnimation* UPlayerInfoWidget::GetAnimationByName(FName& AnimName) const
@@ -388,3 +385,4 @@ void UPlayerInfoWidget::StartFinishAnim()
 		drainageBorder->SetBrushFromMaterial(nullptr);
 	}
 }
+

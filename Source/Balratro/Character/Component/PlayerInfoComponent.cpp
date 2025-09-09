@@ -141,12 +141,6 @@ void UPlayerInfoComponent::UpdateCurrentScore()
 	VM_PI->SetScroe(PS->GetCurrentScore());
 }
 
-void UPlayerInfoComponent::UpdateMaxScore(int32 _invalue)
-{
-	auto VM = GetVMPlayerInfo();
-	// 나중에 수정필요
-}
-
 void UPlayerInfoComponent::UpdateHandRanking()
 {
 	auto VM_PI = GetVMPlayerInfo();
@@ -154,76 +148,36 @@ void UPlayerInfoComponent::UpdateHandRanking()
 
 	EPokerHand CurHandType = PS->GetCurHandCard_Type();
 
-	FName Name;
-	switch (CurHandType)
-	{
-	case EPokerHand::NONE:
-		Name = "-";
-		break;
-	case EPokerHand::HIGH_CARD:
-		Name = "HIGH CARD";
-		break;
-	case EPokerHand::ONE_PAIR:
-		Name = "ONE PAIR";
-		break;
-	case EPokerHand::TWO_PAIR:
-		Name = "TWO PAIR";
-		break;
-	case EPokerHand::TRIPLE:
-		Name = "TRIPLE";
-		break;
-	case EPokerHand::STRAIGHT:
-		Name = "STRAIGHT";
-		break;
-	case EPokerHand::FLUSH:
-		Name = "FLUSH";
-		break;
-	case EPokerHand::FULL_HOUSE:
-		Name = "FULL HOUSE";
-		break;
-	case EPokerHand::FOUR_CARD:
-		Name = "FOUR CARD";
-		break;
-	case EPokerHand::STRAIGHT_FLUSH:
-		Name = "STRAIGHT FLUSH";
-		break;
-	case EPokerHand::ROYAL_FLUSH:
-		Name = "ROYAL FLUSH";
-		break;
-	case EPokerHand::FIVE_CARD:
-		Name = "FIVE CARD";
-		break;
-	default:
-		break;
-	}
+	int32 Level = 0, BaseChip = 0, IncreaseChip = 0, BaseDrainage = 0, IncreaseDrainage = 0;
+	FName Name ="-";
 
-	VM_PI->SetHandName(Name);
-
-	int32 Level = 0, BaseChip= 0 , IncreaseChip = 0, BaseDrainage = 0 , IncreaseDrainage =0;
-	FString CurHandRankingName = Name.ToString().Replace(TEXT(" "), TEXT(""));
-	auto& CurMyHandRanking = PS->GetHandRankingInfoModify();
-	for (auto& CurHandRankingInfo : CurMyHandRanking)
+	if (CurHandType != EPokerHand::NONE)
 	{
-		if (CurHandRankingName == CurHandRankingInfo->_Name)
+		auto& CurMyHandRanking = PS->GetHandRankingInfoModify();
+		for (auto& CurHandRankingInfo : CurMyHandRanking)
 		{
-			Level = CurHandRankingInfo->Info.Level;
-			BaseChip = CurHandRankingInfo->Info.Chip;
-			IncreaseChip = CurHandRankingInfo->Info.IncreaseChip;
-			BaseDrainage = CurHandRankingInfo->Info.Drainage;
-			IncreaseDrainage = CurHandRankingInfo->Info.IncreaseDrainage;
-
-			if (PS->GetHandPlayFlag() == true)
+			if (CurHandRankingInfo->Find(CurHandType))
 			{
-				CurHandRankingInfo->Info.UseNum++;
+				Name = CurHandRankingInfo->_Name;
+				Level = CurHandRankingInfo->Info.Level;
+				BaseChip = CurHandRankingInfo->Info.Chip;
+				IncreaseChip = CurHandRankingInfo->Info.IncreaseChip;
+				BaseDrainage = CurHandRankingInfo->Info.Drainage;
+				IncreaseDrainage = CurHandRankingInfo->Info.IncreaseDrainage;
+
+				if (PS->GetHandPlayFlag() == true)
+				{
+					CurHandRankingInfo->Info.UseNum++;
+				}
+				break;
 			}
-
-			break;
 		}
+		BaseChip += IncreaseChip * (Level - 1);
+		BaseDrainage += IncreaseDrainage * (Level - 1);
 	}
-
-	BaseChip += IncreaseChip * (Level-1);
-	BaseDrainage += IncreaseDrainage * (Level - 1);
-
+	
+	VM_PI->SetHandName(Name);
+	
 	PS->SetCurrentShowChip(BaseChip);
 	PS->SetCurrentShowDrainage(BaseDrainage);
 }
@@ -241,11 +195,9 @@ void UPlayerInfoComponent::UpdateScene_PlayerInfo(EPlayerStateType _InType)
 	auto& Sigleton = UBBGameSingleton::Get();
 	auto VM_MW = GetVMMainWidget();
 
-
 	if (_InType == EPlayerStateType::ITEM_SELECT)
 	{
-		// 상점 이펙트랑 동일
-		_InType = EPlayerStateType::STORE;
+		_InType = EPlayerStateType::STORE;  	// 상점 이펙트랑 동일
 	}
 
 	int32 EntiCnt = PS->GetEntiCount();
@@ -299,10 +251,12 @@ void UPlayerInfoComponent::UpdateScene_PlayerInfo(EPlayerStateType _InType)
 		BlindInfoActive = false;
 		break;
 	case EPlayerStateType::BOSS_BLIND:
-		MainOrder = "Boss Blind";
+		MainOrder = FName(*(PS->BossTypeToString()));
 		BlindInfoActive = true;
 		Reward = Sigleton.GetBlindStat()[EntiCnt]->BossReward;
 		BlindGrade = Sigleton.GetBlindStat()[EntiCnt]->BossGrade;
+		BlindImageMatPath = PS->BossImagePath();
+		LinearColor = FLinearColor(1.000000, 1.0, 1.0, 1.000000);
 		++RoundCnt;
 		break;
 	case EPlayerStateType::REWARD:
@@ -358,3 +312,4 @@ UVM_MainMenu* UPlayerInfoComponent::GetVMMainWidget()
 	const auto Found = VMCollection->FindViewModelInstance(Context);
 	return Cast<UVM_MainMenu>(Found);
 }
+

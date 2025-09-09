@@ -38,6 +38,8 @@ void UHandRankingComponent::InitHandRanking()
 	auto VM = GetVMHandRanking();
 	auto VM_MainMenu = GetVMMainWidget();
 
+	VM->ResetHandRankingDatas();
+
 	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("HandRankingView", true));
 
 	auto FHandRankingArray = PlayerState->GetHandRankingInfo();

@@ -74,6 +74,10 @@ public:
 	FOnBlindSkipRewardSetting	OnBlindSkipRewardSetting;
 
 public:
+	FString BossImagePath();
+	FString BossTypeToString();
+
+public:
 	FORCEINLINE int32 GetRoundCount() { return RoundCount; }
 	FORCEINLINE void  SetRoundCount(int32 InValue) { RoundCount = InValue; OnSetRoundCount.Broadcast(); }
 
@@ -82,6 +86,7 @@ public:
 
 	FORCEINLINE int32 GetGold() { return Gold; }
 	FORCEINLINE void  SetGold(int32 InValue) { Gold = InValue; SetMaxGold(Gold); OnSetCurrentGold.Broadcast(); }
+	FORCEINLINE void  SetBossSkill_GoldZero(int32 InValue) { Gold = InValue; }
 
 	FORCEINLINE int32 GetMaxGold() { return MaxGold; }
 	FORCEINLINE void  SetMaxGold(int32 InValue) { MaxScore = FMath::Max(MaxScore, InValue); }
@@ -212,6 +217,8 @@ public:
 	
 	FORCEINLINE void SetAllChuckCount() { AllChuckCount++; }
 	FORCEINLINE int32 GetAllChuckCount() { return AllChuckCount; }
+
+	class UHandRanking_Info* MostUseHandRankingName();
 
 
 	void		ResetInfos();

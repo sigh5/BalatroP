@@ -288,14 +288,14 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 	if (PS->GetPlayerState() == EPlayerStateType::BOSS_BLIND)
 	{
 		auto CurBossType = PS->GetCurBossType();
-		VM->SetBossSkillUse(true); // SetRestCardDatas 이게 먼저 들어가야되네?
+		VM->SetBossSkillUse(true); 
 	}
 	else
 	{
 		VM->SetBossSkillUse(false);
 	}
 
-	VM->SetCurCardsData(CurPlayCards); // 보여주는 카드 점수 계산하는거
+	VM->SetCurCardsData(CurPlayCards); 
 	VM->SetRestCardEffectFlag(true);
 }
 

@@ -62,3 +62,21 @@ enum class EBossType :uint8
 	EYE,     // 이 라운드에서는 핸드 유형을 한 번씩만 플레이할 수 있습니다
 	FINAL
 };
+
+UENUM(BlueprintType)
+enum class EPokerHand : uint8
+{
+	NONE,
+	HIGH_CARD,
+	ONE_PAIR,
+	TWO_PAIR,
+	TRIPLE,
+	STRAIGHT,
+	FLUSH,
+	STRAIGHT_FLUSH,
+	FULL_HOUSE,
+	FOUR_CARD,
+	ROYAL_FLUSH,
+	FIVE_CARD,
+	FlUSH_FIVE_CARD
+};

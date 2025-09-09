@@ -27,7 +27,7 @@ private:
 	void	ResetBlindSelectData();
 	
 	void	SetRandomBossType();
-	void	UseBossSkill();
+	void	UseBlindBossSkill();
 
 	void	SetBlindSkipReward(EBlindSkip_Tag CurTagType);
 

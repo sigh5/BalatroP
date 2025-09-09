@@ -24,19 +24,18 @@ public:
 	void UpdateUseHandCount(int32 _invalue);
 	void UpdateUseChuckCount(int32 _Invalue);
 	void UpdateCurrentScore();
-	void UpdateMaxScore(int32 _invalue);
 
 	void UpdateHandRanking();
 	void UpdateScene_PlayerInfo(EPlayerStateType _InType);
 
 	void UpdateCalculatorChip();
 	void UpdateCalculatorDrainage();
-
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	void  Init_PlayerInfo();
+	
 
 private:
 	class UVM_PlayerInfo* GetVMPlayerInfo();

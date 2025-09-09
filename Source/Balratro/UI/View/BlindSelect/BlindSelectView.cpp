@@ -95,7 +95,7 @@ void UBlindSelectView::OnSmallBlindButtonClicked()
 	BigBlindButton->SetVisibility(ESlateVisibility::Visible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
 	
-	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
+	VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
 }
 
 void UBlindSelectView::OnBigBlindButtonClicked()
@@ -233,18 +233,16 @@ void UBlindSelectView::VM_FieldChanged_BossTypeChanged(UObject* Object, UE::Fiel
 
 	BossNameText->SetText(FText::FromString(Name));
 
-	FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Boss/%s.%s"), *Name, *Name);
-	TSoftObjectPtr<UPaperSprite> AssetImage = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-	if (!AssetImage.IsValid())
-	{
-		AssetImage.LoadSynchronous();
-	}
+	FString AssetPath = VMInst->GetBossBlindImage_AssetPath();
 
-	FSlateBrush BossImageBrush;
-	BossImageBrush.SetResourceObject(AssetImage.Get());
-	BossImageBrush.DrawAs = ESlateBrushDrawType::Image;
-	//BossImageBrush.SetImageSize(FVector2D(100.f, 150.f));
-	BossBlindImage->SetBrush(BossImageBrush);
+	FStringAssetReference MatRef = AssetPath;
+	UMaterialInterface* LoadedMat = Cast<UMaterialInterface>(MatRef.TryLoad());
+	if (LoadedMat)
+	{
+		FSlateBrush Brush;
+		Brush.SetResourceObject(LoadedMat);
+		BossBlindImage->SetBrush(Brush);
+	}
 }
 
 void UBlindSelectView::VM_FieldChanged_SmallBlindSkipImage(UObject* Object, UE::FieldNotification::FFieldId FieldId)

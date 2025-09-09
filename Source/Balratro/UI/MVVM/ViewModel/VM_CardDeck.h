@@ -11,6 +11,8 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnSkipButtonClicked);
 
+DECLARE_MULTICAST_DELEGATE(FOnBossSkillOtherInfoChange);
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSortTypeChange, const EHandInCardSortType&);
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUseChuckButton,int32 , TArray<UHandInCard_Info*>& /*ChuckCardNum*/);
@@ -40,6 +42,8 @@ public:
 	FOnCurPlayHands		OnCurPlayHands;
 	FOnSkipButtonClicked OnSkipButtonClicked;
 	FOnSwapCards		OnSwapCards;
+
+	FOnBossSkillOtherInfoChange		OnBossSkillOtherInfoChange;
 
 public:
 	const TArray<UHandInCard_Info*>& GetCurrentAllHands() const
@@ -140,6 +144,8 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BossSkillUse); 
 	}
 
+
+	void	OtherView_InfoChange() { OnBossSkillOtherInfoChange.Broadcast(); }
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))

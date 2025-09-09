@@ -9,6 +9,7 @@
 #include "GameData/BlindStat.h"
 #include "GameData/JokerStat.h"
 #include "GameData/TaroStat.h"
+#include "GameData/EnumDatas.h"
 #include "BBGameSingleton.generated.h"
 
 /**

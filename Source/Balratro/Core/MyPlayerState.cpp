@@ -7,7 +7,7 @@
 
 AMyPlayerState::AMyPlayerState()
 	:RoundCount(0), EntiCount(0), UseHandCount(0), MaxChuckCount(3), UseChuckCount(0), CurrentScore(0),
-	 MaxScore(0), MaxHandCount(1), MaxGold(4), Gold(4), CurrentShowChip(0), CurrentShowDrainage(0),
+	 MaxScore(0), MaxHandCount(3), MaxGold(4), Gold(4), CurrentShowChip(0), CurrentShowDrainage(0),
 	 CurSortType(EHandInCardSortType::SORT_RANK)
 {
 	FRandomUtils::Init();
@@ -17,6 +17,22 @@ void AMyPlayerState::ResetMyHandRankingInfo(const TMap<const FName, FHandRanking
 {
 	MyHandRankingInfo.Empty();
 
+	EPokerHand PokerHandsType[12] = {
+		EPokerHand::FlUSH_FIVE_CARD,
+		EPokerHand::FIVE_CARD,
+		EPokerHand::ROYAL_FLUSH,
+		EPokerHand::FOUR_CARD,
+		EPokerHand::FULL_HOUSE,
+		EPokerHand::STRAIGHT_FLUSH,
+		EPokerHand::FLUSH,
+		EPokerHand::STRAIGHT,
+		EPokerHand::TRIPLE,
+		EPokerHand::TWO_PAIR,
+		EPokerHand::ONE_PAIR,
+		EPokerHand::HIGH_CARD,
+	};
+
+	int32 Index = 0;
 	for (const auto& Info : InHandRanking)
 	{
 		UHandRanking_Info* MyInfo = NewObject<UHandRanking_Info>();
@@ -24,10 +40,17 @@ void AMyPlayerState::ResetMyHandRankingInfo(const TMap<const FName, FHandRanking
 		MyInfo->Info.Chip = Info.Value->Chip;
 		MyInfo->Info.Drainage = Info.Value->Drainage;
 		MyInfo->Info.UseNum = Info.Value->UseNum;
+		
+		if (Index == 11)// Test
+		{
+			MyInfo->Info.UseNum = 3;
+		}
+		
 		MyInfo->Info.IncreaseChip = Info.Value->IncreaseChip;
 		MyInfo->Info.IncreaseDrainage = Info.Value->IncreaseDrainage;
 
 		MyInfo->_Name = Info.Key;
+		MyInfo->_Type = PokerHandsType[Index++];
 		MyHandRankingInfo.Add(MyInfo);
 	}
 }
@@ -154,6 +177,17 @@ void AMyPlayerState::AddBoucherType(FBoucherInfo& _InValue)
 	}
 }
 
+UHandRanking_Info* AMyPlayerState::MostUseHandRankingName()
+{
+	TArray<UHandRanking_Info*> HandRankingInfo = MyHandRankingInfo; // บนป็
+	HandRankingInfo.Sort([&](const UHandRanking_Info& a, const UHandRanking_Info& b)
+		{
+			return a.Info.UseNum > b.Info.UseNum;
+		});
+
+	return HandRankingInfo[0];
+}
+
 void AMyPlayerState::ResetInfos()
 {
 	FRandomUtils::Init();
@@ -184,4 +218,51 @@ void AMyPlayerState::ResetInfos()
 	CurTaroStatTable.Empty();
 
 	SetPlayerState(EPlayerStateType::RESET_GAME);
+}
+
+FString AMyPlayerState::BossImagePath()
+{
+	FString AssetPath = "";
+
+	switch (CurrentBostType.Value)
+	{
+	case EBossType::HOOK:
+		AssetPath = TEXT("/Game/UI/View/PlayerInfo/M_Hook.M_Hook");
+		break;
+	case EBossType::OX:
+		AssetPath = TEXT("/Game/UI/View/PlayerInfo/M_OX.M_OX");
+		break;
+	case EBossType::WALL:
+		AssetPath = TEXT("/Game/UI/View/PlayerInfo/M_Wall.M_Wall");
+		break;
+	case EBossType::ARM:
+		AssetPath = TEXT("/Game/UI/View/PlayerInfo/M_ARM.M_ARM");
+		break;
+	case EBossType::PSYCHIC:
+		AssetPath = TEXT("/Game/UI/View/PlayerInfo/M_PSYCHIC.M_PSYCHIC");
+		break;
+	case EBossType::GOAD:
+		AssetPath = TEXT("/Game/UI/View/PlayerInfo/M_GOAD.M_GOAD");
+		break;
+	case EBossType::WATER:
+		AssetPath = TEXT("/Game/UI/View/PlayerInfo/M_WATER.M_WATER");
+		break;
+	case EBossType::EYE:
+		AssetPath = TEXT("/Game/UI/View/PlayerInfo/M_EYE.M_EYE");
+		break;
+	case EBossType::FINAL:
+		AssetPath = TEXT("/Game/UI/View/PlayerInfo/M_FINAL.M_FINAL");
+		break;
+	default:
+		break;
+	}
+
+	return AssetPath;
+}
+
+FString AMyPlayerState::BossTypeToString()
+{
+	const UEnum* EnumPtr = StaticEnum<EBossType>();
+	if (!EnumPtr) return TEXT("Invalid");
+	return EnumPtr->GetNameStringByValue((int64)CurrentBostType.Value);
 }

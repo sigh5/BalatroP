@@ -92,6 +92,7 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CurHaveBouchers);
 	}
 
+	void ResetHandRankingDatas() { CurHaveBouchers.Empty(); VM_HandRankingData.Empty(); HRButtonInfo = FHRButton_Info(); }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 	void	HandRankingViewExitButtonClicked() { OnHandRankingExitButton.Broadcast(); }

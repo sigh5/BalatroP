@@ -146,6 +146,9 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(ResetBlindView);	
 	}
 
+	void	SetBossBlindImage_AssetPath(FString AssetPath) { BossAssetPath = AssetPath; }
+	const FString&	GetBossBlindImage_AssetPath() const { return BossAssetPath; }
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 SmallGrade = 0;
@@ -179,4 +182,8 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool  ResetBlindView = false; // 보스블라인드 끝내면 이거 호출해야됌
+
+	UPROPERTY()
+	FString BossAssetPath;
+
 };

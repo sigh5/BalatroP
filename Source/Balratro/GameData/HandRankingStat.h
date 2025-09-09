@@ -3,24 +3,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "GameData/EnumDatas.h"
 #include "HandRankingStat.generated.h"
-
-UENUM(BlueprintType)
-enum class EPokerHand : uint8
-{
-	NONE,
-	HIGH_CARD,
-	ONE_PAIR,
-	TWO_PAIR,
-	TRIPLE,
-	STRAIGHT,
-	FLUSH,
-	FULL_HOUSE,
-	FOUR_CARD,
-	STRAIGHT_FLUSH,
-	ROYAL_FLUSH,
-	FIVE_CARD
-};
 
 
 USTRUCT(BlueprintType)
@@ -62,4 +46,18 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	FName	_Name;
+
+	UPROPERTY(BlueprintReadOnly)
+	EPokerHand _Type;
+
+	
+	UHandRanking_Info* Find(EPokerHand _InType)
+	{
+		if (_InType == _Type)
+			return this;
+
+		else
+			return nullptr;
+	}
+
 };

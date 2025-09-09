@@ -34,8 +34,11 @@ UCardDeckView::UCardDeckView()
 void UCardDeckView::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
 
-	UE_LOG(LogTemp, Warning, TEXT("UCardDeckView::NativeConstruct"));
+void UCardDeckView::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 
 	CardButtonSubClass = LoadClass<UCardButtonWidget>(nullptr, TEXT("/Game/UI/View/CardDeck/WBP_CardButtonWidget.WBP_CardButtonWidget_C"));
 
@@ -63,17 +66,12 @@ void UCardDeckView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::CurrentBossType,
 		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_CurBossText));
 
-	BossSkillText->SetVisibility(ESlateVisibility::Collapsed);
-}
-
-void UCardDeckView::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-
 	SuitSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnSuitSortButtonClicked);
 	RankSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnRankSortButtonClicked);
 	HandPlayButton->OnClicked.AddDynamic(this, &UCardDeckView::OnHandPlayButtonClicked);
 	ChuckButton->OnClicked.AddDynamic(this, &UCardDeckView::OnChuckButtonClicked);
+
+	BossSkillText->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 UCardButtonWidget* UCardDeckView::ReuseCardButtonWidget(int32 CurAllCardNum, int32 CurNum, UHandInCard_Info* CardInfo)
@@ -214,22 +212,33 @@ void UCardDeckView::VM_FieldChanged_CurBossUseSkill(UObject* Object, UE::FieldNo
 
 	BossSkillText->SetRenderOpacity(0.f);
 
-	TArray<UHandInCard_Info*>  CurAllCards = VMInst->GetCurrentAllHands();
-	TArray<UHandInCard_Info*>  CurRestCards = VMInst->GetRestCardDatas();
-	
-	TArray<UHandInCard_Info*> CardStatInfo; // 전체 선택한 것
-	int32 SelectedNum = 0;
-	SetCardData(CardStatInfo, SelectedNum);
-	
-	for (auto& Card : HandCardButtons)
+
+	if (BossType == EBossType::HOOK)
 	{
-		if (CurRestCards.Contains(Card->GetCardInfoData()))
-			continue;
+		TArray<UHandInCard_Info*>  CurAllCards = VMInst->GetCurrentAllHands();
+		TArray<UHandInCard_Info*>  CurRestCards = VMInst->GetRestCardDatas();
 
-		if (CardStatInfo.Contains(Card->GetCardInfoData()))
-			continue;
+		TArray<UHandInCard_Info*> CardStatInfo; // 전체 선택한 것
+		int32 SelectedNum = 0;
+		SetCardData(CardStatInfo, SelectedNum);
 
-		SetCard_PrevEffectOrder(Card,Card->GetCardInfoData()->Info);
+		for (auto& Card : HandCardButtons)
+		{
+			if (CurRestCards.Contains(Card->GetCardInfoData()))
+				continue;
+
+			if (CardStatInfo.Contains(Card->GetCardInfoData()))
+				continue;
+
+			SetCard_PrevEffectOrder(Card, Card->GetCardInfoData()->Info);
+		}
+	}
+	else if (BossType == EBossType::OX)
+	{
+		FDeckCardStat None;
+		None.Name = "OX";
+
+		SetCard_PrevEffectOrder(nullptr, None);		
 	}
 
 }
@@ -237,6 +246,8 @@ void UCardDeckView::VM_FieldChanged_CurBossUseSkill(UObject* Object, UE::FieldNo
 void UCardDeckView::VM_FieldChanged_CurBossText(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>(); check(VMInst);
+
+	BossSkillText->SetVisibility(ESlateVisibility::Visible);
 	BossSkillText->SetRenderOpacity(1.f);
 	BossSkillText->SetText(FText::FromString("Discard 2 cards when playing"));
 }
@@ -311,16 +322,24 @@ void UCardDeckView::SetCard_PrevEffectOrder(UCardButtonWidget* EventCard, FDeckC
 {
 	if (EventCard)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SetCard_PrevEffectOrder0"));
-
 		PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("SetCard_PrevEffectOrder"));
-
 				CurEventCard->ChuckAnimation();
-
-				
 			}, EventCard, CardData.BaseChip);
+	}
+	else
+	{
+		if (CardData.Name == "OX")
+		{
+			PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("PushTimerEvent:: EBossType::OX"));
+					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>("VM_PlayerInfo", UVM_PlayerInfo::StaticClass());
+					check(VM_PlayerInfo);
+
+					VM_PlayerInfo->SetGold(0);
+				}, nullptr, 0);
+		}
 	}
 
 }

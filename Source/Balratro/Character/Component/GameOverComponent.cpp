@@ -37,15 +37,15 @@ void UGameOverComponent::SetGameOverView(EPlayerStateType InType)
 
 	VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("GameOverView", true));
 
-	TArray<UHandRanking_Info*> HandRankingInfo = PS->GetHandRankingInfo();
-	HandRankingInfo.Sort([&](const UHandRanking_Info& a, const UHandRanking_Info& b)
-		{
-			return a.Info.UseNum > b.Info.UseNum;
-		});
+	//TArray<UHandRanking_Info*> HandRankingInfo = PS->GetHandRankingInfo();
+	//HandRankingInfo.Sort([&](const UHandRanking_Info& a, const UHandRanking_Info& b)
+	//	{
+	//		return a.Info.UseNum > b.Info.UseNum;
+	//	});
 
-	
+	auto MostHandRanking =	PS->MostUseHandRankingName();
+
 	FGameOverInfo Infos;
-
 	Infos.BestHandScore =  PS->GetMaxScore();
 	Infos.PlayCount = PS->GetAllPlayCount();
 	Infos.ChunkCount = PS->GetAllChuckCount();
@@ -56,7 +56,7 @@ void UGameOverComponent::SetGameOverView(EPlayerStateType InType)
 	
 	int32 SeedNum = Seed.GetCurrentSeed();
 
-	FName MostHandRankingName = HandRankingInfo[0]->_Name;
+	FName MostHandRankingName = MostHandRanking->_Name;
 
 	VM_GameOver->SetSeedName(SeedNum);
 	VM_GameOver->SetMostHandRankingName(MostHandRankingName);

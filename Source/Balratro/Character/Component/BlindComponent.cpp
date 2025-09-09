@@ -31,7 +31,7 @@ void UBlindComponent::BeginPlay()
 	VM_Store->OnNextButton.AddUObject(this, &UBlindComponent::StoreNextButtonClicked);
 
 	auto PS = GetPlayerState();
-	PS->OnBossSkill_RestCardsSet.AddUObject(this,&UBlindComponent::UseBossSkill);
+	PS->OnBossSkill_RestCardsSet.AddUObject(this,&UBlindComponent::UseBlindBossSkill);
 	PS->OnSelectNextScene.AddUObject(this, &UBlindComponent::NewtSceneEvent);
 
 
@@ -63,6 +63,8 @@ void UBlindComponent::InitBlindSelectView()
 
 	VM->SetSmallBlind_SkipTag(BlindSkipTags[SmallSkipIndex]); // 나중에 그냥 1~8까지 깔기로 하기
 	VM->SetBigBlind_SkipTag(BlindSkipTags[BigSkipIndex]);
+	
+	VM->SetBossBlindImage_AssetPath(PS->BossImagePath());
 	VM->SetBossType(BossType.Value);
 }
 
@@ -140,13 +142,6 @@ void UBlindComponent::BlindViewActive()
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("StoreView", false));
 	VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", true));
 
-	//auto VM = GetVMBlindSelect();
-	//if (VM->GetResetBlindView())
-	//{
-	//	auto VM = GetVMBlindSelect();
-	//	VM->SetResetBlindView(true);
-	//}
-
 	InitBlindSelectView();
 }
 
@@ -171,12 +166,7 @@ void UBlindComponent::ResetBlindSelectData()
 		RandomArray.Add(i);
 	}
 
-	float CurrentTime = UGameplayStatics::GetRealTimeSeconds(nullptr);
-	int32 Seed = FMath::FloorToInt(CurrentTime * 1000.0f);
-	FMath::RandInit(Seed);
-
 	int32 NumElements = RandomArray.Num();
-
 	for (int32 i = NumElements - 1; i > 0; --i)
 	{
 		int32 RandomIndex = FRandomUtils::RandomSeed.RandRange(0, i);
@@ -188,7 +178,6 @@ void UBlindComponent::ResetBlindSelectData()
 	}
 	
 	PS->SetCurBossType({ -1,EBossType::NONE });
-	
 	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);  // 일단 그 테스트용
 	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);
 	
@@ -198,7 +187,7 @@ void UBlindComponent::ResetBlindSelectData()
 void UBlindComponent::SetRandomBossType()
 {
 	auto PS = GetPlayerState();
-	
+	auto VM = GetVMBlindSelect();
 	TPair<int32, EBossType> MyBossType;
 	
 	/*int32 EntiCount = PS->GetEntiCount();
@@ -207,15 +196,16 @@ void UBlindComponent::SetRandomBossType()
 	RandomArray.RemoveAt(EntiCount);*/
 
 	// TestCode
-	MyBossType = { 0,EBossType::HOOK };
+	MyBossType = { 0,EBossType::OX };
+
+
 
 	PS->SetCurBossType(MyBossType);
 }
 
-void UBlindComponent::UseBossSkill()
+void UBlindComponent::UseBlindBossSkill()
 {
 	auto PS = GetPlayerState();
-	UE_LOG(LogTemp, Warning, TEXT("UseBossSkill"));
 
 	if (EPlayerStateType::BOSS_BLIND != PS->GetPlayerState())
 	{
@@ -223,27 +213,20 @@ void UBlindComponent::UseBossSkill()
 	}
 
 	EBossType CurBossType = PS->GetCurBossType().Value;
-
-	UE_LOG(LogTemp, Warning, TEXT("UseBossSkill2, %d"),static_cast<int>(CurBossType));
-
 	BossTypes[CurBossType]();
 }
 
 void UBlindComponent::SetBlindSkipReward(EBlindSkip_Tag CurTagType)
 {
 	auto PS = GetPlayerState();
-
 	PS->SetCurBlindSkipReward(CurTagType);
 }
 
 void UBlindComponent::HOOK_Skill()
 {
 	auto PS = GetPlayerState();
-	auto VM_CardDeck = GetVMCardDeck();
-
 	auto RestHands = PS->GetRestCardInHands();
 	
-	UE_LOG(LogTemp, Warning, TEXT("Before HOOK_Skill %d"), RestHands.Num());
 	if (RestHands.Num() == 0)
 		return;
 
@@ -256,15 +239,19 @@ void UBlindComponent::HOOK_Skill()
 		RestHands.RemoveAt(0, 2);
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("HOOK_Skill %d"), RestHands.Num());
-
-
 	PS->SetRestCardInHands(RestHands); // 남아있는 
 }
 
 void UBlindComponent::OX_Skill()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OX_Skill"));
+	auto PS = GetPlayerState();
+	
+	auto CurHandType = PS->GetCurHandCard_Type();
+	
+	if (PS->MostUseHandRankingName()->_Type == CurHandType)
+	{
+		PS->SetBossSkill_GoldZero(0);
+	}
 }
 
 void UBlindComponent::WALL_SKill()

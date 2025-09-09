@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/View/Core/BBUserWidgetBase.h"
+#include "GameData/EnumDatas.h"
 #include "PlayerInfoWidget.generated.h"
 
 /**
@@ -51,6 +52,7 @@ private:
 	void			FillAnimMap();
 
 	void			StartFinishAnim();
+
 
 private:
 	UPROPERTY(meta = (BindWidget))

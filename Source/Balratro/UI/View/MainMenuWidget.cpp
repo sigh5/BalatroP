@@ -208,7 +208,7 @@ void UMainMenuWidget::NativeOnInitialized()
 
 	BackGroundImage->SetVisibility(ESlateVisibility::Collapsed);
 
-	PlayAnimation(LogoAnimation);
+	//PlayAnimation(LogoAnimation);
 }
 
 void UMainMenuWidget::VM_FieldChanged_WidgetName(UObject* Object, UE::FieldNotification::FFieldId FieldId)
