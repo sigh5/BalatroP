@@ -72,7 +72,7 @@ FReply UCardButtonWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeom
 	FReply Reply = Super::NativeOnPreviewMouseButtonDown(InGeometry, InMouseEvent);
 
 	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
-	{	
+	{
 		FVector2D LocalMousePos = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
 		DragOffset = LocalMousePos; // 클릭한 위치와 위젯 좌상단 차이
 
@@ -105,14 +105,14 @@ void UCardButtonWidget::NativeOnDragDetected(const FGeometry& InGeometry, const 
 bool UCardButtonWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
-	
+
 	MainImage->SetRenderOpacity(1.f);
 	Enhance_Image->SetRenderOpacity(1.f);
 
 	bIsDragging = false;
-	
+
 	if (InOperation && InOperation->Payload)
-	{	
+	{
 		if (UCardButtonWidget* DraggedWidget = Cast<UCardButtonWidget>(InOperation->Payload))
 		{
 			if (DraggedWidget->CardInfoData->Info != CardInfoData->Info)
@@ -126,11 +126,11 @@ bool UCardButtonWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 				DraggedWidget->ForceSwapData(CardInfoData);
 				DraggedWidget->CardIndex = CardIndex;
 				DraggedWidget->bSelected = bSelected;
-				
+
 				ForceSwapData(SwapData0);
 				CardIndex = SwapCardIndex;
 				bSelected = SwapSelected;
-				
+
 				if (DraggedWidget->bSelected != bSelected)
 				{
 					DraggedWidget->ForceSwapPos();
@@ -141,7 +141,7 @@ bool UCardButtonWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 			}
 
 
-			
+
 			DraggedWidget->MainImage->SetRenderOpacity(1.f);
 			DraggedWidget->Enhance_Image->SetRenderOpacity(1.f);
 
@@ -254,7 +254,7 @@ void UCardButtonWidget::SetInfo(UHandInCard_Info* _inValue)
 	{
 		ChangeImage();
 	}
-	
+
 	if (IsCreated == false)
 	{
 		IsCreated = true;
@@ -274,7 +274,7 @@ void UCardButtonWidget::ChangeImage()
 		MainImageSpriteBrush.DrawAs = ESlateBrushDrawType::Image;
 		MainImageSpriteBrush.SetImageSize(FVector2D(100.f, 150.f));
 		MainImage->SetBrush(MainImageSpriteBrush);
-		
+
 	}
 
 	if (UPaperSprite* Sprite = CardInfoData->Info.EnforceSprite.Get())
@@ -284,6 +284,8 @@ void UCardButtonWidget::ChangeImage()
 		EnhanceImageSpriteBrush.SetImageSize(FVector2D(100.f, 150.f));
 		Enhance_Image->SetBrush(EnhanceImageSpriteBrush);
 	}
+
+	SetGoadEvent();
 }
 
 void UCardButtonWidget::CreateImage()
@@ -322,7 +324,7 @@ void UCardButtonWidget::ForceSwapData(UHandInCard_Info* CardInfoData0)
 	Ghost_Image->SetVisibility(ESlateVisibility::Collapsed);
 	Foil_Image->SetVisibility(ESlateVisibility::Collapsed);
 
-	
+
 }
 
 void UCardButtonWidget::ForceSwapPos()
@@ -350,16 +352,34 @@ void UCardButtonWidget::ForceSwapPos()
 	}
 }
 
+void UCardButtonWidget::SetGoadEvent()
+{
+	auto VM = TryGetViewModel<UVM_CardDeck>(); check(VM);
+
+	int32 Useless_Emblem = VM->GetUseless_EmblemType();
+
+	if (VM->GetCurrentBossType() == EBossType::GOAD &&
+		(Useless_Emblem == CardInfoData->Info.SuitGrade || CardInfoData->Info.EnforceType == EnforceStatType::WILD))
+	{
+		SetRenderOpacity(0.3f);
+	}
+	else
+	{
+		SetRenderOpacity(1.0f);
+	}
+
+}
+
 void UCardButtonWidget::LoadEnhanceImage()
 {
 	int32 EnforceNum = static_cast<int32>(CardInfoData->Info.EnforceType);
 
-	FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/CardEnfoceImage/EnforceSprite_%d.EnforceSprite_%d"),EnforceNum, EnforceNum);
+	FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/CardEnfoceImage/EnforceSprite_%d.EnforceSprite_%d"), EnforceNum, EnforceNum);
 	CardInfoData->Info.EnforceSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
 	if (!CardInfoData->Info.EnforceSprite.IsValid())
 	{
 		CardInfoData->Info.EnforceSprite.LoadSynchronous();
-	}	
+	}
 }
 
 void UCardButtonWidget::OnFilpAnimationFinished()

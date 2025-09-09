@@ -31,14 +31,14 @@ int32 UCalculatorHandRankingComponent::CalCulatorHandRanking(int32 CardNum, TArr
 	auto PS = GetPlayerState();
 	PS->SetHandPlayFlag(true);
 	
-	SetCalRestCardInHands(_DeckCardStat); // 점수 계산 전 보스 능력 확인
+	SetCalRestCardInHands(_DeckCardStat); 
 	
-	SetStillCards();					  // 스틸카드 계산
+	PS->UseBossSkill(); // 점수 계산 전 보스 능력 확인
+
+	SetStillCards();    // 스틸카드 계산
 
 	SetHandRankingType(CardNum, _DeckCardStat);
 	
-	PS->SetHandPlayFlag(false);
-
 	return ResultScore();
 }
 
@@ -55,7 +55,8 @@ void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<UHan
 	{
 		SetHandRankingType(CardNum, _DeckCardStat);
 	}
-    if (CardNum == 5)  // 내가 공격할 수 있는 최대의 패
+    
+	if (CardNum == 5)  // 내가 공격할 수 있는 최대의 패
     {
         VM_CardDeck->SetIsSelectedMax(true);
     }
@@ -250,8 +251,14 @@ void UCalculatorHandRankingComponent::Calculator_StillCard(OUT int32& CurChip, O
 	auto PS = GetPlayerState();
 	auto VM_CardDeck = GetVMCardDeck();
 
+	bool GoadFlag = (PS->GetPlayerState() == EPlayerStateType::BOSS_BLIND &&
+		PS->GetCurBossType().Value == EBossType::GOAD);
+
 	for (auto& SteelCard : CurStillCard)
 	{
+		if (GoadFlag && SteelCard->Info.RankGrade == 1)
+			continue;
+
 		CurDriange *= 1.5f;
 	}
 }
@@ -275,26 +282,39 @@ int32 UCalculatorHandRankingComponent::ResultScore()
 	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
 
 	int32 Score = 0;
-	int32 ShowChip = PS->GetCurrentShowChip();
-	float ShowDrainage = static_cast<float>(PS->GetCurrentShowDrainage());
 
-	for (auto cardInfo : CurPlayCards)
-	{
-		ShowChip += cardInfo->Info.BaseChip;
-		if (cardInfo->Info.EnforceType == EnforceStatType::DRAINAGE)
+	if (PS->GetHandPlayFlag() == true)
+	{	
+		int32 ShowChip = PS->GetCurrentShowChip();
+		float ShowDrainage = static_cast<float>(PS->GetCurrentShowDrainage());
+
+		bool GoadFlag = (PS->GetCurBossType().Value == EBossType::GOAD && 
+						 PS->GetPlayerState() == EPlayerStateType::BOSS_BLIND);
+
+		for (auto cardInfo : CurPlayCards)
 		{
-			ShowDrainage += 4;
+			if (GoadFlag && cardInfo->Info.SuitGrade == 1)
+			{
+				continue;
+			}
+
+			ShowChip += cardInfo->Info.BaseChip;
+			if (cardInfo->Info.EnforceType == EnforceStatType::DRAINAGE)
+			{
+				ShowDrainage += 4;
+			}
+			else if (cardInfo->Info.EnforceType == EnforceStatType::CHIP_PLUS)
+			{
+				ShowChip += 30;
+			}
 		}
-		else if(cardInfo->Info.EnforceType == EnforceStatType::CHIP_PLUS)
-		{
-			ShowChip += 30;
-		}
+
+		Calculator_StillCard(ShowChip, ShowDrainage);  // 여기까지 손패에서 계산
+		Calculator_Joker(ShowChip, ShowDrainage);
+
+		Score = static_cast<int>(static_cast<float>(ShowChip) * ShowDrainage);
 	}
 	
-	Calculator_StillCard(ShowChip,ShowDrainage);  // 여기까지 손패에서 계산
-	Calculator_Joker(ShowChip, ShowDrainage);
-
-	Score = static_cast<int>(static_cast<float>(ShowChip) * ShowDrainage);
 	return Score;
 }
 
@@ -323,7 +343,7 @@ void UCalculatorHandRankingComponent::SetCalRestCardInHands(TArray<UHandInCard_I
 	}
 	
 	PS->SetRestCardInHands(RestCards);
-	PS->UseBossSkill();
+
 }
 
 void UCalculatorHandRankingComponent::SetStillCards()

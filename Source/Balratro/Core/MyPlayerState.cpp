@@ -43,6 +43,7 @@ void AMyPlayerState::ResetMyHandRankingInfo(const TMap<const FName, FHandRanking
 		
 		if (Index == 11)// Test
 		{
+			MyInfo->Info.Level += 2;
 			MyInfo->Info.UseNum = 3;
 		}
 		

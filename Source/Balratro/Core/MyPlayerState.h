@@ -44,7 +44,7 @@ DECLARE_MULTICAST_DELEGATE(FOnSetCurrentGold);
 DECLARE_MULTICAST_DELEGATE(FOnSetEntiCount);
 DECLARE_MULTICAST_DELEGATE(FOnShowUIChip); 
 DECLARE_MULTICAST_DELEGATE(FOnShowUIDrainage);
-DECLARE_MULTICAST_DELEGATE(FOnBossSkill_RestCardsSet);
+DECLARE_MULTICAST_DELEGATE(OnBossSkillEvent);
 
 
 /**
@@ -70,7 +70,7 @@ public:
 	FOnDeckCardNum				OnDeckCardNum;
 	FOnShowUIChip				OnShowUIChip;
 	FOnShowUIDrainage			OnShowUIDrainage;
-	FOnBossSkill_RestCardsSet	OnBossSkill_RestCardsSet;
+	OnBossSkillEvent		OnBossSkill_PreEvent;
 	FOnBlindSkipRewardSetting	OnBlindSkipRewardSetting;
 
 public:
@@ -138,7 +138,7 @@ public:
 
 	FORCEINLINE const TArray<class UHandInCard_Info*>  GetRestCardInHands() const { return CurRestCardInHands; }
 	FORCEINLINE void  SetRestCardInHands(TArray<class UHandInCard_Info*> _InValue) {CurRestCardInHands = _InValue;}
-	void		UseBossSkill() { OnBossSkill_RestCardsSet.Broadcast(); }
+	void		UseBossSkill() { OnBossSkill_PreEvent.Broadcast(); }
 
 
 	FORCEINLINE const EHandInCardSortType& GetCurSortType() const { return CurSortType; }
@@ -259,7 +259,6 @@ private:
 	int32	CurSelectTaroNum = 0;
 
 	uint8	HandPlayFlag : 1;
-	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;

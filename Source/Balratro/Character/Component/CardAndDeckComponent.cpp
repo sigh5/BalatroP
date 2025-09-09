@@ -282,7 +282,7 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 	auto CurPlayCards = PS->GetCurCalculatorCardInHands();
 	auto CurRestCards = PS->GetRestCardInHands();
 	
-
+	VM->SetIsHandPlayFlag(PS->GetHandPlayFlag());
 	VM->SetRestCardDatas(CurRestCards);
 
 	if (PS->GetPlayerState() == EPlayerStateType::BOSS_BLIND)
@@ -297,6 +297,8 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 
 	VM->SetCurCardsData(CurPlayCards); 
 	VM->SetRestCardEffectFlag(true);
+
+	PS->SetHandPlayFlag(false);
 }
 
 void UCardAndDeckComponent::ShuffleDeck()
@@ -401,6 +403,10 @@ void UCardAndDeckComponent::InitDeck()
 	if (PS->GetPlayerState() == EPlayerStateType::BOSS_BLIND)
 	{
 		VM->SetCurrentBossType(PS->GetCurBossType().Value);
+	}
+	else
+	{
+		VM->SetCurrentBossType(EBossType::NONE);
 	}
 
 }

@@ -34,6 +34,9 @@ protected:
 
 	void VM_FieldChanged_CurBossUseSkill(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CurBossText(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
+	void VM_FieldChanged_UselessBlindEmblem(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
 private:
 	UFUNCTION()
 	void OnSuitSortButtonClicked();
@@ -60,6 +63,8 @@ private:
 private:
 	bool  SetCardData(OUT TArray<UHandInCard_Info*>& CardStatInfo, OUT int32& SelectedCardNum);
 	class UCardButtonWidget* ReuseCardButtonWidget(int32 CurAllCardNum, int32 CurNum, UHandInCard_Info* CardInfo);
+
+	FString		GetBossSkillText(EBossType _InType);
 
 private:
 	UPROPERTY(meta = (BindWidget))

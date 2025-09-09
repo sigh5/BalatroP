@@ -9,7 +9,7 @@
 #include "VM_PlayerInfo.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnClickedRunInfoButton);
-
+DECLARE_MULTICAST_DELEGATE(FOnRefreshPlayerInfoViewData);
 /**
  * 
  */
@@ -20,7 +20,7 @@ class BALRATRO_API UVM_PlayerInfo : public UMVVMViewModelBase
 
 public:
 	FOnClickedRunInfoButton OnClickedRunInfoButton;
-
+	FOnRefreshPlayerInfoViewData	OnRefreshPlayerInfoViewData;
 
 public:
 	const int32 GetRoundCnt() const
@@ -202,6 +202,7 @@ public:
 		OnClickedRunInfoButton.Broadcast();
 	}
 
+	void	RefreshPlayerInfoViewEvent() { OnRefreshPlayerInfoViewData.Broadcast(); }
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))

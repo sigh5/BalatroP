@@ -66,6 +66,10 @@ void UCardDeckView::NativeOnInitialized()
 	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::CurrentBossType,
 		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_CurBossText));
 
+	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::Useless_EmblemType,
+		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_UselessBlindEmblem));
+
+
 	SuitSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnSuitSortButtonClicked);
 	RankSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnRankSortButtonClicked);
 	HandPlayButton->OnClicked.AddDynamic(this, &UCardDeckView::OnHandPlayButtonClicked);
@@ -94,6 +98,8 @@ UCardButtonWidget* UCardDeckView::ReuseCardButtonWidget(int32 CurAllCardNum, int
 	NewButton->SetCardIndex(CardIndex++);
 	return NewButton;
 }
+
+
 
 void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
@@ -187,12 +193,15 @@ void UCardDeckView::VM_FieldChanged_RestCardData(UObject* Object, UE::FieldNotif
 
 	auto Data = VMInst->GetRestCardDatas();
 
+	int32 UseLess_EmblemType = VMInst->GetUseless_EmblemType();
+
 	for (int i = 0; i < Data.Num(); ++i)
 	{
 		for (auto& Card : HandCardButtons)
 		{
 			if (Card->GetCardInfoData()->Info.EnforceType == EnforceStatType::STEEL 
-				&& Card->GetCardInfoData()->Info == Data[i]->Info)
+				&& Card->GetCardInfoData()->Info == Data[i]->Info && 
+				UseLess_EmblemType != Card->GetCardInfoData()->Info.SuitGrade)
 			{
 				FDeckCardStat CurData = Data[i]->Info;
 				SetRestCard_EffectOrder(Card, CurData);
@@ -240,16 +249,37 @@ void UCardDeckView::VM_FieldChanged_CurBossUseSkill(UObject* Object, UE::FieldNo
 
 		SetCard_PrevEffectOrder(nullptr, None);		
 	}
+	else if (BossType == EBossType::ARM)
+	{
+		FDeckCardStat None;
+		None.Name = "ARM";
 
+		SetCard_PrevEffectOrder(nullptr, None);
+	}
 }
 
 void UCardDeckView::VM_FieldChanged_CurBossText(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>(); check(VMInst);
 
+	auto CurBossType = VMInst->GetCurrentBossType();
+
+	FText BossSkilltxt = FText(FText::FromString(GetBossSkillText(CurBossType)));
 	BossSkillText->SetVisibility(ESlateVisibility::Visible);
 	BossSkillText->SetRenderOpacity(1.f);
-	BossSkillText->SetText(FText::FromString("Discard 2 cards when playing"));
+	BossSkillText->SetText(BossSkilltxt);
+}
+
+void UCardDeckView::VM_FieldChanged_UselessBlindEmblem(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_CardDeck>(); check(VMInst);
+
+	int32 UseLessEmblem = VMInst->GetUseless_EmblemType();
+
+	for (auto Card : HandCardButtons)
+	{
+		Card->SetGoadEvent();
+	}
 }
 
 void UCardDeckView::OnSuitSortButtonClicked()
@@ -303,11 +333,14 @@ void UCardDeckView::CardScroe_EffectText()
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	auto& Data = VMInst->GetCurCardsData();
 	
+	int32 UseLess_EmblemType = VMInst->GetUseless_EmblemType();
+
 	for (int i = 0; i < Data.Num(); ++i)
 	{
 		for (auto& Card : HandCardButtons)
 		{
-			if (Card->GetCardInfoData()->Info == Data[i]->Info)
+			if (Card->GetCardInfoData()->Info == Data[i]->Info &&
+				UseLess_EmblemType != Card->GetCardInfoData()->Info.SuitGrade)
 			{
 				FDeckCardStat CurData = Data[i]->Info;
 				Card->MoveAnimmation();
@@ -329,15 +362,14 @@ void UCardDeckView::SetCard_PrevEffectOrder(UCardButtonWidget* EventCard, FDeckC
 	}
 	else
 	{
-		if (CardData.Name == "OX")
+		if (CardData.Name == "OX" || CardData.Name == "ARM")
 		{
 			PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("PushTimerEvent:: EBossType::OX"));
 					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>("VM_PlayerInfo", UVM_PlayerInfo::StaticClass());
 					check(VM_PlayerInfo);
 
-					VM_PlayerInfo->SetGold(0);
+					VM_PlayerInfo->RefreshPlayerInfoViewEvent();
 				}, nullptr, 0);
 		}
 	}
@@ -465,6 +497,14 @@ void UCardDeckView::SetScoreTextPos(UCardButtonWidget* CurEventCard, bool IsUp)
 
 void UCardDeckView::StartNextTimer()
 {
+	auto VM_Inst = TryGetViewModel<UVM_CardDeck>(); check(VM_Inst);
+
+	if (VM_Inst->GetIsHandPlayFlag() == false)
+	{
+		TimerFuncQueue.Empty();
+	}
+
+
 	if(TimerFuncQueue.IsEmpty())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(MyTimerHandle);
@@ -527,3 +567,41 @@ bool UCardDeckView::SetCardData(OUT TArray<UHandInCard_Info*>& CardStatInfo, OUT
 	return true;
 }
 
+FString UCardDeckView::GetBossSkillText(EBossType _InType)
+{
+	FString CurMessage = "";
+	switch (_InType)
+	{
+	case EBossType::HOOK:
+		CurMessage = TEXT("Discard 2 cards when playing");
+		break;
+	case EBossType::OX:
+		CurMessage = TEXT("If you play the most played hand, your Gold is $0");
+		break;
+	case EBossType::WALL:
+		CurMessage = TEXT("Extra-large blinds. twice grade ");
+		break;
+	case EBossType::ARM:
+		CurMessage = TEXT("The level of the genealogy you played will be lowered");
+		break;
+	case EBossType::PSYCHIC:
+		CurMessage = TEXT("You must play 5 cards");
+		break;
+	case EBossType::GOAD:
+		CurMessage = TEXT("All spade cards are debuffed");
+		break;
+	case EBossType::WATER:
+		CurMessage = TEXT("Start with 0 discards");
+		break;
+	case EBossType::EYE:
+		CurMessage = TEXT("You can only play each hand type once in this Round");
+		break;
+	case EBossType::FINAL:
+		CurMessage = TEXT("FinalRound");
+		break;
+	default:
+		break;
+	}
+
+	return CurMessage;
+}

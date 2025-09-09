@@ -34,11 +34,11 @@ private:
 private: /* Skill */
 	void	HOOK_Skill();
 	void	OX_Skill();
-	void	WALL_SKill();
+	void	WALL_SKill() {}
 	void	ARM_Skill();
 	void	PSYCHIC_Skill();
-	void	GOAD_Skill();
-	void	WATER_Skill();
+	void	GOAD_Skill() {}
+	void	WATER_Skill() {}
 	void    EYE_Skill();
 
 private:
@@ -49,11 +49,18 @@ private:
 	class UVM_CardDeck* GetVMCardDeck();
 private:
 	//UPROPERTY()
-	TMap<EBossType, TFunction<void()>> BossTypes;
+	TMap<EBossType, TFunction<void()>> PreBossSkill;
+
+	//UPROPERTY()
+	TMap<EBossType, TFunction<void()>> AfterBossSkill;
 
 	TArray<int32> RandomArray;
 
 	UPROPERTY()
 	TArray<EBlindSkip_Tag> BlindSkipTags;
+
+	uint8		bEyeSkillFirst : 1;
+
+	TArray<EPokerHand> EyeSkillArr;
 
 };

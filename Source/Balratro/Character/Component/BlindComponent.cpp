@@ -31,7 +31,7 @@ void UBlindComponent::BeginPlay()
 	VM_Store->OnNextButton.AddUObject(this, &UBlindComponent::StoreNextButtonClicked);
 
 	auto PS = GetPlayerState();
-	PS->OnBossSkill_RestCardsSet.AddUObject(this,&UBlindComponent::UseBlindBossSkill);
+	PS->OnBossSkill_PreEvent.AddUObject(this,&UBlindComponent::UseBlindBossSkill);
 	PS->OnSelectNextScene.AddUObject(this, &UBlindComponent::NewtSceneEvent);
 
 
@@ -46,11 +46,7 @@ void UBlindComponent::InitBlindSelectView()
 	auto BlindStatTable = UBBGameSingleton::Get().GetBlindStat();
 
 	int32 EntiCnt = PS->GetEntiCount();
-
-	VM->SetSmallGrade(BlindStatTable[EntiCnt]->SMallGrade);
-	VM->SetBigGrade(BlindStatTable[EntiCnt]->BigGrade);
-	VM->SetBossGrade(BlindStatTable[EntiCnt]->BossGrade);
-
+	
 	auto& BossType = PS->GetCurBossType();
 
 	if (BossType.Key != EntiCnt)
@@ -58,14 +54,24 @@ void UBlindComponent::InitBlindSelectView()
 		SetRandomBossType();
 	}
 
+	VM->SetBossBlindImage_AssetPath(PS->BossImagePath());
+	VM->SetBossType(BossType.Value);
+	int32 BossGrade = BlindStatTable[EntiCnt]->BossGrade;
+	
+	if (PS->GetCurBossType().Value == EBossType::WALL)
+		BossGrade *= 2;
+	
+	VM->SetBossGrade(BossGrade);
+
+
+	VM->SetSmallGrade(BlindStatTable[EntiCnt]->SMallGrade);
+	VM->SetBigGrade(BlindStatTable[EntiCnt]->BigGrade);
+	
 	int32 SmallSkipIndex = ((EntiCnt) * 2);
 	int32 BigSkipIndex = SmallSkipIndex + 1;
 
 	VM->SetSmallBlind_SkipTag(BlindSkipTags[SmallSkipIndex]); // 나중에 그냥 1~8까지 깔기로 하기
 	VM->SetBigBlind_SkipTag(BlindSkipTags[BigSkipIndex]);
-	
-	VM->SetBossBlindImage_AssetPath(PS->BossImagePath());
-	VM->SetBossType(BossType.Value);
 }
 
 void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
@@ -73,6 +79,7 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 	auto VM_MainWidget = GetVMMainWidget();
 	auto PS = GetPlayerState();
 	auto VM_BlindSelect = GetVMBlindSelect();
+	auto VM_CardDeck = GetVMCardDeck();
 
 	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND
 		|| InValue == EPlayerStateType::BOSS_BLIND)
@@ -86,14 +93,32 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 		if (InValue == EPlayerStateType::SMALL_BLIND)
 		{
 			PS->SetCurrentRoundBlindGrade(BlindStatTable[EntiCnt]->SMallGrade);
+			VM_CardDeck->SetUseless_EmblemType(0);
 		}
 		else if (InValue == EPlayerStateType::BIG_BLIND)
 		{
 			PS->SetCurrentRoundBlindGrade(BlindStatTable[EntiCnt]->BigGrade);
+			VM_CardDeck->SetUseless_EmblemType(0);
 		}
 		else
 		{
-			PS->SetCurrentRoundBlindGrade(BlindStatTable[EntiCnt]->BossGrade);
+			int32 BossGrade = BlindStatTable[EntiCnt]->BossGrade;
+			
+			auto CurBossType = PS->GetCurBossType().Value;
+			
+			if (CurBossType == EBossType::WALL)
+				BossGrade *= 2;
+			else if (CurBossType == EBossType::WATER)
+				PS->SetUseChuckCount(PS->GetMaxChuckCount());
+
+			PS->SetCurrentRoundBlindGrade(BossGrade);
+			
+			if (PS->GetCurBossType().Value == EBossType::GOAD)
+			{
+				VM_CardDeck->SetUseless_EmblemType(1);
+			}
+
+			bEyeSkillFirst = false;
 		}
 
 	}
@@ -147,19 +172,19 @@ void UBlindComponent::BlindViewActive()
 
 void UBlindComponent::ResetBlindSelectData()
 {
-	BossTypes.Empty();
+	PreBossSkill.Empty();
 	RandomArray.Empty();
 	BlindSkipTags.Empty();
 
 	auto PS = GetPlayerState();
-	BossTypes.Add(EBossType::HOOK, [this]() { HOOK_Skill(); });
-	BossTypes.Add(EBossType::OX, [this]() { OX_Skill(); });
-	BossTypes.Add(EBossType::WALL, [this]() { WALL_SKill(); });
-	BossTypes.Add(EBossType::ARM, [this]() { ARM_Skill(); });
-	BossTypes.Add(EBossType::PSYCHIC, [this]() { PSYCHIC_Skill(); });
-	BossTypes.Add(EBossType::GOAD, [this]() { GOAD_Skill(); });
-	BossTypes.Add(EBossType::WATER, [this]() { WATER_Skill(); });
-	BossTypes.Add(EBossType::EYE, [this]() { EYE_Skill(); });
+	PreBossSkill.Add(EBossType::HOOK, [this]() { HOOK_Skill(); });
+	PreBossSkill.Add(EBossType::OX, [this]() { OX_Skill(); });
+	PreBossSkill.Add(EBossType::WALL, [this]() { WALL_SKill(); });
+	PreBossSkill.Add(EBossType::ARM, [this]() { ARM_Skill(); });
+	PreBossSkill.Add(EBossType::PSYCHIC, [this]() { PSYCHIC_Skill(); });
+	PreBossSkill.Add(EBossType::GOAD, [this]() { GOAD_Skill(); });
+	PreBossSkill.Add(EBossType::WATER, [this]() { WATER_Skill(); });
+	PreBossSkill.Add(EBossType::EYE, [this]() { EYE_Skill(); });
 
 	for (int32 i = 1; i <= 8; i++)
 	{
@@ -190,15 +215,10 @@ void UBlindComponent::SetRandomBossType()
 	auto VM = GetVMBlindSelect();
 	TPair<int32, EBossType> MyBossType;
 	
-	/*int32 EntiCount = PS->GetEntiCount();
+	int32 EntiCount = PS->GetEntiCount();
 	MyBossType = { EntiCount ,static_cast<EBossType>(RandomArray[EntiCount])};
 	
-	RandomArray.RemoveAt(EntiCount);*/
-
-	// TestCode
-	MyBossType = { 0,EBossType::OX };
-
-
+	RandomArray.RemoveAt(EntiCount);
 
 	PS->SetCurBossType(MyBossType);
 }
@@ -213,7 +233,7 @@ void UBlindComponent::UseBlindBossSkill()
 	}
 
 	EBossType CurBossType = PS->GetCurBossType().Value;
-	BossTypes[CurBossType]();
+	PreBossSkill[CurBossType]();
 }
 
 void UBlindComponent::SetBlindSkipReward(EBlindSkip_Tag CurTagType)
@@ -254,36 +274,63 @@ void UBlindComponent::OX_Skill()
 	}
 }
 
-void UBlindComponent::WALL_SKill()
+void UBlindComponent::ARM_Skill()
 {
 	auto PS = GetPlayerState();
 
-	UE_LOG(LogTemp, Warning, TEXT("WALL_SKill"));
-}
+	auto CurHandType = PS->GetCurHandCard_Type();
 
-void UBlindComponent::ARM_Skill()
-{
-	UE_LOG(LogTemp, Warning, TEXT("ARM_Skill"));
+	auto& MyHandRankingInfos = PS->GetHandRankingInfoModify();
+
+	for (auto Info : MyHandRankingInfos)
+	{
+		if (Info->_Type == CurHandType)
+		{
+			if(Info->Info.Level > 1)
+				Info->Info.Level -= 1;
+
+			break;
+		}
+	}
 }
 
 void UBlindComponent::PSYCHIC_Skill()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PSYCHIC_Skill"));
-}
+	auto PS = GetPlayerState();
 
-void UBlindComponent::GOAD_Skill()
-{
-	UE_LOG(LogTemp, Warning, TEXT("GOAD_Skill"));
-}
+	auto VM_CardDeck = GetVMCardDeck();
 
-void UBlindComponent::WATER_Skill()
-{
-	UE_LOG(LogTemp, Warning, TEXT("WATER_Skill"));
+	bool CurPlayCardMax = VM_CardDeck->GetIsSelectedMax();
+
+	if (CurPlayCardMax ==false)
+	{
+		PS->SetHandPlayFlag(false);
+	}
+
 }
 
 void UBlindComponent::EYE_Skill()
 {
-	UE_LOG(LogTemp, Warning, TEXT("EYE_Skill"));
+	auto PS = GetPlayerState();
+	auto CurHandType = PS->GetCurHandCard_Type();
+
+	if (EyeSkillArr.Num() == 0)
+	{
+		EyeSkillArr.Add(CurHandType);
+		return;
+	}
+	else
+	{
+		if (EyeSkillArr.Contains(CurHandType) == true)
+		{
+			PS->SetHandPlayFlag(false);
+		}
+		else
+		{
+			EyeSkillArr.Add(CurHandType);
+		}
+	}
+	
 }
 
 UVM_BlindSelect* UBlindComponent::GetVMBlindSelect()

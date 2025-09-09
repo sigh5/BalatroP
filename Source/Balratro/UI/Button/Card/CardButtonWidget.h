@@ -44,6 +44,8 @@ public:
 
 	void					DrawAnimation();
 	void					ChuckAnimation();
+
+	void					SetGoadEvent();
 private:
 	UFUNCTION()
 	void OnFilpAnimationFinished();
@@ -56,6 +58,7 @@ private:
 
 	void	 ForceSwapData(class UHandInCard_Info* CardInfoData0);
 	void	 ForceSwapPos();
+
 
 
 private:

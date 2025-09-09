@@ -59,7 +59,7 @@ public:
 	SealStatType SealType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EnforceStatType EnforceType; // ¹è¼ö
+	EnforceStatType EnforceType; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	GhostCardStatType GhostCardType;

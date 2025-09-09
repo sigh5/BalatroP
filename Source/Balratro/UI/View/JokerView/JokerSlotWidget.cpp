@@ -15,6 +15,7 @@
 
 #include "UI/MVVM/ViewModel/VM_JockerSlot.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
+#include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
 #include "UI/Button/JokerCard/JokerCardWidget.h"
 
@@ -28,6 +29,11 @@ UJokerSlotWidget::UJokerSlotWidget()
 void UJokerSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+void UJokerSlotWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 
 	JokerCardSubClass = LoadClass<UJokerCardWidget>(nullptr, TEXT("/Game/UI/View/Joker/WBP_JokerCard.WBP_JokerCard_C"));
 
@@ -36,18 +42,11 @@ void UJokerSlotWidget::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_JockerSlot::FFieldNotificationClassDescriptor::JokerDatas,
 		FFieldValueChangedDelegate::CreateUObject(this, &UJokerSlotWidget::VM_FieldChanged_AddJokerCard));
-	
+
 	VMInst->AddFieldValueChangedDelegate(UVM_JockerSlot::FFieldNotificationClassDescriptor::CalculatorFlag,
 		FFieldValueChangedDelegate::CreateUObject(this, &UJokerSlotWidget::VM_FieldChanged_CalcualtorJokerCard));
 
 	SkillText->SetVisibility(ESlateVisibility::Collapsed);
-}
-
-void UJokerSlotWidget::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-
-	
 }
 
 void UJokerSlotWidget::VM_FieldChanged_AddJokerCard(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -183,6 +182,14 @@ void UJokerSlotWidget::SetSkillTextPos(UJokerCardWidget* CurEventCard)
 
 void UJokerSlotWidget::StartNextTimer()
 {
+	auto VM_CardDeck = TryGetViewModel<UVM_CardDeck>("VM_CardDeck", UVM_CardDeck::StaticClass());
+	check(VM_CardDeck);
+
+	if (VM_CardDeck->GetIsHandPlayFlag() == false)
+	{
+		TimerFuncQueue.Empty();
+	}
+
 	if (TimerFuncQueue.IsEmpty())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(JokerEffectTimerHandle);

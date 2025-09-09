@@ -15,6 +15,7 @@ void UPlayerInfoComponent::BeginPlay()
 	Super::BeginPlay();
 
 	auto PS = GetPlayerState();
+	auto VM = GetVMPlayerInfo();
 
 	PS->OnSetRoundCount.AddUObject(this, &UPlayerInfoComponent::UpdateRoundCount);
 	PS->OnSetEntiCount.AddUObject(this, &UPlayerInfoComponent::UpdateEntiCount);
@@ -27,6 +28,8 @@ void UPlayerInfoComponent::BeginPlay()
 	PS->OnSetCurrentScore.AddUObject(this, &UPlayerInfoComponent::UpdateCurrentScore);
 	PS->OnShowUIChip.AddUObject(this, &UPlayerInfoComponent::UpdateCalculatorChip);
 	PS->OnShowUIDrainage.AddUObject(this, &UPlayerInfoComponent::UpdateCalculatorDrainage);
+
+	VM->OnRefreshPlayerInfoViewData.AddUObject(this, &UPlayerInfoComponent::RefreshPlayerInfoView);
 
 	Init_PlayerInfo();
 }
@@ -48,6 +51,19 @@ void UPlayerInfoComponent::Init_PlayerInfo()
 	UpdateCardInDeck();
 	UpdateScene_PlayerInfo(EPlayerStateType::NONE);
 	UpdateCurrentScore();
+}
+
+void UPlayerInfoComponent::RefreshPlayerInfoView()
+{
+	auto PS = GetPlayerState();
+
+	UpdateRoundCount();
+	UpdateEntiCount();
+	UpdateGold();
+	UpdateCardInDeck();
+	UpdateUseChuckCount(PS->GetMaxChuckCount());
+	UpdateUseHandCount(PS->GetMaxHandCount());
+
 }
 
 UVM_PlayerInfo* UPlayerInfoComponent::GetVMPlayerInfo()
@@ -255,6 +271,10 @@ void UPlayerInfoComponent::UpdateScene_PlayerInfo(EPlayerStateType _InType)
 		BlindInfoActive = true;
 		Reward = Sigleton.GetBlindStat()[EntiCnt]->BossReward;
 		BlindGrade = Sigleton.GetBlindStat()[EntiCnt]->BossGrade;
+		
+		if (PS->GetCurBossType().Value == EBossType::WALL)
+			BlindGrade *= 2;
+		
 		BlindImageMatPath = PS->BossImagePath();
 		LinearColor = FLinearColor(1.000000, 1.0, 1.0, 1.000000);
 		++RoundCnt;

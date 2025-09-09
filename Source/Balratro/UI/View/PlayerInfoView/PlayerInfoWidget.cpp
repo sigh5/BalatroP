@@ -107,8 +107,6 @@ void UPlayerInfoWidget::NativeOnInitialized()
 
 	DynMat = UMaterialInstanceDynamic::Create(WaveMaterial, this);
 	check(DynMat);
-
-
 }
 
 void UPlayerInfoWidget::OnRunInfoButton()

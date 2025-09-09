@@ -35,7 +35,7 @@ protected:
 
 private:
 	void  Init_PlayerInfo();
-	
+	void  RefreshPlayerInfoView();
 
 private:
 	class UVM_PlayerInfo* GetVMPlayerInfo();
