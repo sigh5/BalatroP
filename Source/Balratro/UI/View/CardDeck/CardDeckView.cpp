@@ -351,7 +351,10 @@ void UCardDeckView::CardScroe_EffectText()
 			{
 				FDeckCardStat CurData = Data[i]->Info;
 				Card->MoveAnimmation();
-				SetCard_EffectOrder(Card, Data[i]->Info);
+
+				// 여기서 PreJokerEvent 있다면  SetCard_EffectOrder 마지막 if문에 조커VM에 shaking 넣어주는 함수 넣어주기
+
+				SetCard_EffectOrder(Card, Data[i]->Info); // 함수 수정 필요
 				break;
 			}
 		}
@@ -444,7 +447,8 @@ void UCardDeckView::SetCard_EffectOrder(UCardButtonWidget* EventCard, FDeckCardS
 
 				}, EventCard, 30);
 		}
-	
+
+
 	}
 }
 

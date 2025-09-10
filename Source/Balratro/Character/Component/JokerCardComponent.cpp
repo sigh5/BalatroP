@@ -192,6 +192,7 @@ void UJokerCardComponent::PlayCalculatorJoker(UJokerCard_Info* JokerCard, UHandI
 		if (CurCard->Info.SuitGrade == 1)
 		{
 			CurDriange += 4;
+			CurCard->PreEventJokerType = Type;
 		}
 
 	}
@@ -202,6 +203,7 @@ void UJokerCardComponent::PlayCalculatorJoker(UJokerCard_Info* JokerCard, UHandI
 			if (FRandomUtils::RandomSeed.RandRange(0, 1) == 1)
 			{
 				CurDriange *= 1.5;
+				CurCard->PreEventJokerType = Type;
 			}
 			
 		}

@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "GameData/JokerStat.h"
 #include "DeckCardStat.generated.h"
 
 UENUM(BlueprintType)
@@ -146,4 +147,6 @@ class UHandInCard_Info :public UObject
 public:
 	UPROPERTY(BlueprintReadOnly)
 	FDeckCardStat Info;
+
+	EJokerType PreEventJokerType = EJokerType::NONE;
 };

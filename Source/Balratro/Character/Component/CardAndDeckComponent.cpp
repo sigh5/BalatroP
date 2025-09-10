@@ -359,6 +359,7 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 	}
 
 	VM->SetCurCardsData(CurPlayCards);
+	
 	VM->SetRestCardEffectFlag(true);
 
 	PS->SetHandPlayFlag(false);

@@ -220,6 +220,17 @@ public:
 	void FindRankUpCard(OUT FDeckCardStat& CardStat);
 	void	 DeleteCards(TArray<class UHandInCard_Info*>& CardInfos);
 
+	void  AddPreEventJoker(class UJokerCard_Info* JokerCard)
+	{
+		CurShakingEventJoker.Add(JokerCard);
+	}
+
+	void ResetEventJoker()
+	{
+		CurShakingEventJoker.Empty();
+	}
+
+
 private:
 	int32 RoundCount;
 	
@@ -278,11 +289,8 @@ private:
 	UPROPERTY()
 	TArray<class UHandInCard_Info*> CurCalculatorCardInHands;  // Play시에 점수 계산할 카드들 (1~5장 사이) 단순 (Delay 시간)계산만 하므로 구조체로 만듦
 
-
 	UPROPERTY()
 	TArray<class UHandInCard_Info*> CurSelectedAllCard;  // 선택한 카드들 (점수계산없음)
-
-
 
 	UPROPERTY()
 	TArray<class UHandInCard_Info*> CurRestCardInHands;  // 플레이시도 카드 빼고 남아있는 카드들
@@ -299,5 +307,7 @@ private:
 	UPROPERTY()
 	TArray<FBoucherInfo> CurBoucherInfo;
 
+	UPROPERTY()
+	TArray<class UJokerCard_Info*> CurShakingEventJoker;  // 내가 가지고 있는 조커
 
 };
