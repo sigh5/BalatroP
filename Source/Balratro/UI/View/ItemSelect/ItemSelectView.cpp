@@ -21,6 +21,11 @@ UItemSelectView::UItemSelectView()
 void UItemSelectView::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+void UItemSelectView::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 
 	const auto VMInst = TryGetViewModel<UVM_ItemSelect>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
@@ -29,13 +34,6 @@ void UItemSelectView::NativeConstruct()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_ItemSelect::FFieldNotificationClassDescriptor::ShowTaroInfo,
 		FFieldValueChangedDelegate::CreateUObject(this, &UItemSelectView::VM_FieldChanged_TaroList));
-}
-
-void UItemSelectView::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-
-
 }
 
 void UItemSelectView::VM_FieldChanged_TaroList(UObject* Object, UE::FieldNotification::FFieldId FieldId)

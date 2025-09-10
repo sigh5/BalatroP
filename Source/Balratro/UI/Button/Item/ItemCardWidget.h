@@ -23,6 +23,8 @@ private:
 
 public:
 	void	SetInfo(FTaroStat& _inValue);
+	void	SetCreatePlayerInfoView(bool _InValue) { IsCreatePlayerInfoView = _InValue; }
+
 
 private:
 	UFUNCTION()
@@ -56,4 +58,6 @@ private:
 	uint8 IsSelected : 1;
 
 	uint8 IsCreated : 1;
+
+	uint8 IsCreatePlayerInfoView : 1;
 };

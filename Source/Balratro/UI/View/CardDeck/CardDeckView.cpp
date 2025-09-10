@@ -68,8 +68,7 @@ void UCardDeckView::NativeOnInitialized()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_CardDeck::FFieldNotificationClassDescriptor::Useless_EmblemType,
 		FFieldValueChangedDelegate::CreateUObject(this, &UCardDeckView::VM_FieldChanged_UselessBlindEmblem));
-
-
+	
 	SuitSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnSuitSortButtonClicked);
 	RankSortButton->OnClicked.AddDynamic(this, &UCardDeckView::OnRankSortButtonClicked);
 	HandPlayButton->OnClicked.AddDynamic(this, &UCardDeckView::OnHandPlayButtonClicked);
@@ -115,7 +114,15 @@ void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotific
 		BossSkillText->SetRenderOpacity(1.f);
 	}
 
-	//CardPanel->ClearChildren(); // 기존 이미지 제거
+	if (CurAllHandNum < HandCardButtons.Num())
+	{
+		for (int i = CurAllHandNum; i < HandCardButtons.Num(); ++i)
+		{
+			if(HandCardButtons[i] != nullptr)
+				HandCardButtons[i]->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+
 
 	for (int i = 0; i < CurAllHandNum; ++i)
 	{

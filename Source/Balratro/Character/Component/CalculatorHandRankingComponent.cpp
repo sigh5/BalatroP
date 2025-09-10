@@ -47,15 +47,13 @@ void UCalculatorHandRankingComponent::SetHandRankName(int32 CardNum, TArray<UHan
 	auto PS = GetPlayerState();
     auto VM_CardDeck = GetVMCardDeck();
 
-	if (PS->GetPlayerState() == EPlayerStateType::ITEM_SELECT)
-	{
-		PS->SetCurCalculatorCardInHands0(_DeckCardStat,false);
-	}
-	else
+	PS->SetAllCurSelectCard(_DeckCardStat);
+	
+	if (PS->GetPlayerState() != EPlayerStateType::ITEM_SELECT)
 	{
 		SetHandRankingType(CardNum, _DeckCardStat);
 	}
-    
+	
 	if (CardNum == 5)  // 내가 공격할 수 있는 최대의 패
     {
         VM_CardDeck->SetIsSelectedMax(true);

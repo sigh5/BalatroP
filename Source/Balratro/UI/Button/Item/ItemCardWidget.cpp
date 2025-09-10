@@ -9,6 +9,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/Button.h"
 #include "Components/Overlay.h"
+#include "Components/WrapBoxSlot.h"
 
 #include <Engine/World.h>
 #include <MVVMGameSubsystem.h>
@@ -66,21 +67,42 @@ void UItemCardWidget::OnItemButtonClicked()
 {
 	IsSelected = !IsSelected;
 
-	UHorizontalBoxSlot* HSlot = Cast<UHorizontalBoxSlot>(Slot);
-	FMargin Margin = HSlot->GetPadding();
-
-	if (IsSelected)
+	if (IsCreatePlayerInfoView == false)
 	{
-		Margin.Top -= 100.f;  // 선택한 카드 내리는 것
-		UseButton->SetVisibility(ESlateVisibility::Visible);
+		UHorizontalBoxSlot* HSlot = Cast<UHorizontalBoxSlot>(Slot);
+		FMargin Margin = HSlot->GetPadding();
+
+		if (IsSelected)
+		{
+			Margin.Top -= 100.f;  // 선택한 카드 내리는 것
+			UseButton->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			Margin.Top += 100.f;  // 선택한 카드 올리는 것
+			UseButton->SetVisibility(ESlateVisibility::Collapsed);
+		}
+
+		HSlot->SetPadding(Margin);
 	}
 	else
 	{
-		Margin.Top += 100.f;  // 선택한 카드 올리는 것
-		UseButton->SetVisibility(ESlateVisibility::Collapsed);
-	}
+		UWrapBoxSlot* HSlot = Cast<UWrapBoxSlot>(Slot);
+		FMargin Margin = HSlot->GetPadding();
 
-	HSlot->SetPadding(Margin);
+		if (IsSelected)
+		{
+			Margin.Top -= 50.f;  // 선택한 카드 내리는 것
+			UseButton->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			Margin.Top += 50.f;  // 선택한 카드 올리는 것
+			UseButton->SetVisibility(ESlateVisibility::Collapsed);
+		}
+
+		HSlot->SetPadding(Margin);
+	}
 }
 
 void UItemCardWidget::OnItemUseClicked()
@@ -118,6 +140,11 @@ void UItemCardWidget::OnItemUseClicked()
 
 void UItemCardWidget::ChangeImage()
 {
+	if (!TaroData.SpriteAsset.IsValid())
+	{
+		TaroData.SpriteAsset.LoadSynchronous();
+	}
+
 	if (UPaperSprite* Sprite = TaroData.SpriteAsset.Get())
 	{
 		FSlateBrush SpriteBrush;
@@ -126,7 +153,6 @@ void UItemCardWidget::ChangeImage()
 		SpriteBrush.DrawAs = ESlateBrushDrawType::Image;
 		MainImage->SetBrush(SpriteBrush);
 	}
-
 }
 
 void UItemCardWidget::CreateImage()

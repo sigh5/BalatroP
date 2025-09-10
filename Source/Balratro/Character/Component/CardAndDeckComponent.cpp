@@ -71,7 +71,6 @@ void UCardAndDeckComponent::SetVisibleCardDeckView(EPlayerStateType InValue)
 
 	if (InValue == EPlayerStateType::SMALL_BLIND || InValue == EPlayerStateType::BIG_BLIND || InValue == EPlayerStateType::BOSS_BLIND)
 	{
-		FASTLOGTEXT;
 		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", true));
 		VM_CardDeck->SetItemSelectFlag(false);
 		InitDeck();
@@ -120,10 +119,7 @@ void UCardAndDeckComponent::FinishHandPlay()
 	{
 		if (PS->GetUseHandCount() == PS->GetMaxHandCount())
 		{
-			// 게임 종료 뷰 띄우기
-			UE_LOG(LogTemp, Warning, TEXT("FinishHandPlay_HandPlayNumNone0"));
 			PS->SetPlayerState(EPlayerStateType::GAME_OVER);
-
 		}
 		else
 		{
@@ -155,10 +151,9 @@ void UCardAndDeckComponent::UseTaroItem(FTaroStat& TaroStat)
 	auto PS = GetPlayerState();
 	auto VM = GetVMCardDeck();
 
-	auto TaroTable = PS->GetTaroStatTableModify();
+	auto TaroTable = PS->GetTaroStatTable();
 
 	int32 TaroSelectCount = PS->GetCurSelectTaroNum();
-
 	for (auto& Info : TaroTable)
 	{
 		if (Info->Info.index == TaroStat.index)
@@ -168,63 +163,58 @@ void UCardAndDeckComponent::UseTaroItem(FTaroStat& TaroStat)
 		}
 	}
 
-	UseTaroCard(TaroStat.EnforceType);
+	UseTaroCard(TaroStat);
 
-	/*else if (TaroStat.SealType != 0)
+	if (PS->GetPlayerState() == EPlayerStateType::ITEM_SELECT)
 	{
-		UseSealTaro(TaroStat.SealType);
-	}
-	else if (TaroStat.GhostCardType != 0)
-	{
-		UseGhostTaro(TaroStat.GhostCardType);
-	}*/
-
-	VM->SetCurrentAllHands(PS->GetCurrentAllHands());
-
-	// 현재 부스터팩에서 사용할 타로 횟수가 끝나면 자동으로 상점으로 변환
-	if (TaroSelectCount - 1 == 0)
-	{
-		GetWorld()->GetTimerManager().SetTimer(
-			ItemSkipTimerHandle,
-			[VM]()
-			{
-				if (VM)
+		// 현재 부스터팩에서 사용할 타로 횟수가 끝나면 자동으로 상점으로 변환
+		if (TaroSelectCount - 1 == 0)
+		{
+			GetWorld()->GetTimerManager().SetTimer(
+				ItemSkipTimerHandle,
+				[VM]()
 				{
-					VM->SkipButtonClicked();
-				}
-			},
-			2.5f,
-			false
-		);
-	}
-	else
-	{
-		PS->SetCurSelectTaroNum(TaroSelectCount - 1);
-		GetWorld()->GetTimerManager().ClearTimer(TotalScoreHandle);
+					if (VM)
+					{
+						VM->SkipButtonClicked();
+					}
+				},
+				2.f,
+				false
+			);
+		}
+		else
+		{
+			PS->SetCurSelectTaroNum(TaroSelectCount - 1);
+			GetWorld()->GetTimerManager().ClearTimer(TotalScoreHandle);
+		}
 	}
 
 }
 
-void UCardAndDeckComponent::UseTaroCard(int32 EnhanceType)
+void UCardAndDeckComponent::UseTaroCard(FTaroStat& TaroStat)
 {
+	int32 EnhanceType = TaroStat.EnforceType;
+
 	if (EnhanceType <= 12)
 	{
 		UseTaroSkillInCard(EnhanceType);
-
 		PrevUseTaroCard = static_cast<ETaroSkillType>(EnhanceType);
 	}
 	else
 	{
 		ETaroSkillType CurType = static_cast<ETaroSkillType>(EnhanceType);
-
-		auto VM_PlayerInfo = GetVMPlayerInfo(); check(VM_PlayerInfo);
+		auto PS = GetPlayerState();
+		auto VM_PlayerInfo = GetVMPlayerInfo(); 
+		auto VM_CardDeck = GetVMCardDeck();
 
 		if (CurType == ETaroSkillType::FOOL)
 		{
 			if (PrevUseTaroCard == ETaroSkillType::NONE)
 				return;
 
-			VM_PlayerInfo->AddUseBoxData(PrevUseTaroCard);
+			FTaroStat PrevUseTaroStat = FindTaroData(PrevUseTaroCard);
+			VM_PlayerInfo->AddUseBoxData(PrevUseTaroStat);
 
 			PrevUseTaroCard = ETaroSkillType::NONE;
 		}
@@ -234,16 +224,18 @@ void UCardAndDeckComponent::UseTaroCard(int32 EnhanceType)
 		}
 		else if (CurType == ETaroSkillType::CREATE_TARO_TWO)
 		{
-			ETaroSkillType Temp0 = ETaroSkillType::FOOL;
-			ETaroSkillType Temp1 = ETaroSkillType::CHANGE_CLOVER;
+			auto Temp0 = FindTaroData(ETaroSkillType::FOOL);
+			auto Temp1 = FindTaroData(ETaroSkillType::CHANGE_CLOVER);
+
+			// Random 값 만들기
 
 			VM_PlayerInfo->AddUseBoxData(Temp0);
 			VM_PlayerInfo->AddUseBoxData(Temp1);
+
+			VM_CardDeck->SetCurrentAllHands(PS->GetCurrentAllHands());
 		}
 		else if (CurType == ETaroSkillType::GOLD_MUL_2)
 		{
-			auto PS = GetPlayerState();
-
 			int32 CurGold = PS->GetGold();
 
 			if (CurGold >= 20)
@@ -255,42 +247,36 @@ void UCardAndDeckComponent::UseTaroCard(int32 EnhanceType)
 		}
 		else if (CurType == ETaroSkillType::RANK_UP)
 		{
-			auto PS = GetPlayerState();
-			auto& Cards = PS->GetCurCalculatorCardInHands();
+			auto& Cards = PS->GetAllCurSelectCard();
 
 			for (auto& Card : Cards)
 			{
-				// 카드 랭크업 하기
-				// 그리고 애니메이션 넣기
+				PS->FindRankUpCard(Card->Info);
 			}
-
+			VM_CardDeck->SetCurrentAllHands(PS->GetCurrentAllHands());
 		}
 		else if (CurType == ETaroSkillType::DELETE_CARD)
 		{
-			auto PS = GetPlayerState();
-			auto& Cards = PS->GetCurCalculatorCardInHands();
+			auto SelectedCards = PS->GetAllCurSelectCard();
 
-			for (auto& Card : Cards)
-			{
-				// 카드 삭제하기
-				// 그리고 애니메이션 넣기
-			}
+			PS->DeleteCards(SelectedCards);
+
+			VM_CardDeck->SetCurrentAllHands(PS->GetCurrentAllHands());
 		}
 		else if (CurType == ETaroSkillType::CARD_CHANGE)
 		{
-			auto PS = GetPlayerState();
-			auto& Cards = PS->GetCurCalculatorCardInHands();
+			auto& Cards = PS->GetAllCurSelectCard();
 
-			for (auto& Card : Cards)
+			if (Cards.Num() != 2)
 			{
-				// 위치 스왑하기
-				// 그리고 애니메이션 넣기
+				return;
 			}
-		}
+			Cards[0]->Info = Cards[1]->Info;
 
+			VM_CardDeck->SetCurrentAllHands(PS->GetCurrentAllHands());
+		}
 	}
 }
-
 
 void UCardAndDeckComponent::UseSealTaro(int32 SealType)
 {
@@ -314,7 +300,8 @@ void UCardAndDeckComponent::AllEffectViewFinish()
 void UCardAndDeckComponent::UseTaroSkillInCard(int32 EnhanceType)
 {
 	auto PS = GetPlayerState();
-	auto& Cards = PS->GetCurCalculatorCardInHands();
+	auto& Cards = PS->GetAllCurSelectCard(); // 수정 필요
+	auto VM_CardDeck = GetVMCardDeck();
 
 	TMap<ETaroSkillType, FSuitChangeInfo> SuitChangeMap = {
 	   { ETaroSkillType::CHANGE_HEART,   { 'H', 3 } },
@@ -346,6 +333,8 @@ void UCardAndDeckComponent::UseTaroSkillInCard(int32 EnhanceType)
 		else
 			Card->Info.EnforceType = static_cast<ETaroSkillType>(EnhanceType);
 	}
+
+	VM_CardDeck->SetCurrentAllHands(PS->GetCurrentAllHands());
 }
 
 void UCardAndDeckComponent::SetPlayCardEffect()
@@ -395,7 +384,7 @@ void UCardAndDeckComponent::DrawCard(int32 DrawCardNum)
 {
 	auto PS = GetPlayerState();
 	auto VM = GetVMCardDeck();
-	auto& MyDeckStatTable = PS->GetDeckStatTableModify();
+	auto& MyDeckStatTable = PS->GetDeckStatTable();
 
 	for (int i = CurDrawIndex; i < CurDrawIndex + DrawCardNum; ++i)
 	{
@@ -589,4 +578,29 @@ UVM_PlayerInfo* UCardAndDeckComponent::GetVMPlayerInfo()
 
 	const auto Found = VMCollection->FindViewModelInstance(Context);
 	return Cast<UVM_PlayerInfo>(Found);
+}
+
+FTaroStat UCardAndDeckComponent::FindTaroData(ETaroSkillType _FindType)
+{
+	auto PS = GetPlayerState();
+
+	auto TaroTable = PS->GetTaroStatTable();
+
+	FTaroStat ResultData;
+
+	int32 FindInt = static_cast<int32>(_FindType);
+
+	for (auto Info : TaroTable)
+	{
+		if (Info->Info.EnforceType == FindInt)
+		{
+			ResultData = Info->Info;
+			break;
+		}
+	}
+
+	if (!ResultData.SpriteAsset.IsValid())
+		ResultData.SpriteAsset.LoadSynchronous();
+
+	return ResultData;
 }

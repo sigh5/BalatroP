@@ -22,6 +22,7 @@ public:
 
 private:
 	virtual void NativeConstruct()override;
+	virtual void NativeOnInitialized()override;
 
 	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void   NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
@@ -46,6 +47,7 @@ public:
 	void					ChuckAnimation();
 
 	void					SetGoadEvent();
+
 private:
 	UFUNCTION()
 	void OnFilpAnimationFinished();

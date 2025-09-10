@@ -34,6 +34,11 @@ UCardButtonWidget::UCardButtonWidget()
 void UCardButtonWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
+
+void UCardButtonWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 
 	if (bIsDummyData == true)
 	{
@@ -241,6 +246,7 @@ void UCardButtonWidget::SetInfo(UHandInCard_Info* _inValue)
 {
 	CardInfoData = _inValue;
 
+	SetVisibility(ESlateVisibility::Visible);
 	MainButton->SetRenderOpacity(1.0f);
 
 	if (IsCreated == false)
@@ -268,13 +274,19 @@ void UCardButtonWidget::ChangeImage()
 {
 	LoadEnhanceImage();
 
-	if (UPaperSprite* Sprite = CardInfoData->Info.CardSprite.Get())
+
+	if (CardInfoData->Info.EnforceType == ETaroSkillType::STONE && 
+		CardInfoData->Info.EnforceSprite.Get())
+	{
+		MainImage->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else if (UPaperSprite* Sprite = CardInfoData->Info.CardSprite.Get())
 	{
 		MainImageSpriteBrush.SetResourceObject(Sprite);
 		MainImageSpriteBrush.DrawAs = ESlateBrushDrawType::Image;
 		MainImageSpriteBrush.SetImageSize(FVector2D(100.f, 150.f));
 		MainImage->SetBrush(MainImageSpriteBrush);
-
+		MainImage->SetVisibility(ESlateVisibility::Visible);
 	}
 
 	if (UPaperSprite* Sprite = CardInfoData->Info.EnforceSprite.Get())
@@ -284,7 +296,7 @@ void UCardButtonWidget::ChangeImage()
 		EnhanceImageSpriteBrush.SetImageSize(FVector2D(100.f, 150.f));
 		Enhance_Image->SetBrush(EnhanceImageSpriteBrush);
 	}
-
+	
 	SetGoadEvent();
 }
 

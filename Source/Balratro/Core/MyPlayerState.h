@@ -17,17 +17,11 @@
 // 디버그일때만 사용 릴리즈 일때 꺼야됌
 // 초기 시작  Bline_View_TEST, PlayerInfoView_VIEW_TEST ,JokerSlotView_VIEW_TEST
 //#define Bline_View_TEST
-#define Store_View_TEST
-#define PlayerInfoView_VIEW_TEST
-#define JokerSlotView_VIEW_TEST
+//#define Store_View_TEST
+//#define PlayerInfoView_VIEW_TEST
+//#define JokerSlotView_VIEW_TEST
 //#define CadDeckView_View_TEST
 //#define HandRankingView_View_TEST
-
-#define FASTLOGTEXT UE_LOG(LogTemp, Warning, TEXT("?"))
-#define FASTLOGTEXT_NUM(n) UE_LOG(LogTemp, Warning, TEXT("%d"),n)
-
-
-
 
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseChuck, int32);
@@ -149,7 +143,9 @@ public:
 
 	FORCEINLINE const TArray<class UHandInCard_Info*>& GetCurCalculatorCardInHands() const { return CurCalculatorCardInHands; }
 	void  SetCurCalculatorCardInHands(TArray<class UHandInCard_Info*>& InValue);
-	void  SetCurCalculatorCardInHands0(TArray<UHandInCard_Info*>& InValue,bool bPlay = true);
+
+	FORCEINLINE const TArray<class UHandInCard_Info*>& GetAllCurSelectCard() const { return CurSelectedAllCard; }
+	void  SetAllCurSelectCard(TArray<UHandInCard_Info*>& InValue);
 
 
 	FORCEINLINE const EPlayerStateType GetPlayerState() const { return CurPlayerState; }
@@ -185,7 +181,6 @@ public:
 	FORCEINLINE const class UBoosterPackData* GetSelectPackType() { return CurSelcetPackType; }
 	FORCEINLINE void  SetSelectPackType(class UBoosterPackData* InValue) { CurSelcetPackType = InValue; }
 
-	FORCEINLINE TArray<class UTaroStat_Info*>& GetTaroStatTableModify() { return CurTaroStatTable; }
 	FORCEINLINE const TArray<class UTaroStat_Info*>& GetTaroStatTable()  const { return CurTaroStatTable; }
 	FORCEINLINE void  SetTaroStatTable(class TArray<class UTaroStat_Info*>& InValue) { CurTaroStatTable = InValue; }
 
@@ -220,8 +215,10 @@ public:
 
 	class UHandRanking_Info* MostUseHandRankingName();
 
-
 	void		ResetInfos();
+
+	void FindRankUpCard(OUT FDeckCardStat& CardStat);
+	void	 DeleteCards(TArray<class UHandInCard_Info*>& CardInfos);
 
 private:
 	int32 RoundCount;
@@ -280,6 +277,12 @@ private:
 
 	UPROPERTY()
 	TArray<class UHandInCard_Info*> CurCalculatorCardInHands;  // Play시에 점수 계산할 카드들 (1~5장 사이) 단순 (Delay 시간)계산만 하므로 구조체로 만듦
+
+
+	UPROPERTY()
+	TArray<class UHandInCard_Info*> CurSelectedAllCard;  // 선택한 카드들 (점수계산없음)
+
+
 
 	UPROPERTY()
 	TArray<class UHandInCard_Info*> CurRestCardInHands;  // 플레이시도 카드 빼고 남아있는 카드들

@@ -188,17 +188,17 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool BossSkillUse = false;
 
-	UPROPERTY()
-	bool IsSelectedMax = false;
-
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	EBossType	CurrentBossType;
 
-	
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	int32 Useless_EmblemType = 0; // 0 None , 1 Space,  2 Dia , 3 Heart , 4  Clover
+
+	UPROPERTY()
+	bool IsSelectedMax = false;
+
 	UPROPERTY()
 	bool IsHandPlayFlag = false; // false -> 카드 이펙트 계산 끄기, true 카드 이펙트 게산
 
-	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	int32 Useless_EmblemType = 0; // 0 None , 1 Space,  2 Dia , 3 Heart , 4  Clover
 
 };

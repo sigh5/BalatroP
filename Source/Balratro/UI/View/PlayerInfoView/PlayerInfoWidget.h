@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UI/View/Core/BBUserWidgetBase.h"
 #include "GameData/EnumDatas.h"
+#include "GameData/TaroStat.h"
 #include "PlayerInfoWidget.generated.h"
 
 /**
@@ -25,7 +26,6 @@ protected:
 private:
 	UFUNCTION()
 	void					OnRunInfoButton();
-
 
 private: /*VM_PlayerInfo*/
 	void VM_FieldChanged_Score(UObject* Object, UE::FieldNotification::FFieldId FieldId);
@@ -53,9 +53,9 @@ private: /*VM_PlayerInfo*/
 private:
 	UWidgetAnimation* GetAnimationByName(FName& AnimName) const;
 	void			FillAnimMap();
-
 	void			StartFinishAnim();
 
+	class UItemCardWidget* ReuseTaroItem(FTaroStat _inValue ,int32 Index,int32 MaxIndex);
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -96,11 +96,6 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UBorder> drainageBorder;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UWrapBox> UseTaroWrapBox;
-
-
 	/* 블라인드 이미지 */
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UBorder> CurBlindNameBorder;
@@ -129,6 +124,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UImage> ShopImage;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UWrapBox> UseTaroWrapBox;
 /*Button*/
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> RunInfoBtn;
@@ -136,20 +133,22 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> OptionBtn;
 
-
+private:
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TObjectPtr<class UMaterialInterface> WaveMaterial;
 
 	UPROPERTY()
 	TObjectPtr<class UMaterialInstanceDynamic> DynMat;
 
-
-
-
-
 	FVector2D		MainOrderPos;
 
+	UPROPERTY()
+	TMap<FName, class UWidgetAnimation*> AnimationsMap;	
 
-	TMap<FName, class UWidgetAnimation*> AnimationsMap;
-	
+private:
+	UPROPERTY()
+	TSubclassOf<class UItemCardWidget> ItemCardWidgetSubClass;
+
+	UPROPERTY()
+	TArray<class UItemCardWidget*>  TaroCardData;
 };

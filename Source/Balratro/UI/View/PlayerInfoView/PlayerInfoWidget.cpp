@@ -11,14 +11,16 @@
 #include "Components/Border.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Button.h"
+#include "Animation/WidgetAnimation.h"
+#include "Components/WrapBox.h"
+#include "Components/WrapBoxSlot.h"
 
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "UI/MVVM/ViewModel/VM_BlindSelect.h"
 #include "UI/MVVM/ViewModel/VM_CardDeck.h"
 
-#include "Animation/WidgetAnimation.h"
-
+#include "UI/Button/Item/ItemCardWidget.h"
 
 
 UPlayerInfoWidget::UPlayerInfoWidget()
@@ -44,6 +46,8 @@ void UPlayerInfoWidget::NativeConstruct()
 void UPlayerInfoWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	ItemCardWidgetSubClass = LoadClass<UItemCardWidget>(nullptr, TEXT("/Game/UI/View/ItemSelectView/WBP_Taro.WBP_Taro_C"));
 
 	FillAnimMap();
 
@@ -101,7 +105,6 @@ void UPlayerInfoWidget::NativeOnInitialized()
 
 	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::BlindMaterialPath,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage));
-
 
 	VMInst->AddFieldValueChangedDelegate(UVM_PlayerInfo::FFieldNotificationClassDescriptor::UseBoxData,
 		FFieldValueChangedDelegate::CreateUObject(this, &UPlayerInfoWidget::VM_FieldChanged_UseBoxData));
@@ -332,10 +335,26 @@ void UPlayerInfoWidget::VM_FieldChanged_BlindPresentImage(UObject* Object, UE::F
 
 void UPlayerInfoWidget::VM_FieldChanged_UseBoxData(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
-	const auto VMInstance = Cast<UVM_PlayerInfo>(Object);
+	const auto VMInstance = Cast<UVM_PlayerInfo>(Object); check(VMInstance);
 
+	auto CurTaroDatas =  VMInstance->GetUseBoxData();
+	int32 DataNum = CurTaroDatas.Num();
 
+	for (int i = 0; i < DataNum; ++i)
+	{
+		UItemCardWidget* NewButton = ReuseTaroItem(CurTaroDatas[i], i, 2);
 
+		UWrapBoxSlot* BoxSlot = UseTaroWrapBox->AddChildToWrapBox(NewButton);
+		if (BoxSlot)
+		{
+			BoxSlot->SetHorizontalAlignment(HAlign_Center);
+			BoxSlot->SetVerticalAlignment(VAlign_Center);
+			BoxSlot->SetPadding(FMargin(10.0f, 10.0f));
+			BoxSlot->SetFillEmptySpace(false);  // true로 하면 빈 공간까지 채워서 늘어남
+		}
+
+		TaroCardData.Add(NewButton);
+	}
 
 
 }
@@ -396,5 +415,25 @@ void UPlayerInfoWidget::StartFinishAnim()
 		ChipBorder->SetBrushFromMaterial(nullptr);
 		drainageBorder->SetBrushFromMaterial(nullptr);
 	}
+}
+
+UItemCardWidget* UPlayerInfoWidget::ReuseTaroItem(FTaroStat _inValue, int32 Index, int32 MaxIndex)
+{
+	UItemCardWidget* NewButton = nullptr;
+	
+	if (TaroCardData.Num() < MaxIndex)
+	{
+		NewButton = CreateWidget<UItemCardWidget>(this, ItemCardWidgetSubClass);
+	}
+	else
+	{
+		NewButton = TaroCardData[Index];
+	}
+	check(NewButton);
+
+	NewButton->SetCreatePlayerInfoView(true);
+	NewButton->SetInfo(_inValue);
+
+	return NewButton;
 }
 

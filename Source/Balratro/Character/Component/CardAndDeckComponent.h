@@ -48,13 +48,15 @@ private:
 private:
 	void	UseTaroItem(FTaroStat& TaroStat);
 	
-	void	UseTaroCard(int32 EnhanceType);
+	void	UseTaroCard(FTaroStat& TaroStat);
 	void	UseSealTaro(int32 SealType);
 	void	UseGhostTaro(int32 GhostType);
 
 	void	AllEffectViewFinish();
 
 	void	UseTaroSkillInCard(int32 EnhanceType);
+
+	FTaroStat FindTaroData(ETaroSkillType _FindType);
 
 
 private:

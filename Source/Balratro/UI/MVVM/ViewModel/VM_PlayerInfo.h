@@ -6,6 +6,7 @@
 #include "MVVMViewModelBase.h"
 #include "GameData/DeckCardStat.h"
 #include "GameData/HandRankingStat.h"
+#include "GameData/TaroStat.h"
 #include "VM_PlayerInfo.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnClickedRunInfoButton);
@@ -204,12 +205,12 @@ public:
 
 	void	RefreshPlayerInfoViewEvent() { OnRefreshPlayerInfoViewData.Broadcast(); }
 
-	const TArray<ETaroSkillType>& GetUseBoxData() const
+	const TArray<FTaroStat>& GetUseBoxData() const
 	{
 		return UseBoxData;
 	}
 
-	void SetUseBoxData(TArray<ETaroSkillType>& InValue)
+	void SetUseBoxData(TArray<FTaroStat>& InValue)
 	{
 		//UE_MVVM_SET_PROPERTY_VALUE(BlindGrade, InValue);
 		UseBoxData = InValue;
@@ -217,8 +218,11 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(UseBoxData);
 	}
 
-	void AddUseBoxData(ETaroSkillType& Datas)
+	void AddUseBoxData(FTaroStat& Datas)
 	{
+		if (UseBoxData.Num() > 2)
+			return;
+
 		UseBoxData.Add(Datas);
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(UseBoxData);
 	}
@@ -274,6 +278,6 @@ private:
 	FString BlindMaterialPath ;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	TArray<ETaroSkillType> UseBoxData;
+	TArray<FTaroStat> UseBoxData;
 
 };

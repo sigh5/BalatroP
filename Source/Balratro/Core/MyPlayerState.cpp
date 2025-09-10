@@ -4,6 +4,7 @@
 #include "Core/MyPlayerState.h"
 #include "GameData/BoucherStat.h"	
 #include "GameData/Utills.h"
+#include "Singleton/BBGameSingleton.h"
 
 AMyPlayerState::AMyPlayerState()
 	:RoundCount(0), EntiCount(0), UseHandCount(0), MaxChuckCount(3), UseChuckCount(0), CurrentScore(0),
@@ -87,9 +88,9 @@ void AMyPlayerState::SetCurCalculatorCardInHands(TArray<class UHandInCard_Info*>
 	}
 }
 
-void AMyPlayerState::SetCurCalculatorCardInHands0(TArray<UHandInCard_Info*>& InValue, bool bPlay)
+void AMyPlayerState::SetAllCurSelectCard(TArray<UHandInCard_Info*>& InValue)
 {
-	CurCalculatorCardInHands.Empty();
+	CurSelectedAllCard.Empty();
 	
 	for (auto CurHandsCard : CurrentAllHands)
 	{
@@ -97,21 +98,10 @@ void AMyPlayerState::SetCurCalculatorCardInHands0(TArray<UHandInCard_Info*>& InV
 		{
 			if (CurHandsCard->Info == CardStat->Info)
 			{
-				if (bPlay)
-				{
-					CurHandsCard->Info.UseNum++;
-				}
-
-				CurCalculatorCardInHands.Add(CurHandsCard);
-			
+				CurSelectedAllCard.Add(CurHandsCard);
 				break;
 			}
 		}
-	}
-
-	if (InValue.Num() == 0)
-	{
-		SetCurHandCard_Type(EPokerHand::NONE);
 	}
 }
 
@@ -219,6 +209,62 @@ void AMyPlayerState::ResetInfos()
 	CurTaroStatTable.Empty();
 
 	SetPlayerState(EPlayerStateType::RESET_GAME);
+}
+
+void AMyPlayerState::FindRankUpCard(OUT FDeckCardStat& CardStat)
+{
+	int32 CurRankGrade = CardStat.RankGrade;
+
+	if (CurRankGrade - 1 == 0)
+	{
+		CurRankGrade = 13;
+	}
+	else
+	{
+		CurRankGrade -= 1;
+	}
+
+	auto OriginData = UBBGameSingleton::Get().GetDeckStatTable();
+
+	FDeckCardStat FindData; 
+
+	for (auto Data : OriginData)
+	{
+		if (CurRankGrade == Data->RankGrade && CardStat.SuitGrade == Data->SuitGrade)
+		{
+			FindData = *Data;
+			break;
+		}
+	}
+	
+	CardStat.RankGrade = CurRankGrade;
+	CardStat.CardSprite = FindData.CardSprite;
+
+	if (!CardStat.CardSprite.IsValid())
+		CardStat.CardSprite.LoadSynchronous();
+
+}
+
+void AMyPlayerState::DeleteCards(TArray<class UHandInCard_Info*>& CardInfos)
+{
+	for (UHandInCard_Info* Card : CardInfos)
+	{
+		CurrentAllHands.Remove(Card);  // 원본에서 삭제
+	}
+
+	for (UHandInCard_Info* Card : CardInfos)
+	{
+		Deck_Stat.Remove(Card);  // 원본에서 삭제
+	}
+
+	int32 CurDeckNum = CardInDeckNum;
+	CurDeckNum -= CardInfos.Num();
+
+	SetCardInDeckNum(CurDeckNum);
+
+
+	UE_LOG(LogTemp, Warning, TEXT("CurrentAllHands Num :%d "), CurrentAllHands.Num());
+
 }
 
 FString AMyPlayerState::BossImagePath()

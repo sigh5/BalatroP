@@ -203,33 +203,34 @@ TSet<int32> UItemSelectComponent::SetTaroType(int32 SetTaroNum)
 {
 	auto PS = GetPlayerState();
 
-	/*TSet<int32> IndexArr;
+	//TSet<int32> IndexArr;
 
-	while (IndexArr.Num() < SetTaroNum)
-	{
-		int32 TotalWeight = 0;
-		for (auto& Elem : PS->GetTaroStatTable())
-			TotalWeight += Elem->Info.weight;
+	//while (IndexArr.Num() < SetTaroNum)
+	//{
+	//	int32 TotalWeight = 0;
+	//	for (auto& Elem : PS->GetTaroStatTable())
+	//		TotalWeight += Elem->Info.weight;
 
-		int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
-		int32 Accumulated = 0;
+	//	int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
+	//	int32 Accumulated = 0;
 
-		for (auto& Elem : PS->GetTaroStatTable())
-		{
-			Accumulated += Elem->Info.weight;
-			if (RandomValue <= Accumulated)
-			{
-				IndexArr.Add(Elem->Info.index);
-				break;
-			}
-		}
-	}*/
+	//	for (auto& Elem : PS->GetTaroStatTable())
+	//	{
+	//		Accumulated += Elem->Info.weight;
+	//		if (RandomValue <= Accumulated)
+	//		{
+	//			IndexArr.Add(Elem->Info.index);
+	//			break;
+	//		}
+	//	}
+	//}
+	//
 
 	// 미구현 목록 0,2,4,9,11,12,13   
 	// 조커 카드 구현 하고 해야되는것 10,14,20,22
 
 	//  // 스톤카드 수정필요 
-	TSet<int32> IndexArr = { 0,2,4,9,11 };
+	TSet<int32> IndexArr = { 16,4,9,11,12 };
 
 	
 	return IndexArr;
