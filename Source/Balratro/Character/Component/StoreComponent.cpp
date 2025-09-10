@@ -97,7 +97,7 @@ void UStoreComponent::SetUpStoreItem()
 
 		int32 ItemIndex = i; //static_cast<int32>(ItemType);
 		FString ItemIndexStr = FString::FromInt(ItemIndex);
-		FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Jokers_Sprite_%s.Jokers_Sprite_%s"), *ItemIndexStr, *ItemIndexStr);
+		FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
 		CurJoker->Info.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
 		if (!CurJoker->Info.CardSprite.IsValid())
 		{
@@ -216,7 +216,11 @@ EBoosterPackType UStoreComponent::SetBoosterPackType()
 
 EJokerType UStoreComponent::SetJokerType()
 {
-	return EJokerType::BASE_JOKER;
+	EJokerType CurType = EJokerType::BASE_JOKER;
+
+
+
+	return CurType;
 }
 
 void UStoreComponent::StartBoosterPackEvent(UBoosterPackData* InData)
@@ -238,18 +242,10 @@ void UStoreComponent::StartBoosterPackEvent(UBoosterPackData* InData)
 
 	check(CurBoosterPack);
 
-	/*
-		1) 타로카드 고르는 View 키기
-		2) 부스터팩 정보 가지고와서 아이템뷰에 타로 카드 넣기
-	*/
-
 	PS->SetSelectPackType(CurBoosterPack);
 	PS->SetPlayerState(EPlayerStateType::ITEM_SELECT);
 
-
 	VM_MainMenu->SetClearFlag(true);
-
-	//VM_Stroe->SetBoosterPackTypes(BoosterPacks);
 }
 
 UVM_MainMenu* UStoreComponent::GetVMMainWidget()

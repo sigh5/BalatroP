@@ -22,5 +22,8 @@ class BALRATRO_API IJokerCalculatorInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void CalculatorJokerSkill(OUT int32& CurChip, OUT float& CurDriange) = 0;
+	virtual void LastCalculatorJokerSkill(OUT int32& CurChip, OUT float& CurDriange) = 0;
+
+	virtual void CalculatorCardJokerSkill(class UHandInCard_Info* CurCard, OUT int32& CurChip, OUT float& CurDriange) = 0;
+
 };

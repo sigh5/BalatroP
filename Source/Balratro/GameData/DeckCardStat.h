@@ -48,7 +48,7 @@ enum class GhostCardStatType : uint8
 };
 
 
-UENUM(BlueprintType)
+/*UENUM(BlueprintType)
 enum class ETaroType : uint8
 {
 	FOOL = 0, // 이카드 제외 마지막에 타로 카드 생성   // 0
@@ -74,7 +74,7 @@ enum class ETaroType : uint8
 	CREATE_Joker,  // 조커 카드생성					=> 조커 카드 구현먼저 하고
 	CHANGE_SPADE,  // 스페이드 3장 바꿈				// 0
 	CREATE_LEGEND, // 전설 조커 카드 생성				=> 조커 카드 구현먼저 하고
-};
+};*/
 
 USTRUCT(BlueprintType)
 struct FDeckCardStat : public FTableRowBase

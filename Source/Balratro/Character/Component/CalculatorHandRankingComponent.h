@@ -28,7 +28,9 @@ private:
 	void	SetStillCards();
 
 	void	Calculator_StillCard(OUT int32& CurChip, OUT float& CurDriange); // CurDriange이거 때문에
-	void	Calculator_Joker(OUT int32& CurChip, OUT float& CurDriange);
+	void	LastCalculator_Joker(OUT int32& CurChip, OUT float& CurDriange);
+
+	void	Calculator_CardAndJoker(UHandInCard_Info* CurCard , OUT int32& CurChip, OUT float& CurDriange);
 
 	int32	ResultScore();
 

@@ -16,10 +16,10 @@
 // First  Test
 // 디버그일때만 사용 릴리즈 일때 꺼야됌
 // 초기 시작  Bline_View_TEST, PlayerInfoView_VIEW_TEST ,JokerSlotView_VIEW_TEST
-//#define Bline_View_TEST
+#define Bline_View_TEST
 //#define Store_View_TEST
-//#define PlayerInfoView_VIEW_TEST
-//#define JokerSlotView_VIEW_TEST
+#define PlayerInfoView_VIEW_TEST
+#define JokerSlotView_VIEW_TEST
 //#define CadDeckView_View_TEST
 //#define HandRankingView_View_TEST
 

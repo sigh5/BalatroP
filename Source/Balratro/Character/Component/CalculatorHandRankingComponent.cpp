@@ -261,14 +261,27 @@ void UCalculatorHandRankingComponent::Calculator_StillCard(OUT int32& CurChip, O
 	}
 }
 
-void UCalculatorHandRankingComponent::Calculator_Joker(OUT int32& CurChip, OUT float& CurDriange)
+void UCalculatorHandRankingComponent::LastCalculator_Joker(OUT int32& CurChip, OUT float& CurDriange)
 {
 	for (UActorComponent* Comp : GetOwner()->GetComponents())
 	{
 		if (Comp->GetClass()->ImplementsInterface(UJokerCalculatorInterface::StaticClass()))
 		{
 			IJokerCalculatorInterface* InterfacePtr = Cast<IJokerCalculatorInterface>(Comp);
-			InterfacePtr->CalculatorJokerSkill(CurChip, CurDriange);
+			InterfacePtr->LastCalculatorJokerSkill(CurChip, CurDriange);
+			break;
+		}
+	}
+}
+
+void UCalculatorHandRankingComponent::Calculator_CardAndJoker(UHandInCard_Info* CurCard, OUT int32& CurChip, OUT float& CurDriange)
+{
+	for (UActorComponent* Comp : GetOwner()->GetComponents())
+	{
+		if (Comp->GetClass()->ImplementsInterface(UJokerCalculatorInterface::StaticClass()))
+		{
+			IJokerCalculatorInterface* InterfacePtr = Cast<IJokerCalculatorInterface>(Comp);
+			InterfacePtr->CalculatorCardJokerSkill(CurCard, CurChip, CurDriange);
 			break;
 		}
 	}
@@ -305,10 +318,12 @@ int32 UCalculatorHandRankingComponent::ResultScore()
 			{
 				ShowChip += 30;
 			}
+
+			Calculator_CardAndJoker(cardInfo, ShowChip, ShowDrainage);
 		}
 
 		Calculator_StillCard(ShowChip, ShowDrainage);  // 여기까지 손패에서 계산
-		Calculator_Joker(ShowChip, ShowDrainage);
+		LastCalculator_Joker(ShowChip, ShowDrainage);
 
 		Score = static_cast<int>(static_cast<float>(ShowChip) * ShowDrainage);
 	}

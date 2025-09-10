@@ -112,7 +112,7 @@ void UJokerSlotWidget::JokerScroe_EffectText()
 	{
 		for (auto& Joker : JokerButtons)
 		{
-			if (Joker->GetInfo() == Data[i]->Info)
+			if (Joker->GetInfo().JokerType == Data[i]->Info.JokerType)
 			{
 				FJokerStat CurData = Data[i]->Info;
 				SetJoker_EffectOrder(Joker, CurData);
@@ -128,23 +128,170 @@ void UJokerSlotWidget::SetJoker_EffectOrder(UJokerCardWidget* EventJoker, FJoker
 {
 	if (EventJoker)
 	{
-		PushTimerEvent([&](UJokerCardWidget* CurEventCard, FJokerStat Value)
-			{
-				auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
-				check(VM_PlayerInfo);
+		auto VM = TryGetViewModel<UVM_JockerSlot>(); check(VM);
 
-				FString ScoreStr = FString::Printf(TEXT("+%d Draiage"), 4);
-				SkillText->SetText(FText::FromString(ScoreStr));
-				SetSkillTextPos(CurEventCard);
+		if (JokerData.JokerType == EJokerType::BASE_JOKER)
+		{
+			PushTimerEvent([&](UJokerCardWidget* CurEventCard, FJokerStat Value)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("EJokerType::BASE_JOKER"));
 
-				int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
-				VM_PlayerInfo->SetCurDrainage(CurDrainage + 4);
+					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+					check(VM_PlayerInfo);
 
-				SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
+					FString ScoreStr = FString::Printf(TEXT("+%d Draiage"), 4);
+					SkillText->SetText(FText::FromString(ScoreStr));
+					SetSkillTextPos(CurEventCard);
 
-				CurEventCard->ShakingEvent();
+					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
+					VM_PlayerInfo->SetCurDrainage(CurDrainage + 4);
 
-			}, EventJoker, JokerData);
+					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+					CurEventCard->ShakingEvent();
+
+				}, EventJoker, JokerData);
+		}
+		else if (JokerData.JokerType == EJokerType::LAST_HAND_MUL3)
+		{
+			if (VM->GetIsLastHandPlay() == false)
+				return;
+
+			PushTimerEvent([&](UJokerCardWidget* CurEventCard, FJokerStat Value)
+				{
+					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+					check(VM_PlayerInfo);
+
+					FString ScoreStr = FString::Printf(TEXT("x%d Draiage"), 3);
+					SkillText->SetText(FText::FromString(ScoreStr));
+					SetSkillTextPos(CurEventCard);
+
+					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
+					VM_PlayerInfo->SetCurDrainage(CurDrainage * 3);
+
+					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+					CurEventCard->ShakingEvent();
+
+				}, EventJoker, JokerData);
+		}
+		else if (JokerData.JokerType == EJokerType::PAIR_MUL_DRANGE)
+		{
+			if (VM->GetCurrentPokerHand() != EPokerHand::ONE_PAIR)
+				return;
+
+			PushTimerEvent([&](UJokerCardWidget* CurEventCard, FJokerStat Value)
+				{
+					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+					check(VM_PlayerInfo);
+
+					FString ScoreStr = FString::Printf(TEXT("x%d Draiage"), 2);
+					SkillText->SetText(FText::FromString(ScoreStr));
+					SetSkillTextPos(CurEventCard);
+
+					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
+					VM_PlayerInfo->SetCurDrainage(CurDrainage * 2);
+
+					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+					CurEventCard->ShakingEvent();
+
+				}, EventJoker, JokerData);
+		}
+		else if (JokerData.JokerType == EJokerType::PAIR_CHIP)
+		{
+			if (VM->GetCurrentPokerHand() != EPokerHand::ONE_PAIR)
+				return;
+
+			PushTimerEvent([&](UJokerCardWidget* CurEventCard, FJokerStat Value)
+				{
+					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+					check(VM_PlayerInfo);
+
+					FString ScoreStr = FString::Printf(TEXT("+%d Chips"), 30);
+					SkillText->SetText(FText::FromString(ScoreStr));
+					SetSkillTextPos(CurEventCard);
+
+					int32 CurChip = VM_PlayerInfo->GetCurChip();
+					VM_PlayerInfo->SetCurDrainage(CurChip + 30);
+
+					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+					CurEventCard->ShakingEvent();
+
+				}, EventJoker, JokerData);
+		}
+		else if (JokerData.JokerType == EJokerType::PAIR_DRAINAGE)
+		{
+			if (VM->GetCurrentPokerHand() != EPokerHand::ONE_PAIR)
+				return;
+
+			PushTimerEvent([&](UJokerCardWidget* CurEventCard, FJokerStat Value)
+				{
+					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+					check(VM_PlayerInfo);
+
+					FString ScoreStr = FString::Printf(TEXT("+%d Draiage"), 4);
+					SkillText->SetText(FText::FromString(ScoreStr));
+					SetSkillTextPos(CurEventCard);
+
+					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
+					VM_PlayerInfo->SetCurDrainage(CurDrainage + 4);
+
+					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+					CurEventCard->ShakingEvent();
+
+				}, EventJoker, JokerData);
+		}
+		else if (JokerData.JokerType == EJokerType::JOKER_GOLD_SUM)
+		{
+			PushTimerEvent([&](UJokerCardWidget* CurEventCard, FJokerStat Value)
+				{
+					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+					check(VM_PlayerInfo);
+
+					auto VM_CardDeck = TryGetViewModel<UVM_JockerSlot>(); check(VM_CardDeck);
+
+					int32 JokerSum = static_cast<int32>(VM_CardDeck->GetAddtionalValue());
+
+					FString ScoreStr = FString::Printf(TEXT("+%d Draiage"), JokerSum);
+					SkillText->SetText(FText::FromString(ScoreStr));
+					SetSkillTextPos(CurEventCard);
+
+					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
+					VM_PlayerInfo->SetCurDrainage(CurDrainage + JokerSum);
+
+					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+					CurEventCard->ShakingEvent();
+
+				}, EventJoker, JokerData);
+		}
+		else if (JokerData.JokerType == EJokerType::POP_CONE)
+		{
+			PushTimerEvent([&](UJokerCardWidget* CurEventCard, FJokerStat Value)
+				{
+					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
+					check(VM_PlayerInfo);
+
+					auto VM_CardDeck = TryGetViewModel<UVM_JockerSlot>(); check(VM_CardDeck);
+
+					float BaseDrainage = VM_CardDeck->GetAddtionalValue();
+
+					FString ScoreStr = FString::Printf(TEXT("x%.2f Draiage"), BaseDrainage);
+					SkillText->SetText(FText::FromString(ScoreStr));
+					SetSkillTextPos(CurEventCard);
+
+					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
+					VM_PlayerInfo->SetCurDrainage(CurDrainage * BaseDrainage);
+
+					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+					CurEventCard->ShakingEvent();
+
+				}, EventJoker, JokerData);
+		}
 	}
 }
 

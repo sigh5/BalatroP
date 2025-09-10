@@ -5,30 +5,6 @@
 #include "Engine/DataTable.h"
 #include "BlindStat.generated.h"
 
-//UENUM(BlueprintType)
-//enum class EBlindSkip_Tag : uint8
-//{
-//	SECREAT_JOKER = 0 , 
-//	REAR_JOKER,
-//	NEGERTIVE_JOKER,
-//	FOIL_JOKER,
-//	BOSTER_PACK_FREE,
-//	ADD_TEN_JKER, // 10배수
-//	MULTIPLE_JOKER, // x1.5
-//	BOSS_GOLD_REWARD, // 25골 추가
-//	VOUCHER_ADD,      // 바우처카드 1개추가
-//	TWO_COMMON_JOKER, // 일반 조커 2개 추가
-//	JUGGLE,		// 다음 라운드 손패 +3
-//	BOSS_REROAD,  // 보스 엔티능력 리롤
-//	STANDARD_PACK, // 카드 팩 (2장 선택)
-//	ARCANA_PACK, // 타로 팩 (2장 선택)
-//	ORB_PACK,   // 천체 팩 (2장 선택)
-//	GHOST_PACK
-//};
-
-
-
-
 USTRUCT(BlueprintType)
 struct FBlindStat : public FTableRowBase
 {

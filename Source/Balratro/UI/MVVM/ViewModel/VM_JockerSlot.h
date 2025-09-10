@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
 #include "GameData/JokerStat.h"
+#include "GameData/EnumDatas.h"
 #include "VM_JockerSlot.generated.h"
 
 
@@ -48,6 +49,16 @@ public:
 	void	All_EffectFinish() { OnEffectUIViewFinish.Broadcast(); }
 	
 
+	const   bool GetIsLastHandPlay() const { return IsLastHandPlay; }
+	void	SetIsLastHandPlay(bool _InValue) { IsLastHandPlay = _InValue; }
+
+	const   EPokerHand GetCurrentPokerHand() const { return CurrentPokerHand; }
+	void	SetCurrentPokerHand(EPokerHand _InValue) { CurrentPokerHand = _InValue; }
+
+
+	const   float GetAddtionalValue() const { return AddtionalValue; }
+	void	SetAddtionalValue(float _InValue) { AddtionalValue = _InValue; }
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<class UJokerCard_Info*> JokerDatas;
@@ -55,5 +66,13 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool	CalculatorFlag = false;
 
+	UPROPERTY()
+	bool	IsLastHandPlay = false;
+
+	UPROPERTY()
+	EPokerHand	CurrentPokerHand;
+
+	UPROPERTY()
+	float		AddtionalValue;
 
 };

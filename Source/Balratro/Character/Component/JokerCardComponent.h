@@ -15,22 +15,26 @@ class BALRATRO_API UJokerCardComponent : public UActorComponent, public IJokerCa
 	GENERATED_BODY()
 
 public:
-	virtual void CalculatorJokerSkill(OUT int32& CurChip, OUT float& CurDriange) override;
-
+	virtual void LastCalculatorJokerSkill(OUT int32& CurChip, OUT float& CurDriange) override;
+	virtual void CalculatorCardJokerSkill(class UHandInCard_Info* CurCard, OUT int32& CurChip, OUT float& CurDriange) override;
 protected:
 	virtual void BeginPlay() override;
 
 
 
 private:
-	void UpdateJoker();
 	void UpdateAddJoker(FJokerStat& Data);
 
-	void CalculatorJoker(UJokerCard_Info* JokerCard ,OUT int32& CurChip , OUT float& CurDriange);
+	void LastCalculatorJoker(UJokerCard_Info* JokerCard ,OUT int32& CurChip , OUT float& CurDriange);
+	void PlayCalculatorJoker(UJokerCard_Info* JokerCard, class UHandInCard_Info* CurCard, OUT int32& CurChip, OUT float& CurDriange);
 
 private:
 	class UVM_PlayerInfo* GetVMPlayerInfo();
 	class UVM_JockerSlot* GetVMJockerSlot();
 	class AMyPlayerState* GetPlayerState();
 
+
+private:
+	int32 JokerGoldSum = 0;
+	
 };
