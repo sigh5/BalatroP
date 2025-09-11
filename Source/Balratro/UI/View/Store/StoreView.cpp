@@ -102,7 +102,7 @@ UJokerCardWidget* UStoreView::ReUseJokerWidget(int32 DataNum, int32 Index, UJoke
 	}
 
 	check(JokerCardButton);
-	JokerCardButton->SetInfo(Data->Info);
+	JokerCardButton->SetInfo(Data);
 	JokerCardButton->SetIsStoreHave(true);
 
 	return JokerCardButton;

@@ -65,6 +65,8 @@ void UJokerSlotWidget::VM_FieldChanged_AddJokerCard(UObject* Object, UE::FieldNo
 
 	for (int i = 0; i < DataNums; ++i)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("%d"), static_cast<int>(JokerDatas[i]->Info.JokerType));
+
 		UJokerCardWidget* NewButton = ReuseCardButtonWidget(DataNums, i, JokerDatas[i]);
 		UWrapBoxSlot* BoxSlot = Cast<UWrapBoxSlot>(JokerWrapBox->AddChild(NewButton));
 		if (BoxSlot)
@@ -98,9 +100,44 @@ void UJokerSlotWidget::VM_FieldChanged_PlayJokerEvent(UObject* Object, UE::Field
 	if (CurPreJokerType == EJokerType::NONE)
 		return;
 
+	int32 CopyJokerIndex = -1;
+
+	if (CurPreJokerType == EJokerType::COPY)
+	{
+		for (int32 i=0; i<JokerButtons.Num(); ++i)
+		{
+			if (JokerButtons[i]->GetInfo()->Info.JokerType == CurPreJokerType)
+			{
+				CopyJokerIndex = i;
+				break;
+			}
+		}
+
+		if (CopyJokerIndex != -1 &&
+			CopyJokerIndex +1 < JokerButtons.Num() &&
+			JokerButtons[CopyJokerIndex + 1]->IsVisible())
+		{
+			CopyJokerIndex += 1;
+		}
+
+	}
+
+
 	for (auto JokerCard : JokerButtons)
 	{
-		if (JokerCard->GetInfo().JokerType == CurPreJokerType)
+		if (CurPreJokerType == EJokerType::COPY && JokerCard->GetInfo()->Info.JokerType == CurPreJokerType)
+		{
+			if (CopyJokerIndex == -1)
+				return;
+
+			JokerCard->SetCopyJoker(JokerButtons[CopyJokerIndex]->GetInfo()->Info.JokerType);
+			JokerCard->PlayJokerEvent(SkillText, SkillText2);
+			SetSkillTextPos(JokerCard);
+			SetSkillTextPos2(JokerCard);
+			JokerCard->SetCopyJoker(EJokerType::COPY);
+			break;
+		}
+		else if (JokerCard->GetInfo()->Info.JokerType == CurPreJokerType)
 		{
 			JokerCard->PlayJokerEvent(SkillText, SkillText2);
 			SetSkillTextPos(JokerCard);
@@ -136,7 +173,7 @@ UJokerCardWidget* UJokerSlotWidget::ReuseCardButtonWidget(int32 AllNum, int32 In
 	}
 
 	check(NewButton);
-	NewButton->SetInfo(Data->Info);
+	NewButton->SetInfo(Data);
 	NewButton->SetIsStoreHave(false);
 
 	return NewButton;
@@ -151,7 +188,7 @@ void UJokerSlotWidget::JokerScroe_EffectText()
 	{
 		for (auto& Joker : JokerButtons)
 		{
-			if (Joker->GetInfo().JokerType == Data[i]->Info.JokerType)
+			if (Joker->GetInfo()->Info.JokerType == Data[i]->Info.JokerType)
 			{
 				FJokerStat CurData = Data[i]->Info;
 				SetJoker_EffectOrder(Joker, CurData);
@@ -330,6 +367,19 @@ void UJokerSlotWidget::SetJoker_EffectOrder(UJokerCardWidget* EventJoker, FJoker
 					CurEventCard->ShakingEvent();
 
 				}, EventJoker, JokerData);
+		}
+		else if (JokerData.JokerType == EJokerType::COPY)
+		{
+			auto VM_CardDeck= TryGetViewModel<UVM_JockerSlot>(); check(VM_CardDeck);
+
+			if (VM_CardDeck->GetCopyJokerSetting() == EJokerType::NONE)
+				return;
+
+			FJokerStat Temp = JokerData;
+
+			Temp.JokerType = VM_CardDeck->GetCopyJokerSetting();
+
+			SetJoker_EffectOrder(EventJoker, Temp);
 		}
 	}
 }

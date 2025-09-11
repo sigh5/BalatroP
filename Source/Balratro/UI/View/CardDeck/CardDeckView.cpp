@@ -470,7 +470,8 @@ void UCardDeckView::SetCard_EffectOrder(UCardButtonWidget* EventCard, UHandInCar
 				{
 					auto VM_Joker = TryGetViewModel<UVM_JockerSlot>("VM_JockerSlot", UVM_JockerSlot::StaticClass()); check(VM_Joker);
 
-					VM_Joker->SetPlayEventJoker(static_cast<EJokerType>(Value));
+					EJokerType CurType = static_cast<EJokerType>(Value);
+					VM_Joker->SetPlayEventJoker(CurType);
 
 				}, EventCard, static_cast<int32>(EventCard->GetCardInfoData()->PreEventJokerType[i]));
 		}

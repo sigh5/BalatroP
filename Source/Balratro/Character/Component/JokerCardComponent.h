@@ -26,6 +26,8 @@ private:
 	void LastCalculatorJoker(UJokerCard_Info* JokerCard ,OUT int32& CurChip , OUT float& CurDriange);
 	void PlayCalculatorJoker(UJokerCard_Info* JokerCard, class UHandInCard_Info* CurCard, OUT int32& CurChip, OUT float& CurDriange);
 
+	void UpdateSwapJokerData(UJokerCard_Info* Source, UJokerCard_Info* SwapDest);
+
 private:
 	class UVM_PlayerInfo* GetVMPlayerInfo();
 	class UVM_JockerSlot* GetVMJockerSlot();
@@ -34,5 +36,5 @@ private:
 
 private:
 	int32 JokerGoldSum = 0;
-	
+	uint8 IsCopy : 1;
 };

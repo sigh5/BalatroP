@@ -154,7 +154,6 @@ public:
 	}
 
 
-	FORCEINLINE TArray<class UJokerCard_Info*>& GetCurrentJokerCardsModify() { return CurJokerCardInfo; }
 	FORCEINLINE const TArray<class UJokerCard_Info*>& GetCurrentJokerCards() const { return CurJokerCardInfo; }
 	FORCEINLINE void SetCurrentJokerCards(TArray<class UJokerCard_Info*>& InValue) { CurJokerCardInfo = InValue;}
 

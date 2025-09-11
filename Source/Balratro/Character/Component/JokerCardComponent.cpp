@@ -27,6 +27,8 @@ void UJokerCardComponent::BeginPlay()
 	auto PS = GetPlayerState();
 
 	VM_Joker->OnAddJoker.AddUObject(this, &UJokerCardComponent::UpdateAddJoker);
+	VM_Joker->OnJokerSlotSwapData.AddUObject(this, &UJokerCardComponent::UpdateSwapJokerData);
+
 
 	// BASE_JOKER, LAST_HAND_MUL3, PAIR_MUL_DRANGE, JOKER_GOLD_SUM, PAIR_CHIP,POP_CONE ,PAIR_DRAINAGE
 //#ifdef JokerSlotView_VIEW_TEST
@@ -94,8 +96,8 @@ void UJokerCardComponent::BeginPlay()
 	UpdateAddJoker(Test_Data);
 
 
-	ItemType = EJokerType::ACE_PLUS;
-	ItemIndex = static_cast<int32>(EJokerType::ACE_PLUS);
+	ItemType = EJokerType::JOKER_GOLD_SUM;
+	ItemIndex = static_cast<int32>(EJokerType::JOKER_GOLD_SUM);
 	ItemIndexStr = FString::FromInt(ItemIndex);
 	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
 	Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
@@ -198,7 +200,13 @@ void UJokerCardComponent::PlayCalculatorJoker(UJokerCard_Info* JokerCard, UHandI
 		if (CurCard->Info.SuitGrade == 1)
 		{
 			CurDriange += 4;
-			CurCard->PreEventJokerType.Add(Type);
+
+			if (IsCopy)
+			{
+				CurCard->PreEventJokerType.Add(EJokerType::COPY);
+			}
+			else
+				CurCard->PreEventJokerType.Add(Type);
 		}
 
 	}
@@ -209,38 +217,100 @@ void UJokerCardComponent::PlayCalculatorJoker(UJokerCard_Info* JokerCard, UHandI
 			if (FRandomUtils::RandomSeed.RandRange(0, 1) == 1)
 			{
 				CurDriange *= 1.5;
-				CurCard->PreEventJokerType.Add(Type);
+				
+				if (IsCopy)
+				{
+					CurCard->PreEventJokerType.Add(EJokerType::COPY);
+				}
+				else
+					CurCard->PreEventJokerType.Add(Type);
 			}
 			
 		}
 	}
 	/* ~Emblem */
-	if (Type == EJokerType::ACE_PLUS)
+	else if (Type == EJokerType::ACE_PLUS)
 	{
 		if (CurCard->Info.RankGrade == 1)
-		{
-			
+		{		
 			CurDriange += 4;
 			CurChip += 30;
-			CurCard->PreEventJokerType.Add(Type);
+			
+			if (IsCopy)
+			{
+				CurCard->PreEventJokerType.Add(EJokerType::COPY);
+			}
+			else
+				CurCard->PreEventJokerType.Add(Type);
 		}
 	}
+
+	JokerCard->Info.UseNum += 1;
+}
+
+void UJokerCardComponent::UpdateSwapJokerData(UJokerCard_Info* Source, UJokerCard_Info* SwapDest)
+{
+	auto PS = GetPlayerState();
+
+	auto CurJokerCards = PS->GetCurrentJokerCards();
+
+	auto VM = GetVMJockerSlot();
+
+	int32 SourceIndex = CurJokerCards.IndexOfByKey(Source);
+	int32 DestIndex = CurJokerCards.IndexOfByKey(SwapDest);
+
+	if (SourceIndex != INDEX_NONE && DestIndex != INDEX_NONE)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UpdateSwapJokerData"));
+		CurJokerCards.Swap(SourceIndex, DestIndex);
+	}
+
+	PS->SetCurrentJokerCards(CurJokerCards);
+	VM->SetJokerDatas(CurJokerCards);
 }
 
 void UJokerCardComponent::LastCalculatorJokerSkill(OUT int32& CurChip, OUT float& CurDriange)
 {
 	auto PS = GetPlayerState();
 	auto CurJokerCards = PS->GetCurrentJokerCards();
-
+	auto VM_Joker = GetVMJockerSlot();
+	
 	JokerGoldSum = 0;
-	for (auto Joker : CurJokerCards)
+
+	int32 CopyIndex = -1;
+
+	int32 DataNum = CurJokerCards.Num();
+	for (int32 i = 0; i < DataNum; ++i)
 	{
-		JokerGoldSum += Joker->Info.Price;
+		JokerGoldSum += CurJokerCards[i]->Info.Price;
+		if (CurJokerCards[i]->Info.JokerType == EJokerType::COPY)
+		{
+			CopyIndex = i;
+		}
 	}
 
-	for (auto Joker : CurJokerCards)
+	if (CopyIndex == -1)
 	{
-		LastCalculatorJoker(Joker, CurChip, CurDriange);
+		VM_Joker->SetCopyJokerSetting(EJokerType::NONE);
+	}
+
+
+	for (int32 i = 0; i < DataNum; ++i)
+	{
+		IsCopy = false;
+		if (i == CopyIndex && i < DataNum - 1)
+		{
+			CurJokerCards[i]->Info.JokerType = CurJokerCards[i + 1]->Info.JokerType;
+			IsCopy = true;
+		}
+		LastCalculatorJoker(CurJokerCards[i], CurChip, CurDriange);
+
+		if (i == CopyIndex && i < DataNum - 1)
+		{
+			CurJokerCards[i]->Info.JokerType = EJokerType::COPY;
+
+			VM_Joker->SetCopyJokerSetting(CurJokerCards[i + 1]->Info.JokerType);
+		}
 	}
 }
 
@@ -249,11 +319,36 @@ void UJokerCardComponent::CalculatorCardJokerSkill(UHandInCard_Info* CurCard, OU
 	auto PS = GetPlayerState();
 	auto CurJokerCards = PS->GetCurrentJokerCards();
 
+	int32 CopyIndex = -1;
 
-	for (auto Joker : CurJokerCards)
+	int32 DataNum = CurJokerCards.Num();
+	for (int32 i=0; i<DataNum; ++i)
 	{
-		PlayCalculatorJoker(Joker, CurCard,CurChip, CurDriange);
+		if (CurJokerCards[i]->Info.JokerType == EJokerType::COPY)
+		{
+			CopyIndex = i;
+			break;
+		}
 	}
+
+	for (int32 i = 0; i < DataNum; ++i)
+	{
+		IsCopy = false;
+		if (i == CopyIndex && i < DataNum -1)
+		{
+			CurJokerCards[i]->Info.JokerType = CurJokerCards[i + 1]->Info.JokerType;
+			IsCopy = true;
+		}
+
+		PlayCalculatorJoker(CurJokerCards[i], CurCard, CurChip, CurDriange);
+
+		if (i == CopyIndex && i < DataNum - 1)
+		{
+			CurJokerCards[i]->Info.JokerType = EJokerType::COPY;
+		}
+	}
+
+
 
 }
 

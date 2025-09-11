@@ -20,13 +20,24 @@ public:
 
 private:
 	virtual void NativeConstruct()override;
+	virtual void NativeOnInitialized()override;
+
+	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void   NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	virtual bool   NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+	virtual void	NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
+
 
 public:
-	void	SetInfo(FJokerStat& _inValue);
-	const   FJokerStat& GetInfo() const { return JokerData; }
+	void	SetInfo(UJokerCard_Info* _inValue);
+	const UJokerCard_Info* GetInfo() const { return JokerData; }
 
 	void	 ShakingEvent();
 	void	 PlayJokerEvent(class UTextBlock* SkillText0, class UTextBlock* SkillText1);
+
+	void	SetCopyJoker(EJokerType JokerType);
 
 
 	FORCEINLINE const bool	GetSelected() const { return IsSelected; }
@@ -45,10 +56,15 @@ private:
 	UFUNCTION()
 	void					OnButtonHover();
 
+
+	void ForceSwapData(UJokerCard_Info* InfoData);
+
 private:
 	void					SetInit();
 	void					ChangeJokerImage();
 	void					CreateJokerImage();
+
+	void					ForceSwapPos();
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -76,10 +92,17 @@ private:
 	TObjectPtr<class UWidgetAnimation> ShakingAnim;
 
 private:
-	FJokerStat		JokerData;
+	TObjectPtr<class UJokerCard_Info>	JokerData;
 
 	uint8 IsSelected : 1;
 	uint8 IsCreated : 1;
-
 	uint8 IsStore : 1;  // true 상점거 false 조커뷰
+	uint8 bIsDragging : 1;
+	uint8 bIsDummyData : 1;
+
+	FVector2D DragOffset;
+
+	UPROPERTY()
+	TObjectPtr<class UJokerCardWidget> DragVisual;
+
 };

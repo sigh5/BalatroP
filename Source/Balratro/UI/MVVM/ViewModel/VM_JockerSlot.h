@@ -11,6 +11,9 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnAddJoker , FJokerStat&)
 
 DECLARE_MULTICAST_DELEGATE(FOnEffectUIViewFinish);
 
+
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnJokerSlotSwapData, UJokerCard_Info* , UJokerCard_Info* /*Sour Dest*/ );
+
 /**
  * 
  */
@@ -23,7 +26,7 @@ class BALRATRO_API UVM_JockerSlot : public UMVVMViewModelBase
 public:
 	FOnAddJoker OnAddJoker;
 	FOnEffectUIViewFinish OnEffectUIViewFinish;
-
+	FOnJokerSlotSwapData OnJokerSlotSwapData;
 public:
 	const TArray<UJokerCard_Info*>& GetJokerDatas() const
 	{
@@ -71,6 +74,17 @@ public:
 	const   float GetAddtionalValue() const { return AddtionalValue; }
 	void	SetAddtionalValue(float _InValue) { AddtionalValue = _InValue; }
 
+
+	const EJokerType GetCopyJokerSetting() const { return CopyJokerSetting; }
+	void SetCopyJokerSetting(EJokerType _InValue) {
+		CopyJokerSetting = _InValue;}
+
+	void SwapCardData(UJokerCard_Info* Source, UJokerCard_Info* SwapDest)
+	{
+		OnJokerSlotSwapData.Broadcast(Source, SwapDest);
+	}
+
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TArray<class UJokerCard_Info*> JokerDatas;
@@ -93,5 +107,9 @@ private:
 
 	UPROPERTY()
 	float		AddtionalValue;
+
+	UPROPERTY()
+	EJokerType	CopyJokerSetting;
+
 
 };

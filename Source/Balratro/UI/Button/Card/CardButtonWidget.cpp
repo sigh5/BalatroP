@@ -342,7 +342,6 @@ void UCardButtonWidget::ForceSwapData(UHandInCard_Info* CardInfoData0)
 void UCardButtonWidget::ForceSwapPos()
 {
 	auto VM = TryGetViewModel<UVM_CardDeck>(); check(VM);
-	bool CurSelectedMax = VM->GetIsSelectedMax();
 
 	UHorizontalBoxSlot* HSlot = Cast<UHorizontalBoxSlot>(Slot);
 	check(HSlot);
