@@ -148,5 +148,6 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FDeckCardStat Info;
 
-	EJokerType PreEventJokerType = EJokerType::NONE;
+	UPROPERTY()
+	TArray<EJokerType> PreEventJokerType;
 };

@@ -6,6 +6,11 @@
 #include "Components/CanvasPanel.h"
 #include "Components/Button.h"
 #include "Components/Overlay.h"
+#include "Components/Border.h"
+#include "Components/Image.h"
+#include "Components/SizeBox.h"
+#include "Components/WrapBox.h"
+#include "Components/WrapBoxSlot.h"
 
 #include <Engine/World.h>
 #include <MVVMGameSubsystem.h>
@@ -14,15 +19,8 @@
 #include "UI/MVVM/ViewModel/VM_ItemSelect.h"
 #include "UI/MVVM/ViewModel/VM_JockerSlot.h"
 
-
 #include "PaperSprite.h"
 #include "Styling/SlateBrush.h"
-#include "Components/Border.h"
-#include "Components/Image.h"
-
-#include "Components/SizeBox.h"
-#include "Components/WrapBox.h"
-#include "Components/WrapBoxSlot.h"
 
 
 UJokerCardWidget::UJokerCardWidget()
@@ -65,6 +63,34 @@ void UJokerCardWidget::ShakingEvent()
 {
 	PlayAnimation(ShakingAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
 
+}
+
+void UJokerCardWidget::PlayJokerEvent(UTextBlock* SkillText0, UTextBlock* SkillText1)
+{
+	if (SkillText0 == nullptr || SkillText1 == nullptr)
+		return;
+
+	ShakingEvent();
+
+	FString ScoreStr = "";
+	FString ScoreStr2 = "";
+
+	if (JokerData.JokerType == EJokerType::SPADE)
+	{
+		ScoreStr = FString::Printf(TEXT("+%d Draiage"), 4);
+	}
+	else if (JokerData.JokerType == EJokerType::HEART_MUL)
+	{
+		ScoreStr = FString::Printf(TEXT("x%.1f Draiage"), 1.5f);
+	}
+	else if (JokerData.JokerType == EJokerType::ACE_PLUS)
+	{
+		ScoreStr = FString::Printf(TEXT("+%d Draiage"), 4);
+		ScoreStr2 = FString::Printf(TEXT("+%d Chip"), 30);
+	}
+
+	SkillText0->SetText(FText::FromString(ScoreStr));
+	SkillText1->SetText(FText::FromString(ScoreStr2));
 }
 
 void UJokerCardWidget::OnSellButtonClicked()

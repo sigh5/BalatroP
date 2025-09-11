@@ -363,6 +363,17 @@ void UCardAndDeckComponent::SetPlayCardEffect()
 	VM->SetRestCardEffectFlag(true);
 
 	PS->SetHandPlayFlag(false);
+
+	// Event Joker ÃÖ½ÅÈ­
+	for (auto& Cards : CurPlayCards)
+	{
+		Cards->PreEventJokerType.Empty();
+	}
+
+	for (auto& Cards : CurRestCards)
+	{
+		Cards->PreEventJokerType.Empty();
+	}
 }
 
 void UCardAndDeckComponent::ShuffleDeck()

@@ -31,20 +31,23 @@ void UJokerCardComponent::BeginPlay()
 	// BASE_JOKER, LAST_HAND_MUL3, PAIR_MUL_DRANGE, JOKER_GOLD_SUM, PAIR_CHIP,POP_CONE ,PAIR_DRAINAGE
 //#ifdef JokerSlotView_VIEW_TEST
 	FJokerStat Test_Data;
-	EJokerType ItemType = EJokerType::BASE_JOKER;
-	
-	int32 ItemIndex = static_cast<int32>(EJokerType::BASE_JOKER);
-	FString ItemIndexStr = FString::FromInt(ItemIndex);
-	FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
-	Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-	if (!Test_Data.CardSprite.IsValid())
-	{
-		Test_Data.CardSprite.LoadSynchronous();
-	}
-
-	Test_Data.JokerType = ItemType;
-	Test_Data.Price = 3;
-	UpdateAddJoker(Test_Data);
+	EJokerType ItemType;
+	int32 ItemIndex;
+	FString ItemIndexStr;
+	FString AssetPath;
+	//ItemType = EJokerType::BASE_JOKER;
+	//
+	//ItemIndex = static_cast<int32>(EJokerType::BASE_JOKER);
+	//ItemIndexStr = FString::FromInt(ItemIndex);
+	// AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
+	//Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+	//if (!Test_Data.CardSprite.IsValid())
+	//{
+	//	Test_Data.CardSprite.LoadSynchronous();
+	//}
+	//Test_Data.JokerType = ItemType;
+	//Test_Data.Price = 3;
+	//UpdateAddJoker(Test_Data);
 
 	ItemType = EJokerType::SPADE;
 	ItemIndex = static_cast<int32>(EJokerType::SPADE);
@@ -182,17 +185,20 @@ void UJokerCardComponent::PlayCalculatorJoker(UJokerCard_Info* JokerCard, UHandI
 	auto VM = GetVMJockerSlot();
 	EJokerType Type = JokerCard->Info.JokerType;
 
-	if (false == (Type == EJokerType::SPADE || Type == EJokerType::HEART_MUL))
+	if (false == (Type == EJokerType::SPADE || 
+				  Type == EJokerType::HEART_MUL || 
+				  Type == EJokerType::ACE_PLUS  ))
 	{
 		return;
 	}
 
+	/* Emblem */
 	if (Type == EJokerType::SPADE)
 	{
 		if (CurCard->Info.SuitGrade == 1)
 		{
 			CurDriange += 4;
-			CurCard->PreEventJokerType = Type;
+			CurCard->PreEventJokerType.Add(Type);
 		}
 
 	}
@@ -203,12 +209,22 @@ void UJokerCardComponent::PlayCalculatorJoker(UJokerCard_Info* JokerCard, UHandI
 			if (FRandomUtils::RandomSeed.RandRange(0, 1) == 1)
 			{
 				CurDriange *= 1.5;
-				CurCard->PreEventJokerType = Type;
+				CurCard->PreEventJokerType.Add(Type);
 			}
 			
 		}
 	}
-
+	/* ~Emblem */
+	if (Type == EJokerType::ACE_PLUS)
+	{
+		if (CurCard->Info.RankGrade == 1)
+		{
+			
+			CurDriange += 4;
+			CurChip += 30;
+			CurCard->PreEventJokerType.Add(Type);
+		}
+	}
 }
 
 void UJokerCardComponent::LastCalculatorJokerSkill(OUT int32& CurChip, OUT float& CurDriange)

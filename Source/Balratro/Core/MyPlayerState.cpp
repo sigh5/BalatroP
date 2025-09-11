@@ -61,10 +61,13 @@ void AMyPlayerState::ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRank
 {
 	Deck_Stat.Empty();
 
+	//Test
+	auto Temp = InHandRanking[0];
+
 	for (auto& Info : InHandRanking)
 	{
 		UHandInCard_Info* CardInfo = NewObject<UHandInCard_Info>();
-		CardInfo->Info.Name = Info->Name;
+		CardInfo->Info.Name =	Info->Name;
 		CardInfo->Info.BaseChip = Info->BaseChip;
 		CardInfo->Info.SealType = Info->SealType;
 		CardInfo->Info.EnforceType = Info->EnforceType; // ETaroSkillType

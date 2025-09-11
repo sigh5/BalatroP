@@ -210,8 +210,7 @@ void UCardDeckView::VM_FieldChanged_RestCardData(UObject* Object, UE::FieldNotif
 				&& Card->GetCardInfoData()->Info == Data[i]->Info && 
 				UseLess_EmblemType != Card->GetCardInfoData()->Info.SuitGrade)
 			{
-				FDeckCardStat CurData = Data[i]->Info;
-				SetRestCard_EffectOrder(Card, CurData);
+				SetRestCard_EffectOrder(Card, Data[i]);
 				break;
 			}
 		}
@@ -254,7 +253,7 @@ void UCardDeckView::VM_FieldChanged_CurBossUseSkill(UObject* Object, UE::FieldNo
 		FDeckCardStat None;
 		None.Name = "OX";
 
-		SetCard_PrevEffectOrder(nullptr, None);		
+		SetCard_PrevEffectOrder(nullptr, None);
 	}
 	else if (BossType == EBossType::ARM)
 	{
@@ -340,21 +339,17 @@ void UCardDeckView::CardScroe_EffectText()
 	const auto VMInst = TryGetViewModel<UVM_CardDeck>();
 	auto& Data = VMInst->GetCurCardsData();
 	
-	int32 UseLess_EmblemType = VMInst->GetUseless_EmblemType();
+	//int32 UseLess_EmblemType = VMInst->GetUseless_EmblemType();
 
 	for (int i = 0; i < Data.Num(); ++i)
 	{
 		for (auto& Card : HandCardButtons)
 		{
-			if (Card->GetCardInfoData()->Info == Data[i]->Info &&
-				UseLess_EmblemType != Card->GetCardInfoData()->Info.SuitGrade)
+			if (Card->GetCardInfoData()->Info == Data[i]->Info ) //&&
+				//UseLess_EmblemType != Card->GetCardInfoData()->Info.SuitGrade)
 			{
-				FDeckCardStat CurData = Data[i]->Info;
 				Card->MoveAnimmation();
-
-				// 여기서 PreJokerEvent 있다면  SetCard_EffectOrder 마지막 if문에 조커VM에 shaking 넣어주는 함수 넣어주기
-
-				SetCard_EffectOrder(Card, Data[i]->Info); // 함수 수정 필요
+				SetCard_EffectOrder(Card, Data[i]); // 함수 수정 필요
 				break;
 			}
 		}
@@ -368,7 +363,7 @@ void UCardDeckView::SetCard_PrevEffectOrder(UCardButtonWidget* EventCard, FDeckC
 		PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
 			{
 				CurEventCard->ChuckAnimation();
-			}, EventCard, CardData.BaseChip);
+			}, EventCard, 0);
 	}
 	else
 	{
@@ -386,29 +381,48 @@ void UCardDeckView::SetCard_PrevEffectOrder(UCardButtonWidget* EventCard, FDeckC
 
 }
 
-void UCardDeckView::SetCard_EffectOrder(UCardButtonWidget* EventCard, FDeckCardStat& CardData)
+void UCardDeckView::SetCard_EffectOrder(UCardButtonWidget* EventCard, UHandInCard_Info* CardData)
 {
 	if (EventCard)
 	{
 		PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
 		{
-
 			ScoreResultText->SetVisibility(ESlateVisibility::HitTestInvisible);
 
 			auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
 			check(VM_PlayerInfo);
+			const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+
+			int32 UseLess_EmblemType = VMInst->GetUseless_EmblemType();
+
+			if (UseLess_EmblemType == CurEventCard->GetCardInfoData()->Info.SuitGrade)
+			{
+				Value = 0;
+			}
 
 			int32 CurChip = VM_PlayerInfo->GetCurChip();
 			CurChip += Value;
 			VM_PlayerInfo->SetCurChip(CurChip);
-
+			
 			FString ScoreStr = FString::Printf(TEXT("+%d"), Value);
 			ScoreResultText->SetText(FText::FromString(ScoreStr));
 			SetScoreTextPos(CurEventCard,false);
-		}, EventCard, CardData.BaseChip);
+
+			auto VM_Joker = TryGetViewModel<UVM_JockerSlot>("VM_JockerSlot", UVM_JockerSlot::StaticClass()); check(VM_Joker);
+			VM_Joker->SetJokerEventStopFlag(true);
+
+		}, EventCard, CardData->Info.BaseChip);
 
 		
-		if (CardData.EnforceType == ETaroSkillType::DRAINAGE)
+		const auto VMInst = TryGetViewModel<UVM_CardDeck>();
+		int32 UseLess_EmblemType = VMInst->GetUseless_EmblemType();
+
+		if (UseLess_EmblemType == EventCard->GetCardInfoData()->Info.SuitGrade)
+		{
+			return;
+		}
+
+		if (CardData->Info.EnforceType == ETaroSkillType::DRAINAGE)
 		{
 			PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
 				{
@@ -428,7 +442,7 @@ void UCardDeckView::SetCard_EffectOrder(UCardButtonWidget* EventCard, FDeckCardS
 					SetScoreTextPos(CurEventCard,false);
 				}, EventCard, 4);
 		}
-		else if (CardData.EnforceType == ETaroSkillType::CHIP_PLUS)
+		else if (CardData->Info.EnforceType == ETaroSkillType::CHIP_PLUS)
 		{
 			PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
 				{
@@ -448,13 +462,25 @@ void UCardDeckView::SetCard_EffectOrder(UCardButtonWidget* EventCard, FDeckCardS
 				}, EventCard, 30);
 		}
 
+		int32 PreEventJokerNum = CardData->PreEventJokerType.Num();
+
+		for (int32 i = 0; i < PreEventJokerNum; ++i)
+		{
+			PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
+				{
+					auto VM_Joker = TryGetViewModel<UVM_JockerSlot>("VM_JockerSlot", UVM_JockerSlot::StaticClass()); check(VM_Joker);
+
+					VM_Joker->SetPlayEventJoker(static_cast<EJokerType>(Value));
+
+				}, EventCard, static_cast<int32>(EventCard->GetCardInfoData()->PreEventJokerType[i]));
+		}
 
 	}
 }
 
-void UCardDeckView::SetRestCard_EffectOrder(UCardButtonWidget* EventCard, FDeckCardStat& CardData)
+void UCardDeckView::SetRestCard_EffectOrder(UCardButtonWidget* EventCard, UHandInCard_Info* CardData)
 {
-	if (CardData.EnforceType == ETaroSkillType::STEEL)
+	if (CardData->Info.EnforceType == ETaroSkillType::STEEL)
 	{
 		PushTimerEvent([&](UCardButtonWidget* CurEventCard, int32 Value)
 			{

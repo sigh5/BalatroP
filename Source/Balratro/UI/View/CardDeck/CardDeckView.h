@@ -50,8 +50,8 @@ private:
 	void	CardScroe_EffectText(); // 점수 관련 이벤트들
 
 	void	SetCard_PrevEffectOrder(class UCardButtonWidget* EventCard, FDeckCardStat& CardData); // 맨앞에 효과
-	void	SetCard_EffectOrder(class UCardButtonWidget* EventCard, FDeckCardStat& CardData);     // 중간 효과
-	void	SetRestCard_EffectOrder(class UCardButtonWidget* EventCard, FDeckCardStat& CardData); // 맨뒤 효과
+	void	SetCard_EffectOrder(class UCardButtonWidget* EventCard, class UHandInCard_Info* CardData);     // 중간 효과
+	void	SetRestCard_EffectOrder(class UCardButtonWidget* EventCard, class UHandInCard_Info* CardData); // 맨뒤 효과
 
 	// 순서 BaseChip >  Chip_Plus or Drainage > 10배수 or 1.5 or 50(foil) > Ghost (retriger)
 	void SetScoreTextPos(class UCardButtonWidget* CurEventCard, bool IsUp = false);

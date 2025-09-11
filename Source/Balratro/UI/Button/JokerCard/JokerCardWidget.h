@@ -26,6 +26,7 @@ public:
 	const   FJokerStat& GetInfo() const { return JokerData; }
 
 	void	 ShakingEvent();
+	void	 PlayJokerEvent(class UTextBlock* SkillText0, class UTextBlock* SkillText1);
 
 
 	FORCEINLINE const bool	GetSelected() const { return IsSelected; }
@@ -33,8 +34,6 @@ public:
 
 	FORCEINLINE const bool	GetIsStoreHave() const { return IsStore; }
 	void		SetIsStoreHave(bool _Selected);
-
-	//void					Set
 
 private:
 	UFUNCTION()

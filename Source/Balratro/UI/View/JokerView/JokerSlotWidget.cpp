@@ -46,7 +46,15 @@ void UJokerSlotWidget::NativeOnInitialized()
 	VMInst->AddFieldValueChangedDelegate(UVM_JockerSlot::FFieldNotificationClassDescriptor::CalculatorFlag,
 		FFieldValueChangedDelegate::CreateUObject(this, &UJokerSlotWidget::VM_FieldChanged_CalcualtorJokerCard));
 
+	VMInst->AddFieldValueChangedDelegate(UVM_JockerSlot::FFieldNotificationClassDescriptor::PlayEventJoker,
+		FFieldValueChangedDelegate::CreateUObject(this, &UJokerSlotWidget::VM_FieldChanged_PlayJokerEvent));
+
+	VMInst->AddFieldValueChangedDelegate(UVM_JockerSlot::FFieldNotificationClassDescriptor::JokerEventStopFlag,
+		FFieldValueChangedDelegate::CreateUObject(this, &UJokerSlotWidget::VM_FieldChanged_PreJokerEventStopFlag));
+
+
 	SkillText->SetVisibility(ESlateVisibility::Collapsed);
+	SkillText2->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UJokerSlotWidget::VM_FieldChanged_AddJokerCard(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -80,6 +88,37 @@ void UJokerSlotWidget::VM_FieldChanged_CalcualtorJokerCard(UObject* Object, UE::
 	GetWorld()->GetTimerManager().ClearTimer(FinishJokerTimerHandle);
 
 	JokerScroe_EffectText();
+}
+
+void UJokerSlotWidget::VM_FieldChanged_PlayJokerEvent(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInstance = Cast<UVM_JockerSlot>(Object); check(VMInstance);
+	auto CurPreJokerType = VMInstance->GetPlayEventJoker();
+
+	if (CurPreJokerType == EJokerType::NONE)
+		return;
+
+	for (auto JokerCard : JokerButtons)
+	{
+		if (JokerCard->GetInfo().JokerType == CurPreJokerType)
+		{
+			JokerCard->PlayJokerEvent(SkillText, SkillText2);
+			SetSkillTextPos(JokerCard);
+			SetSkillTextPos2(JokerCard);
+			break;
+		}
+	}
+}
+
+void UJokerSlotWidget::VM_FieldChanged_PreJokerEventStopFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInstance = Cast<UVM_JockerSlot>(Object); check(VMInstance);
+
+	if (VMInstance->GetJokerEventStopFlag() == false)
+		return;
+
+	SkillText->SetVisibility(ESlateVisibility::Collapsed);
+	SkillText2->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 
@@ -311,16 +350,41 @@ void UJokerSlotWidget::PushTimerEvent(TFunction<void(class UJokerCardWidget*, FJ
 
 void UJokerSlotWidget::SetSkillTextPos(UJokerCardWidget* CurEventCard)
 {
+	SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
 	FGeometry CardGeo = CurEventCard->GetCachedGeometry();
 	FVector2D AbsPos = CardGeo.GetAbsolutePosition();
-	FVector2D Size = CardGeo.GetLocalSize();
 
 	if (UWidget* CanvasParent = SkillText->GetParent())
 	{
 		FGeometry ParentGeo = CanvasParent->GetCachedGeometry();
 		FVector2D LocalCenter = ParentGeo.AbsoluteToLocal(AbsPos);
 
+		LocalCenter.Y -= 20.f;
+
 		if (UCanvasPanelSlot* MySlot = Cast<UCanvasPanelSlot>(SkillText->Slot))
+		{
+			MySlot->SetPosition(LocalCenter);
+		}
+	}
+}
+
+void UJokerSlotWidget::SetSkillTextPos2(UJokerCardWidget* CurEventCard)
+{
+	SkillText2->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+	FGeometry CardGeo = CurEventCard->GetCachedGeometry();
+	FVector2D AbsPos = CardGeo.GetAbsolutePosition();
+
+	if (UWidget* CanvasParent = SkillText2->GetParent())
+	{
+		FGeometry ParentGeo = CanvasParent->GetCachedGeometry();
+		FVector2D LocalCenter = ParentGeo.AbsoluteToLocal(AbsPos);
+
+		LocalCenter.Y -= 55.f;
+
+
+		if (UCanvasPanelSlot* MySlot = Cast<UCanvasPanelSlot>(SkillText2->Slot))
 		{
 			MySlot->SetPosition(LocalCenter);
 		}
@@ -340,11 +404,13 @@ void UJokerSlotWidget::StartNextTimer()
 	if (TimerFuncQueue.IsEmpty())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(JokerEffectTimerHandle);
-
+	
 		FTimerDelegate FinishDelegate;
 		FinishDelegate.BindLambda([&]() {
 			SkillText->SetVisibility(ESlateVisibility::Collapsed);
+			SkillText2->SetVisibility(ESlateVisibility::Collapsed);
 			SkillText->SetText(FText::FromString(""));
+			SkillText2->SetText(FText::FromString(""));
 			});
 
 		GetWorld()->GetTimerManager().SetTimer(
@@ -352,6 +418,9 @@ void UJokerSlotWidget::StartNextTimer()
 			FinishDelegate,
 			0.5f,
 			false);
+
+					
+
 		
 		
 		auto VM_Joker = TryGetViewModel<UVM_JockerSlot>(); check(VM_Joker);

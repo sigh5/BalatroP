@@ -43,6 +43,18 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(CalculatorFlag);
 	}
 
+	const EJokerType GetPlayEventJoker() const { return PlayEventJoker; }
+	void SetPlayEventJoker(EJokerType _InValue) {
+		PlayEventJoker = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(PlayEventJoker);
+	}
+
+	const bool GetJokerEventStopFlag() const { return JokerEventStopFlag; }
+	void SetJokerEventStopFlag(bool _InValue) {
+		JokerEventStopFlag = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(JokerEventStopFlag);
+	}
+
 ///////////////////////////////////////////////////////////////////////////
 	void	SetAddJokerCard(FJokerStat& Data) { OnAddJoker.Broadcast(Data); }// JokerList에 내 조커 추가하기
 
@@ -65,6 +77,13 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool	CalculatorFlag = false;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	EJokerType	PlayEventJoker = EJokerType::NONE;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	bool	JokerEventStopFlag = false;
+
 
 	UPROPERTY()
 	bool	IsLastHandPlay = false;

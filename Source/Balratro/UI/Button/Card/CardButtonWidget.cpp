@@ -373,6 +373,7 @@ void UCardButtonWidget::SetGoadEvent()
 	if (VM->GetCurrentBossType() == EBossType::GOAD &&
 		(Useless_Emblem == CardInfoData->Info.SuitGrade || CardInfoData->Info.EnforceType == ETaroSkillType::WILD))
 	{
+		UE_LOG(LogTemp, Warning, TEXT(" UCardButtonWidget::SetGoadEvent"));
 		SetRenderOpacity(0.3f);
 	}
 	else

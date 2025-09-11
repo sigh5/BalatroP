@@ -26,6 +26,9 @@ protected:
 private:
 	void VM_FieldChanged_AddJokerCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CalcualtorJokerCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_PlayJokerEvent(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_PreJokerEventStopFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
 
 private:
 	class UJokerCardWidget* ReuseCardButtonWidget(int32 AllNum, int32 Index, UJokerCard_Info* Data);
@@ -39,7 +42,7 @@ private:
 	void	StartNextTimer();
 
 	void SetSkillTextPos(class UJokerCardWidget* CurEventCard);
-
+	void SetSkillTextPos2(class UJokerCardWidget* CurEventCard);
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -48,6 +51,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> SkillText;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> SkillText2;
 
 private:
 	UPROPERTY()
@@ -58,11 +63,8 @@ private:
 
 private:
 	const int32 PaddingX = 8;
-
-
 	TQueue<FTimerDelegate> TimerFuncQueue;
+
 	FTimerHandle		   JokerEffectTimerHandle;
-
 	FTimerHandle			FinishJokerTimerHandle;
-
 };

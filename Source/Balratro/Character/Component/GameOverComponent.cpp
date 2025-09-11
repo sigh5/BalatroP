@@ -77,17 +77,13 @@ void UGameOverComponent::SetGameOverNextEvent(EPlayerStateType InType)
 	auto VM = GetVMBlindSelect();
 	VM->SetResetBlindView(true);
 
-	if (InType == EPlayerStateType::BLINDSELECT)
-	{
-		PS->SetPlayerState(InType);	
-	}
-	else if(InType == EPlayerStateType::LOGO)
+	if(InType == EPlayerStateType::LOGO)
 	{
 		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("PlayerInfoView", false));
 		VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("JokerSlotView", false));
-
-		PS->SetPlayerState(InType);
 	}
+
+	PS->SetPlayerState(InType);
 }
 
 
