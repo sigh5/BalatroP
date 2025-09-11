@@ -39,6 +39,20 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 		int32 BlindGrade = VM_PI->GetBlindGrade();  // 여기 수정필요
 		int32 BlindReward = VM_PI->GetBlindReward();
 		FString BlindImageIndex = VM_PI->GetBlindMaterialPath();
+		int32 GoldJoker = 0;
+
+		auto CurJokers = PS->GetCurrentJokerCards();
+
+		for (auto Joker : CurJokers)
+		{
+			if (Joker->Info.JokerType == EJokerType::GOLD)
+			{
+				GoldJoker = 5;
+				break;
+			}
+		}
+
+
 
 		UE_LOG(LogTemp, Warning, TEXT("RestHands : %d"), RestHands);
 		UE_LOG(LogTemp, Warning, TEXT("RestChucks : %d"), RestChucks);
@@ -46,7 +60,7 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 		UE_LOG(LogTemp, Warning, TEXT("BlindGrade : %d"), BlindGrade);
 		UE_LOG(LogTemp, Warning, TEXT("BlindReward : %d"), BlindReward);
 
-		EarnGold = RestHands + BlindReward + (CurGold / 5);
+		EarnGold = RestHands + BlindReward + (CurGold / 5) + GoldJoker;
 		VM_Reward->SetEarnGold(EarnGold);		// Order 0
 
 		UE_LOG(LogTemp, Warning, TEXT("EarnGold : %d"), EarnGold);
@@ -54,8 +68,13 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 		VM_Reward->SetBlindReward(BlindReward);  // Order 1
 		VM_Reward->SetRestHands(RestHands);		// Order 2
 		VM_Reward->SetInterest(CurGold / 5);	// Order 3
-		VM_Reward->SetBlindGrade(BlindGrade);	// Order 4
-		VM_Reward->SetBlindMaterialPath(BlindImageIndex); // Order 5
+		if (GoldJoker != 0)
+		{
+			VM_Reward->SetGoldJoker(GoldJoker); 	// Order 4
+		}
+		
+		VM_Reward->SetBlindGrade(BlindGrade); 	// Order 5
+		VM_Reward->SetBlindMaterialPath(BlindImageIndex); // Order 6
 	}
 	else if (EPlayerStateType::RESET_GAME == InType)
 	{

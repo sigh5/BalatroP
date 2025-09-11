@@ -52,6 +52,12 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(PlayEventJoker);
 	}
 
+	const EJokerType GetRoundFinishEventJoker() const { return RoundFinishEventJoker; }
+	void SetRoundFinishEventJoker(EJokerType _InValue) {
+		RoundFinishEventJoker = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(RoundFinishEventJoker);
+	}
+
 	const bool GetJokerEventStopFlag() const { return JokerEventStopFlag; }
 	void SetJokerEventStopFlag(bool _InValue) {
 		JokerEventStopFlag = _InValue;
@@ -111,5 +117,8 @@ private:
 	UPROPERTY()
 	EJokerType	CopyJokerSetting;
 
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	EJokerType	RoundFinishEventJoker = EJokerType::NONE;
 
 };

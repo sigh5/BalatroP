@@ -17,6 +17,7 @@ class BALRATRO_API UJokerCardComponent : public UActorComponent, public IJokerCa
 public:
 	virtual void LastCalculatorJokerSkill(OUT int32& CurChip, OUT float& CurDriange) override;
 	virtual void CalculatorCardJokerSkill(class UHandInCard_Info* CurCard, OUT int32& CurChip, OUT float& CurDriange) override;
+	virtual void FinishRoundJokerSkill() override;
 protected:
 	virtual void BeginPlay() override;
 

@@ -28,6 +28,7 @@ private:
 	void VM_FieldChanged_CalcualtorJokerCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_PlayJokerEvent(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_PreJokerEventStopFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_RoundFinishEvent(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 
 private:

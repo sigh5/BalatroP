@@ -19,6 +19,7 @@
 #include "UI/MVVM/ViewModel/VM_ItemSelect.h"
 #include "UI/MVVM/ViewModel/VM_JockerSlot.h"
 
+
 #include "PaperSprite.h"
 #include "Styling/SlateBrush.h"
 
@@ -137,6 +138,8 @@ void UJokerCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEve
 	
 	bIsDragging = false;
 }
+
+
 
 void UJokerCardWidget::SetInit()
 {
@@ -293,6 +296,10 @@ void UJokerCardWidget::OnJokerButtonClicked()
 
 		HSlot->SetPadding(Margin);
 	}
+
+	FString Pricestr = FString::Printf(TEXT("$%d"), JokerData->Info.Price);
+	PriceText->SetText(FText::FromString(Pricestr));
+
 }
 
 void UJokerCardWidget::ChangeJokerImage()

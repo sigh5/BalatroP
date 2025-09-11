@@ -40,6 +40,10 @@ void URewardView::NativeOnInitialized()
 	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::Interest,
 		FFieldValueChangedDelegate::CreateUObject(this, &URewardView::VM_FieldChanged_Interest));
 
+	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::GoldJoker,
+		FFieldValueChangedDelegate::CreateUObject(this, &URewardView::VM_FieldChanged_GoldJoker));
+
+
 	VMInst->AddFieldValueChangedDelegate(UVM_Reward::FFieldNotificationClassDescriptor::BlindGrade,
 		FFieldValueChangedDelegate::CreateUObject(this, &URewardView::VM_FieldChanged_BlindGrade));
 
@@ -53,6 +57,10 @@ void URewardView::NativeOnInitialized()
 	CashOutButton->OnClicked.AddDynamic(this, &URewardView::OnCashOutButton);
 
 	DotLine->SetVisibility(ESlateVisibility::Collapsed);
+
+	//GoldJokerReward->SetVisibility(ESlateVisibility::Collapsed);	
+	//GoldJokerText->SetVisibility(ESlateVisibility::Collapsed);
+	//GoldJoker->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void URewardView::OnCashOutButton()
@@ -119,6 +127,11 @@ void URewardView::VM_FieldChanged_RestHands(UObject* Object, UE::FieldNotificati
 	const auto VMInst = TryGetViewModel<UVM_Reward>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
+	GoldJokerReward->SetVisibility(ESlateVisibility::Collapsed);
+	GoldJokerText->SetVisibility(ESlateVisibility::Collapsed);
+	GoldJoker->SetVisibility(ESlateVisibility::Collapsed);
+
+
 	RestHandStep = VMInst->GetRestHands();
 	if (RestHandStep == -1)
 		return;
@@ -162,6 +175,39 @@ void URewardView::VM_FieldChanged_Interest(UObject* Object, UE::FieldNotificatio
 	StartQueue.Enqueue(TimerDel);
 
 	StartQueueAnimation();
+}
+
+void URewardView::VM_FieldChanged_GoldJoker(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_Reward>();
+	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
+
+	UE_LOG(LogTemp, Warning, TEXT("VM_FieldChanged_GoldJoker"));
+
+	GoldJokerStep = VMInst->GetGoldJoker();
+
+	if (GoldJokerStep == 0)
+		return;
+
+	UE_LOG(LogTemp, Warning, TEXT("VM_FieldChanged_GoldJoker222"));
+
+	GoldJokerReward->SetText(FText::FromString(""));
+
+	FTimerDelegate TimerDel;
+	TimerDel.BindLambda([&]()
+		{
+			GoldJokerReward->SetVisibility(ESlateVisibility::Visible);
+			GoldJokerText->SetVisibility(ESlateVisibility::Visible);
+			GoldJoker->SetVisibility(ESlateVisibility::Visible);
+
+			UpdateDollarAnimation(GoldJoker, GoldJokerReward, GoldJokerStep);
+		});
+
+	StartQueue.Enqueue(TimerDel);
+
+	StartQueueAnimation();
+
+
 }
 
 void URewardView::VM_FieldChanged_BlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId)

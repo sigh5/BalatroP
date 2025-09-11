@@ -21,6 +21,9 @@
 #include "Interface/CalculatorScoreInterface.h"
 #include "GameData/Utills.h"
 
+
+#include "Interface/JokerCalculatorInterface.h"
+
 void UCardAndDeckComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -104,6 +107,16 @@ void UCardAndDeckComponent::FinishHandPlay()
 
 	if (CurrentSum >= PS->GetCurrentRoundBlindGrade())
 	{
+		for (UActorComponent* Comp : GetOwner()->GetComponents())
+		{
+			if (Comp->GetClass()->ImplementsInterface(UJokerCalculatorInterface::StaticClass()))
+			{
+				IJokerCalculatorInterface* InterfacePtr = Cast<IJokerCalculatorInterface>(Comp);
+				InterfacePtr->FinishRoundJokerSkill();
+				break;
+			}
+		}
+
 		ResultScore = 0;
 		PS->SetCurrentScore(CurrentSum);
 
@@ -547,14 +560,12 @@ UVM_MainMenu* UCardAndDeckComponent::GetVMMainWidget()
 	return Cast<UVM_MainMenu>(Found);
 }
 
-
 AMyPlayerState* UCardAndDeckComponent::GetPlayerState()
 {
 	const auto Pawn = Cast<APawn>(GetOwner());
 	auto PlayerState = Pawn->GetController()->GetPlayerState<AMyPlayerState>();
 	return PlayerState;
 }
-
 
 UVM_ItemSelect* UCardAndDeckComponent::GetVMItemSelect()
 {

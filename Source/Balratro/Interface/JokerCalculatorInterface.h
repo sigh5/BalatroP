@@ -26,4 +26,5 @@ public:
 
 	virtual void CalculatorCardJokerSkill(class UHandInCard_Info* CurCard, OUT int32& CurChip, OUT float& CurDriange) = 0;
 
+	virtual void FinishRoundJokerSkill() = 0;
 };

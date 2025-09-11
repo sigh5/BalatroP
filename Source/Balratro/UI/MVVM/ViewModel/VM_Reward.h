@@ -59,6 +59,12 @@ public:
 		OnCashButtonClicked.Broadcast(); 
 	}
 
+	void SetGoldJoker(int32 _InValue) {
+		GoldJoker = _InValue;
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GoldJoker);
+	}
+	const int32 GetGoldJoker() const { return GoldJoker; }
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 BlindReward = 0;
@@ -74,6 +80,11 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 BlindGrade = 0;
+
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	int32 GoldJoker = 0;
+
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	FString BlindMaterialPath ;

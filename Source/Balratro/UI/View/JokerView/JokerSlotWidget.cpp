@@ -52,6 +52,8 @@ void UJokerSlotWidget::NativeOnInitialized()
 	VMInst->AddFieldValueChangedDelegate(UVM_JockerSlot::FFieldNotificationClassDescriptor::JokerEventStopFlag,
 		FFieldValueChangedDelegate::CreateUObject(this, &UJokerSlotWidget::VM_FieldChanged_PreJokerEventStopFlag));
 
+	VMInst->AddFieldValueChangedDelegate(UVM_JockerSlot::FFieldNotificationClassDescriptor::RoundFinishEventJoker,
+		FFieldValueChangedDelegate::CreateUObject(this, &UJokerSlotWidget::VM_FieldChanged_RoundFinishEvent));
 
 	SkillText->SetVisibility(ESlateVisibility::Collapsed);
 	SkillText2->SetVisibility(ESlateVisibility::Collapsed);
@@ -96,6 +98,8 @@ void UJokerSlotWidget::VM_FieldChanged_PlayJokerEvent(UObject* Object, UE::Field
 {
 	const auto VMInstance = Cast<UVM_JockerSlot>(Object); check(VMInstance);
 	auto CurPreJokerType = VMInstance->GetPlayEventJoker();
+
+	GetWorld()->GetTimerManager().ClearTimer(JokerEffectTimerHandle);
 
 	if (CurPreJokerType == EJokerType::NONE)
 		return;
@@ -222,8 +226,7 @@ void UJokerSlotWidget::SetJoker_EffectOrder(UJokerCardWidget* EventJoker, FJoker
 					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
 					VM_PlayerInfo->SetCurDrainage(CurDrainage + 4);
 
-					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
-
+				
 					CurEventCard->ShakingEvent();
 
 				}, EventJoker, JokerData);
@@ -244,8 +247,6 @@ void UJokerSlotWidget::SetJoker_EffectOrder(UJokerCardWidget* EventJoker, FJoker
 
 					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
 					VM_PlayerInfo->SetCurDrainage(CurDrainage * 3);
-
-					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
 
 					CurEventCard->ShakingEvent();
 
@@ -268,8 +269,6 @@ void UJokerSlotWidget::SetJoker_EffectOrder(UJokerCardWidget* EventJoker, FJoker
 					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
 					VM_PlayerInfo->SetCurDrainage(CurDrainage * 2);
 
-					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
-
 					CurEventCard->ShakingEvent();
 
 				}, EventJoker, JokerData);
@@ -291,8 +290,6 @@ void UJokerSlotWidget::SetJoker_EffectOrder(UJokerCardWidget* EventJoker, FJoker
 					int32 CurChip = VM_PlayerInfo->GetCurChip();
 					VM_PlayerInfo->SetCurDrainage(CurChip + 30);
 
-					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
-
 					CurEventCard->ShakingEvent();
 
 				}, EventJoker, JokerData);
@@ -313,8 +310,6 @@ void UJokerSlotWidget::SetJoker_EffectOrder(UJokerCardWidget* EventJoker, FJoker
 
 					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
 					VM_PlayerInfo->SetCurDrainage(CurDrainage + 4);
-
-					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
 
 					CurEventCard->ShakingEvent();
 
@@ -338,8 +333,7 @@ void UJokerSlotWidget::SetJoker_EffectOrder(UJokerCardWidget* EventJoker, FJoker
 					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
 					VM_PlayerInfo->SetCurDrainage(CurDrainage + JokerSum);
 
-					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
-
+				
 					CurEventCard->ShakingEvent();
 
 				}, EventJoker, JokerData);
@@ -362,7 +356,7 @@ void UJokerSlotWidget::SetJoker_EffectOrder(UJokerCardWidget* EventJoker, FJoker
 					int32 CurDrainage = VM_PlayerInfo->GetCurDrainage();
 					VM_PlayerInfo->SetCurDrainage(CurDrainage * BaseDrainage);
 
-					SkillText->SetVisibility(ESlateVisibility::HitTestInvisible);
+					
 
 					CurEventCard->ShakingEvent();
 
@@ -468,10 +462,6 @@ void UJokerSlotWidget::StartNextTimer()
 			FinishDelegate,
 			0.5f,
 			false);
-
-					
-
-		
 		
 		auto VM_Joker = TryGetViewModel<UVM_JockerSlot>(); check(VM_Joker);
 		VM_Joker->All_EffectFinish();
@@ -487,4 +477,36 @@ void UJokerSlotWidget::StartNextTimer()
 		Delegate,
 		0.5f,
 		false);
+}
+
+
+void UJokerSlotWidget::VM_FieldChanged_RoundFinishEvent(UObject* Object, UE::FieldNotification::FFieldId FieldId)
+{
+	const auto VMInst = TryGetViewModel<UVM_JockerSlot>();
+	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
+
+	for (auto Joker : JokerButtons)
+	{
+		if (VMInst->GetRoundFinishEventJoker() != Joker->GetInfo()->Info.JokerType)
+			continue;
+
+		FString ScoreStr = FString::Printf(TEXT("+%d price"), 3);
+		SkillText->SetText(FText::FromString(ScoreStr));
+		SetSkillTextPos(Joker);
+	}
+
+	FTimerDelegate Delegate;
+	Delegate.BindLambda([&]()
+		{
+			SkillText->SetText(FText::FromString(""));
+			SkillText->SetVisibility(ESlateVisibility::Collapsed);
+		});
+
+	GetWorld()->GetTimerManager().SetTimer(
+		JokerEffectTimerHandle,
+		Delegate,
+		1.5f,
+		false);
+
+
 }

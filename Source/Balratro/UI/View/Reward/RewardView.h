@@ -31,6 +31,8 @@ protected:
 	void VM_FieldChanged_BlindRewardText(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_RestHands(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_Interest(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+	void VM_FieldChanged_GoldJoker(UObject* Object, UE::FieldNotification::FFieldId FieldId);
+
 
 	void VM_FieldChanged_BlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_BlindImageIndex(UObject* Object, UE::FieldNotification::FFieldId FieldId);
@@ -70,6 +72,18 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> DotLine;  // $
 	
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> GoldJokerReward;  // $
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> GoldJokerText;  
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> GoldJoker;  // ¼ýÀÚ
+
+
+
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	TObjectPtr<class UWidgetAnimation> GoldTextAnimation;
 
@@ -84,6 +98,7 @@ private:
 	int32 RewardStep = 0;
 	int32 RestHandStep = 0;
 	int32 interestStep = 0;
+	int32 GoldJokerStep = 0;
 	uint8 isFirst : 1;
 	
 };

@@ -62,7 +62,7 @@ void UJokerCardComponent::BeginPlay()
 	}
 
 	Test_Data.JokerType = ItemType;
-	Test_Data.Price = 5;
+	Test_Data.Price = 3;
 	UpdateAddJoker(Test_Data);
 
 
@@ -98,6 +98,21 @@ void UJokerCardComponent::BeginPlay()
 
 	ItemType = EJokerType::JOKER_GOLD_SUM;
 	ItemIndex = static_cast<int32>(EJokerType::JOKER_GOLD_SUM);
+	ItemIndexStr = FString::FromInt(ItemIndex);
+	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
+	Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+	if (!Test_Data.CardSprite.IsValid())
+	{
+		Test_Data.CardSprite.LoadSynchronous();
+	}
+
+	Test_Data.JokerType = ItemType;
+	Test_Data.Price = 5;
+	UpdateAddJoker(Test_Data);
+
+
+	ItemType = EJokerType::EGG;
+	ItemIndex = static_cast<int32>(EJokerType::EGG);
 	ItemIndexStr = FString::FromInt(ItemIndex);
 	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
 	Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
@@ -347,8 +362,23 @@ void UJokerCardComponent::CalculatorCardJokerSkill(UHandInCard_Info* CurCard, OU
 			CurJokerCards[i]->Info.JokerType = EJokerType::COPY;
 		}
 	}
+}
 
+void UJokerCardComponent::FinishRoundJokerSkill()
+{
+	auto PS = GetPlayerState();
+	auto CurJokerCards = PS->GetCurrentJokerCards();
+	auto VM = GetVMJockerSlot();
 
+	for (auto& Joker : CurJokerCards)
+	{
+		if (Joker->Info.JokerType == EJokerType::EGG) // 이거 나중에 그 타입을 플레이 시작, 후 순위, 선순위 라운드 끝 이런식의 타입으로 나눠야될듯?
+		{
+			VM->SetRoundFinishEventJoker(EJokerType::EGG);
+			Joker->Info.Price += 3;
+			break;
+		}
+	}
 
 }
 
