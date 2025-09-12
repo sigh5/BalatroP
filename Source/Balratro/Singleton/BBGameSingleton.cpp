@@ -86,25 +86,32 @@ UBBGameSingleton::UBBGameSingleton()
 	static ConstructorHelpers::FObjectFinder<UDataTable> JockerStatTableRef(TEXT("/Script/Engine.DataTable'/Game/Data/DT_JokerStatTable.DT_JokerStatTable'"));
 	if (nullptr != JockerStatTableRef.Object)
 	{
-		const UDataTable* DataTable = DeckDataTableRef.Object;
+		const UDataTable* DataTable = JockerStatTableRef.Object;
 		check(DataTable->GetRowMap().Num() > 0);
 
 		for (const auto& Row : DataTable->GetRowMap())
 		{
 			// 나중에 리소스 확보하고 주석해제하기
-			/*const FName RowName = Row.Key;
+			const FName RowName = Row.Key;
 			FJokerStat* StatPtr = reinterpret_cast<FJokerStat*>(Row.Value);
 			if (StatPtr)
 			{
-				StatPtr->Name = RowName;
-				FString AssetPath = FString::Printf(TEXT(""), *RowName.ToString(), *RowName.ToString());
+				int32 ItemIndex = static_cast<int>(StatPtr->JokerType);
+				FString ItemIndexStr = FString::FromInt(ItemIndex);
+				FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
 				StatPtr->CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+				if (!StatPtr->CardSprite.IsValid())
+				{
+					StatPtr->CardSprite.LoadSynchronous();
+				}
+
+
 				JokerStatTable.Add(StatPtr);
-			}*/
+			}
 		}
 
-		//JokerStatMaxNum = JokerStatTable.Num();
-		//ensure(JokerStatMaxNum > 0);
+		JokerStatMaxNum = JokerStatTable.Num();
+		ensure(JokerStatMaxNum > 0);
 	}
 
 	static ConstructorHelpers::FObjectFinder<UDataTable>TaroTableRef(TEXT("/Script/Engine.DataTable'/Game/Data/DT_TaroStat.DT_TaroStat'"));

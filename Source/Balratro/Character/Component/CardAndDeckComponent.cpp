@@ -478,16 +478,19 @@ void UCardAndDeckComponent::UpdateHandPlay(int32 CardNum, TArray<UHandInCard_Inf
 
 void UCardAndDeckComponent::InitDeck()
 {
+	auto VM = GetVMCardDeck();
+	auto PS = GetPlayerState();
+
 	CurDrawIndex = 0;
 	_DelayTime = 0.f;
 	ResultScore = 0;
 
+	int32 CurDrawNum = PS->GetDrawCardNum();
+
 	ShuffleDeck();
-	DrawCard(8);
+	DrawCard(CurDrawNum);
 
-	auto VM = GetVMCardDeck();
-	auto PS = GetPlayerState();
-
+	
 	if (PS->GetPlayerState() == EPlayerStateType::BOSS_BLIND)
 	{
 		VM->SetCurrentBossType(PS->GetCurBossType().Value);

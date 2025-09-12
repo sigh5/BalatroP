@@ -44,6 +44,11 @@ void UJokerCardWidget::NativeOnInitialized()
 
 FReply UJokerCardWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	if (EventButton && EventButton->IsHovered())
+	{
+		return Super::NativeOnPreviewMouseButtonDown(InGeometry, InMouseEvent);
+	}
+	
 	FReply Reply = Super::NativeOnPreviewMouseButtonDown(InGeometry, InMouseEvent);
 
 	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
@@ -51,8 +56,7 @@ FReply UJokerCardWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeome
 		FVector2D LocalMousePos = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
 		DragOffset = LocalMousePos; // 클릭한 위치와 위젯 좌상단 차이
 
-		return UWidgetBlueprintLibrary::DetectDragIfPressed(
-			InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+		return   FReply::Handled().DetectDrag(TakeWidget(), EKeys::LeftMouseButton);;
 	}
 	bIsDragging = false;
 	return Reply;
@@ -145,6 +149,8 @@ void UJokerCardWidget::SetInit()
 {
 	IsSelected = false;
 	
+	UE_LOG(LogTemp, Warning, TEXT("UJokerCardWidget::SetInit"));
+
 	EventButton->OnClicked.AddDynamic(this, &UJokerCardWidget::OnSellButtonClicked);
 }
 
@@ -213,10 +219,12 @@ void UJokerCardWidget::OnSellButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_JockerSlot>(); check(VMInst);
 
-	IsStore = !IsStore;
+	UE_LOG(LogTemp, Warning, TEXT("UpdateSwapJokerData"));
+
+	VMInst->SetJokerState(JokerData->Info,IsStore);
+
 	SetVisibility(ESlateVisibility::Collapsed);
-	
-	VMInst->SetAddJokerCard(JokerData->Info);
+	IsStore = !IsStore;
 }
 
 void UJokerCardWidget::OnButtonHover()

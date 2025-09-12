@@ -147,22 +147,20 @@ public:
 	FORCEINLINE const TArray<class UHandInCard_Info*>& GetAllCurSelectCard() const { return CurSelectedAllCard; }
 	void  SetAllCurSelectCard(TArray<UHandInCard_Info*>& InValue);
 
-
 	FORCEINLINE const EPlayerStateType GetPlayerState() const { return CurPlayerState; }
-	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { 
-		CurPlayerState = InType; OnSelectNextScene.Broadcast(CurPlayerState); 
-	}
-
+	FORCEINLINE void SetPlayerState(EPlayerStateType InType) { CurPlayerState = InType; OnSelectNextScene.Broadcast(CurPlayerState); }
 
 	FORCEINLINE const TArray<class UJokerCard_Info*>& GetCurrentJokerCards() const { return CurJokerCardInfo; }
 	FORCEINLINE void SetCurrentJokerCards(TArray<class UJokerCard_Info*>& InValue) { CurJokerCardInfo = InValue;}
 
-	void AddCurrentJokerCard(const FJokerStat& Info)
+	FORCEINLINE void AddCurrentJokerCard(const FJokerStat& Info)
 	{
 		auto JokerCard = NewObject<UJokerCard_Info>(this);
 		JokerCard->Info = Info;
 		CurJokerCardInfo.Add(JokerCard);
 	}
+
+	void DeleteCurrentJokerCard(const FJokerStat& Info);
 
 
 	FORCEINLINE int32 GetCurrentShowChip() { return CurrentShowChip; }
@@ -212,6 +210,12 @@ public:
 	FORCEINLINE void SetAllChuckCount() { AllChuckCount++; }
 	FORCEINLINE int32 GetAllChuckCount() { return AllChuckCount; }
 
+	FORCEINLINE void  AddPreEventJoker(class UJokerCard_Info* JokerCard) { CurShakingEventJoker.Add(JokerCard); }
+	FORCEINLINE void ResetEventJoker() { CurShakingEventJoker.Empty(); }
+
+	FORCEINLINE void SetDrawCardNum(int32 _InValue) { DrawCardNum = _InValue;}
+	FORCEINLINE const int32 GetDrawCardNum() const { return DrawCardNum; }
+
 	class UHandRanking_Info* MostUseHandRankingName();
 
 	void		ResetInfos();
@@ -219,18 +223,13 @@ public:
 	void FindRankUpCard(OUT FDeckCardStat& CardStat);
 	void	 DeleteCards(TArray<class UHandInCard_Info*>& CardInfos);
 
-	void  AddPreEventJoker(class UJokerCard_Info* JokerCard)
-	{
-		CurShakingEventJoker.Add(JokerCard);
-	}
 
-	void ResetEventJoker()
-	{
-		CurShakingEventJoker.Empty();
-	}
+	FORCEINLINE const bool GetIsHavePriceDownBoucher() const { return IsHavePriceDownBoucher; }
 
 
 private:
+	int32 DrawCardNum = 8;
+
 	int32 RoundCount;
 	
 	int32 Gold;
@@ -253,7 +252,6 @@ private:
 	int32 AllPlayCount = 0;
 	int32 AllChuckCount = 0;
 
-
 	int32	CurrentShowChip;	 // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 칩
 	int32	CurrentShowDrainage; // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 배수
 
@@ -266,6 +264,7 @@ private:
 	int32	CurSelectTaroNum = 0;
 
 	uint8	HandPlayFlag : 1;
+	uint8   IsHavePriceDownBoucher : 1;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;

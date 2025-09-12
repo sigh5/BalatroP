@@ -37,14 +37,13 @@ private:
 	void	SetBoucherItem();
 	void	SetDownStoreItem();
 	
-
 	void	EraseStoreBoucherCard(FBoucherInfo& _Info);
-
 	void	InitStoreData();
 
 private:
 	EBoosterPackType	SetBoosterPackType();
 	EJokerType			SetJokerType();
+	void				SetBoucherType();
 
 private:
 	class UVM_PlayerInfo*	GetVMPlayerInfo();
@@ -62,9 +61,12 @@ private:
 	UPROPERTY()
 	TArray<class UJokerCard_Info*> JokerCards;
 
+	TArray<FBoucherInfo> BoucherCards;
 
-	TArray<FBoucherInfo> BoucherInfos;
+private: /*For Random*/
+	TArray<FBoucherInfo> Available_BoucherInfos;
 
+	TArray<EJokerType> Available_JokerInfos;
 
 	int32 BoosterPackIndex = 0;
 };

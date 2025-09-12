@@ -147,8 +147,6 @@ void URewardView::VM_FieldChanged_RestHands(UObject* Object, UE::FieldNotificati
 		});
 
 	StartQueue.Enqueue(TimerDel);
-
-	UE_LOG(LogTemp, Warning, TEXT("VM_FieldChanged_RestHands"));
 }
 
 void URewardView::VM_FieldChanged_Interest(UObject* Object, UE::FieldNotification::FFieldId FieldId)
@@ -182,14 +180,10 @@ void URewardView::VM_FieldChanged_GoldJoker(UObject* Object, UE::FieldNotificati
 	const auto VMInst = TryGetViewModel<UVM_Reward>();
 	checkf(IsValid(VMInst), TEXT("Couldn't find a valid ViewModel"));
 
-	UE_LOG(LogTemp, Warning, TEXT("VM_FieldChanged_GoldJoker"));
-
 	GoldJokerStep = VMInst->GetGoldJoker();
 
 	if (GoldJokerStep == 0)
 		return;
-
-	UE_LOG(LogTemp, Warning, TEXT("VM_FieldChanged_GoldJoker222"));
 
 	GoldJokerReward->SetText(FText::FromString(""));
 

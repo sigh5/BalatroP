@@ -15,6 +15,8 @@
 #include "Engine/AssetManager.h"
 #include "GameData/Utills.h"
 
+#include "Singleton/BBGameSingleton.h"
+
 void UStoreComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -86,27 +88,40 @@ void UStoreComponent::SetUpStoreItem()
 	auto PS = GetPlayerState();
 	auto VM_Stroe = GetVMStore();
 
+	if (JokerCards.Num() > 0)
+	{
+		for (auto Joker : JokerCards)
+		{
+			Available_JokerInfos.Add(Joker->Info.JokerType);
+		}
+	}
+
 	JokerCards.Empty();
 
+	float HavePriceDownBoucher = PS->GetIsHavePriceDownBoucher() ? 0.65f : 1.f;
+
+
 	int32 UpStoreItemNum = PS->GetHaveUpStoreNum();
-	
+	auto OriginJokerTable = UBBGameSingleton::Get().GetJokerStatTable();
+
 	for (int i = 0; i < UpStoreItemNum; ++i)
 	{
 		EJokerType ItemType = SetJokerType();
+
+		if (ItemType == EJokerType::NONE)
+			return;
+
 		UJokerCard_Info* CurJoker = NewObject<UJokerCard_Info>();
 
-		int32 ItemIndex = i; //static_cast<int32>(ItemType);
-		FString ItemIndexStr = FString::FromInt(ItemIndex);
-		FString AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
-		CurJoker->Info.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-		if (!CurJoker->Info.CardSprite.IsValid())
-		{
-			CurJoker->Info.CardSprite.LoadSynchronous();
-		}
+		int32 ItemIndex = static_cast<int32>(ItemType);
+		CurJoker->Info.Name = OriginJokerTable[ItemIndex]->Name;
+		CurJoker->Info.JokerType = OriginJokerTable[ItemIndex]->JokerType;
+		CurJoker->Info.JokerGrade = OriginJokerTable[ItemIndex]->JokerGrade;
+		CurJoker->Info.JokerSFX = OriginJokerTable[ItemIndex]->JokerSFX;
+		CurJoker->Info.Price = FMath::FloorToInt(OriginJokerTable[ItemIndex]->Price * HavePriceDownBoucher);
+		CurJoker->Info.UseNum = OriginJokerTable[ItemIndex]->UseNum;
+		CurJoker->Info.CardSprite = OriginJokerTable[ItemIndex]->CardSprite;
 
-		CurJoker->Info.JokerType = ItemType;
-		
-		CurJoker->Info.Price = 3;
 		JokerCards.Add(CurJoker);
 	}
 
@@ -117,13 +132,11 @@ void UStoreComponent::SetBoucherItem()
 {
 	auto VM_Store = GetVMStore();
 
-	auto TestData = BoucherInfos[6];
-	auto TestData2 = BoucherInfos[5];
-	TArray<FBoucherInfo> Temp;
-	Temp.Add(TestData);
-	//Temp.Add(TestData2);
-
-	VM_Store->SetCurStoreBouchers(Temp);
+	if (BoucherCards.Num() == 0)
+	{
+		SetBoucherType();	
+		VM_Store->SetCurStoreBouchers(BoucherCards);
+	}
 }
 
 void UStoreComponent::SetDownStoreItem()
@@ -164,17 +177,22 @@ void UStoreComponent::EraseStoreBoucherCard(FBoucherInfo& _Info)
 {
 	auto PS = GetPlayerState();
 
-	if (BoucherInfos.Contains(_Info))
+	int32 CurPrice = _Info.Price;
+
+	if (BoucherCards.Contains(_Info))
 	{
-		BoucherInfos.RemoveSingle(_Info);
+		BoucherCards.RemoveSingle(_Info);
 	}
+
+	int32 CurGold = PS->GetGold();
+	PS->SetGold(CurGold - CurPrice);
 
 	PS->AddBoucherType(_Info);
 }
 
 void UStoreComponent::InitStoreData()
 {
-	BoucherInfos.Empty();
+	Available_BoucherInfos.Empty();
 	BoosterPackIndex = 0;
 	JokerCards.Empty();
 	BoosterPacks.Empty();
@@ -189,38 +207,84 @@ void UStoreComponent::InitStoreData()
 		for (const auto& Boucher : NewStat->BoucherInfos)
 		{
 			FBoucherInfo BoucherInfo = Boucher;
-			BoucherInfos.Add(BoucherInfo);
+			Available_BoucherInfos.Add(BoucherInfo);
 		}
 	}
-	ensure(BoucherInfos.Num() > 0);
+	ensure(Available_BoucherInfos.Num() > 0);
+
+	auto OriginJokerDatas = UBBGameSingleton::Get().GetJokerStatTable();
+	
+	for (auto Data : OriginJokerDatas)
+	{
+		Available_JokerInfos.Add(Data->JokerType);
+	}
 }
 
 EBoosterPackType UStoreComponent::SetBoosterPackType()
 {
-	int32 TotalWeight = 0;
-	for (auto& Elem : ItemWeights)
-		TotalWeight += Elem.Weight;
+	//int32 TotalWeight = 0;
+	//for (auto& Elem : ItemWeights)
+	//	TotalWeight += Elem.Weight;
 
-	int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
-	int32 Accumulated = 0;
+	//int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
+	//int32 Accumulated = 0;
 
-	for (auto& Elem : ItemWeights)
-	{
-		Accumulated += Elem.Weight;
-		if (RandomValue <= Accumulated)
-			return Elem.Type;
-	}
+	//for (auto& Elem : ItemWeights)
+	//{
+	//	Accumulated += Elem.Weight;
+	//	if (RandomValue <= Accumulated)
+	//		return Elem.Type;
+	//}
 
-	return EBoosterPackType::NONE;
+	return EBoosterPackType::ORB_MEGA;
 }
 
 EJokerType UStoreComponent::SetJokerType()
 {
-	EJokerType CurType = EJokerType::BASE_JOKER;
+	EJokerType CurType = EJokerType::NONE;
 
+	int32 Num = Available_JokerInfos.Num();
 
+	int32 RandomValue = FRandomUtils::RandomSeed.RandRange(0, Num - 1);
+
+	CurType = Available_JokerInfos[RandomValue];
+
+	Available_JokerInfos.RemoveAtSwap(RandomValue);
 
 	return CurType;
+}
+
+void UStoreComponent::SetBoucherType()
+{
+	int32 Num = Available_BoucherInfos.Num();
+
+	int32 RandomValue = FRandomUtils::RandomSeed.RandRange(0, Num - 1);
+		
+	auto Data = Available_BoucherInfos[RandomValue];
+
+	if (Data.Type == EBoucherType::BoucherType_INVENTORY_ORB)
+	{
+		auto PS = GetPlayerState();
+
+		bool bIsHavePreBoucher = false;
+
+		for (auto HaveBoucher : PS->GetCurBoucherInfo())
+		{
+			if (HaveBoucher.Type == Data.PrevType)
+			{
+				bIsHavePreBoucher = true;
+				break;
+			}
+		}
+
+		if (!bIsHavePreBoucher)
+		{
+			SetBoucherType();
+		}
+	}
+
+
+	BoucherCards.Add(Data);
 }
 
 void UStoreComponent::StartBoosterPackEvent(UBoosterPackData* InData)
@@ -244,6 +308,11 @@ void UStoreComponent::StartBoosterPackEvent(UBoosterPackData* InData)
 
 	PS->SetSelectPackType(CurBoosterPack);
 	PS->SetPlayerState(EPlayerStateType::ITEM_SELECT);
+	
+	int32 CurGold = PS->GetGold();
+	int32 Price = (static_cast<int32>(CurBoosterPack->GetType()) % 2) == 0 ? 6 : 4;
+	
+	PS->SetGold(CurGold - Price);
 
 	VM_MainMenu->SetClearFlag(true);
 }

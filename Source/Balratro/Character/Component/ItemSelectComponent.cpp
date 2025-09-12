@@ -169,8 +169,6 @@ void UItemSelectComponent::SetItemList()
 
 	int32 IsMegaNum = (static_cast<int32>(PackType->GetType()) % 2 == 0 ) ? 5 : 3 ;
 
-	UE_LOG(LogTemp, Warning, TEXT("%d"), IsMegaNum);
-
 	// 메가 5장, 노말 3장 리스트에 올려야됌
 	// 메가면 2장 선택 아니면 1장 선택
 	if (IsMegaNum == 5)
@@ -203,34 +201,33 @@ TSet<int32> UItemSelectComponent::SetTaroType(int32 SetTaroNum)
 {
 	auto PS = GetPlayerState();
 
-	//TSet<int32> IndexArr;
+	TSet<int32> IndexArr;
 
-	//while (IndexArr.Num() < SetTaroNum)
-	//{
-	//	int32 TotalWeight = 0;
-	//	for (auto& Elem : PS->GetTaroStatTable())
-	//		TotalWeight += Elem->Info.weight;
+	while (IndexArr.Num() < SetTaroNum)
+	{
+		int32 TotalWeight = 0;
+		for (auto& Elem : PS->GetTaroStatTable())
+			TotalWeight += Elem->Info.weight;
 
-	//	int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
-	//	int32 Accumulated = 0;
+		int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
+		int32 Accumulated = 0;
 
-	//	for (auto& Elem : PS->GetTaroStatTable())
-	//	{
-	//		Accumulated += Elem->Info.weight;
-	//		if (RandomValue <= Accumulated)
-	//		{
-	//			IndexArr.Add(Elem->Info.index);
-	//			break;
-	//		}
-	//	}
-	//}
-	//
+		for (auto& Elem : PS->GetTaroStatTable())
+		{
+			Accumulated += Elem->Info.weight;
+			if (RandomValue <= Accumulated)
+			{
+				IndexArr.Add(Elem->Info.index);
+				break;
+			}
+		}
+	}
 
 	// 미구현 목록 0,2,4,9,11,12,13   
 	// 조커 카드 구현 하고 해야되는것 10,14,20,22
 
-	//  // 스톤카드 수정필요 
-	TSet<int32> IndexArr = { 16,4,9,11,12 };
+	// 스톤카드 수정필요 
+	//TSet<int32> IndexArr = { 16,4,9,11,12 };
 
 	
 	return IndexArr;

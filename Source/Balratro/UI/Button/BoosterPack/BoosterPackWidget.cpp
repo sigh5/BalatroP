@@ -13,7 +13,9 @@
 #include <Engine/World.h>
 #include <MVVMGameSubsystem.h>
 #include <MVVMSubsystem.h>
+
 #include "UI/MVVM/ViewModel/VM_Store.h"
+#include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 
 #include "PaperSprite.h"
 #include "Styling/SlateBrush.h"
@@ -39,6 +41,20 @@ void UBoosterPackWidget::OnBuyButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_Store>();
 	check(VMInst);
+
+	const auto VMPlayerInfo = TryGetViewModel<UVM_PlayerInfo>("VM_PlayerInfo", UVM_PlayerInfo::StaticClass()); check(VMPlayerInfo);
+
+	int32 CurGold = VMPlayerInfo->GetGold();
+
+	int32 CurPrice = IsMega ? 6 : 4;
+
+	if (CurGold - CurPrice < 0)
+	{
+		ShakingAnimStart();
+		return;
+	}
+
+
 
 	VMInst->OnClickedBuyBoosterPackButton(PackData);
 
@@ -74,15 +90,22 @@ void UBoosterPackWidget::SetPriceText()
 	auto Type = PackData->GetType();
 	int32 TypeIndex = static_cast<int32>(Type);
 	
-	if (TypeIndex % 2 == 1) // È¦¼ö mega = 6
+	if (TypeIndex % 2 == 0) // Â¦¼ö mega = 6
 	{
 		PriceText->SetText(FText::FromString(TEXT("$6")));
+		IsMega = true;
 	}
-	else    // Â¦¼ö ±âº» 4
+	else    // È¦¼ö ±âº» 4
 	{
 		PriceText->SetText(FText::FromString(TEXT("$4")));
+		IsMega = false;
 	}
 
+}
+
+void UBoosterPackWidget::ShakingAnimStart()
+{
+	PlayAnimation(ShakingAnim);
 }
 
 void UBoosterPackWidget::ChangeImage()

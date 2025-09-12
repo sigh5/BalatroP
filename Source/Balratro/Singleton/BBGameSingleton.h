@@ -40,6 +40,8 @@ public:
 
 	FORCEINLINE const TArray<FTaroStat*>& GetTaroStatTable() const { return TaroStatTable; }
 
+	FORCEINLINE const TArray<FJokerStat*>& GetJokerStatTable() const { return JokerStatTable; }
+
 private:
 	TMap<const FName, FHandRankingStat*> HandRankingStatTable;
 

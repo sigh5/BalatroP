@@ -22,7 +22,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	void UpdateAddJoker(FJokerStat& Data);
+	void UpdateAddJoker(FJokerStat& Data,bool IsAdd);
 
 	void LastCalculatorJoker(UJokerCard_Info* JokerCard ,OUT int32& CurChip , OUT float& CurDriange);
 	void PlayCalculatorJoker(UJokerCard_Info* JokerCard, class UHandInCard_Info* CurCard, OUT int32& CurChip, OUT float& CurDriange);

@@ -43,15 +43,21 @@ void URewardComponent::SetRewardViewData(EPlayerStateType InType)
 
 		auto CurJokers = PS->GetCurrentJokerCards();
 
-		for (auto Joker : CurJokers)
+		int32 CurJokerNum = CurJokers.Num();
+
+		for (int i = 0; i < CurJokerNum; ++i)
 		{
-			if (Joker->Info.JokerType == EJokerType::GOLD)
+			if (CurJokers[i]->Info.JokerType == EJokerType::GOLD)
 			{
-				GoldJoker = 5;
-				break;
+				GoldJoker += 5;
+			}
+			else if (i < CurJokerNum-1 && 
+					 CurJokers[i]->Info.JokerType == EJokerType::COPY &&
+					 CurJokers[i+1]->Info.JokerType == EJokerType::GOLD )
+			{
+				GoldJoker += 5;
 			}
 		}
-
 
 
 		UE_LOG(LogTemp, Warning, TEXT("RestHands : %d"), RestHands);

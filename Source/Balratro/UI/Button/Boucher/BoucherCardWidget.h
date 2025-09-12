@@ -33,6 +33,9 @@ private:
 	void	ChangeImage();
 	void	CreateImage();
 
+	void	ShakingAnimStart();
+
+private:
 	UFUNCTION()
 	void	OnClickedEvent();
 
@@ -41,6 +44,9 @@ private:
 
 	UFUNCTION()
 	void	OnBuyClickedEvent();
+
+
+
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -57,6 +63,11 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> BuyButton;
+
+	//UPROPERTY(meta = (BindWidgetAnim), Transient)
+	//TObjectPtr<class UWidgetAnimation> ShakingAnim;
+
+
 
 private:
 	uint8 IsStoreHave : 1;

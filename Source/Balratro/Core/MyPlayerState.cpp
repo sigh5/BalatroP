@@ -108,6 +108,27 @@ void AMyPlayerState::SetAllCurSelectCard(TArray<UHandInCard_Info*>& InValue)
 	}
 }
 
+void AMyPlayerState::DeleteCurrentJokerCard(const FJokerStat& Info)
+{
+	int32 Num = CurJokerCardInfo.Num();
+
+	int32 Index = -1;
+	for (int i = 0; i < Num; ++i)
+	{
+		if (Info == CurJokerCardInfo[i]->Info)
+		{
+			Index = i;
+			break;
+		}
+	}
+
+	if (Index != -1)
+	{
+		CurJokerCardInfo.RemoveAtSwap(Index);
+	}
+
+}
+
 void AMyPlayerState::ReStart()
 {
 
@@ -135,18 +156,19 @@ void AMyPlayerState::AddBoucherType(FBoucherInfo& _InValue)
 	
 	EBoucherType CurType = _InValue.Type;
 
-	UE_LOG(LogTemp, Warning, TEXT("MaxChuckCount : %d"), MaxChuckCount);
-	UE_LOG(LogTemp, Warning, TEXT("MaxHandCount : %d"), MaxHandCount);
-
 	switch (CurType)
 	{
 	case EBoucherType::NONE:
 		break;
 	case EBoucherType::BoucherType_HAND_PULS:
+		DrawCardNum += 1;
 		break;
 	case EBoucherType::BoucherType_BOSS_REROLL:
+		
 		break;
 	case EBoucherType::BoucherType_ENTI_MINUS:
+		SetEntiCount(EntiCount - 1);
+		SetMaxHandCount(MaxHandCount - 1);
 		break;
 	case EBoucherType::BoucherType_INTEREST_50:
 		break;
@@ -159,12 +181,17 @@ void AMyPlayerState::AddBoucherType(FBoucherInfo& _InValue)
 		SetUseHandCount(0);
 		break;
 	case EBoucherType::BoucherType_ORB:
+		
 		break;
 	case EBoucherType::BoucherType_INVENTORY:
+		HaveUpStoreNum += 1;
 		break;
+
 	case EBoucherType::BoucherType_COST_DOWN:
+		IsHavePriceDownBoucher = true;
 		break;
 	case EBoucherType::BoucherType_INVENTORY_ORB:
+		
 		break;
 	default:
 		break;
@@ -210,6 +237,15 @@ void AMyPlayerState::ResetInfos()
 	CurRestCardInHands.Empty();
 	CurJokerCardInfo.Empty();
 	CurTaroStatTable.Empty();
+
+	SetHaveUpStoreNum(2);
+	MaxHaveBoosterPackNum = 2;
+	HaveUpStoreNum = 2;
+	IsHavePriceDownBoucher = false;
+
+	DrawCardNum = 8;
+	RerollCost = 3;
+
 
 	SetPlayerState(EPlayerStateType::RESET_GAME);
 }

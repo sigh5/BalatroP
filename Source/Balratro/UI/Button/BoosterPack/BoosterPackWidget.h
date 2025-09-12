@@ -26,6 +26,8 @@ public:
 
 	void	SetPriceText();
 
+	void	ShakingAnimStart();
+
 private:
 	void	ChangeImage();
 	void	CreateImage();
@@ -57,6 +59,11 @@ private:
 	TObjectPtr<class UButton> BuyButton;
 
 
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	TObjectPtr<class UWidgetAnimation> ShakingAnim;
+
+
+private:
 	UPROPERTY()
 	TObjectPtr<UBoosterPackData> PackData;
 
@@ -64,5 +71,5 @@ private:
 
 	uint8 IsCreated : 1;
 
-
+	uint8  IsMega : 1;
 };

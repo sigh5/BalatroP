@@ -214,8 +214,6 @@ void UJokerSlotWidget::SetJoker_EffectOrder(UJokerCardWidget* EventJoker, FJoker
 		{
 			PushTimerEvent([&](UJokerCardWidget* CurEventCard, FJokerStat Value)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("EJokerType::BASE_JOKER"));
-
 					auto VM_PlayerInfo = TryGetViewModel<UVM_PlayerInfo>(TEXT("VM_PlayerInfo"), UVM_PlayerInfo::StaticClass());
 					check(VM_PlayerInfo);
 

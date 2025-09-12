@@ -7,7 +7,7 @@
 #include "VM_JockerSlot.generated.h"
 
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnAddJoker , FJokerStat&)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSetJokerState, FJokerStat&, bool /*JokerData , SellOrAdd*/);
 
 DECLARE_MULTICAST_DELEGATE(FOnEffectUIViewFinish);
 
@@ -24,7 +24,7 @@ class BALRATRO_API UVM_JockerSlot : public UMVVMViewModelBase
 	GENERATED_BODY()
 
 public:
-	FOnAddJoker OnAddJoker;
+	FOnSetJokerState OnSetJokerState;
 	FOnEffectUIViewFinish OnEffectUIViewFinish;
 	FOnJokerSlotSwapData OnJokerSlotSwapData;
 public:
@@ -65,7 +65,7 @@ public:
 	}
 
 ///////////////////////////////////////////////////////////////////////////
-	void	SetAddJokerCard(FJokerStat& Data) { OnAddJoker.Broadcast(Data); }// JokerList에 내 조커 추가하기
+	void	SetJokerState(FJokerStat& Data,bool IsAdd) { OnSetJokerState.Broadcast(Data, IsAdd); }// JokerList에 내 조커 추가하기
 
 	void	All_EffectFinish() { OnEffectUIViewFinish.Broadcast(); }
 	
@@ -115,7 +115,7 @@ private:
 	float		AddtionalValue;
 
 	UPROPERTY()
-	EJokerType	CopyJokerSetting;
+	EJokerType	CopyJokerSetting = EJokerType::NONE;
 
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))

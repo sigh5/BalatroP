@@ -26,7 +26,7 @@ void UJokerCardComponent::BeginPlay()
 	auto VM_Joker = GetVMJockerSlot();
 	auto PS = GetPlayerState();
 
-	VM_Joker->OnAddJoker.AddUObject(this, &UJokerCardComponent::UpdateAddJoker);
+	VM_Joker->OnSetJokerState.AddUObject(this, &UJokerCardComponent::UpdateAddJoker);
 	VM_Joker->OnJokerSlotSwapData.AddUObject(this, &UJokerCardComponent::UpdateSwapJokerData);
 
 
@@ -51,19 +51,19 @@ void UJokerCardComponent::BeginPlay()
 	//Test_Data.Price = 3;
 	//UpdateAddJoker(Test_Data);
 
-	ItemType = EJokerType::SPADE;
-	ItemIndex = static_cast<int32>(EJokerType::SPADE);
-	ItemIndexStr = FString::FromInt(ItemIndex);
-	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
-	Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-	if (!Test_Data.CardSprite.IsValid())
-	{
-		Test_Data.CardSprite.LoadSynchronous();
-	}
+	//ItemType = EJokerType::SPADE;
+	//ItemIndex = static_cast<int32>(EJokerType::SPADE);
+	//ItemIndexStr = FString::FromInt(ItemIndex);
+	//AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
+	//Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+	//if (!Test_Data.CardSprite.IsValid())
+	//{
+	//	Test_Data.CardSprite.LoadSynchronous();
+	//}
 
-	Test_Data.JokerType = ItemType;
-	Test_Data.Price = 3;
-	UpdateAddJoker(Test_Data);
+	//Test_Data.JokerType = ItemType;
+	//Test_Data.Price = 3;
+	//UpdateAddJoker(Test_Data,true);
 
 
 	ItemType = EJokerType::GOLD;
@@ -78,7 +78,7 @@ void UJokerCardComponent::BeginPlay()
 
 	Test_Data.JokerType = ItemType;
 	Test_Data.Price = 5;
-	UpdateAddJoker(Test_Data);
+	UpdateAddJoker(Test_Data,true);
 
 
 	ItemType = EJokerType::COPY;
@@ -93,10 +93,10 @@ void UJokerCardComponent::BeginPlay()
 
 	Test_Data.JokerType = ItemType;
 	Test_Data.Price = 5;
-	UpdateAddJoker(Test_Data);
+	UpdateAddJoker(Test_Data, true);
 
 
-	ItemType = EJokerType::JOKER_GOLD_SUM;
+	/*ItemType = EJokerType::JOKER_GOLD_SUM;
 	ItemIndex = static_cast<int32>(EJokerType::JOKER_GOLD_SUM);
 	ItemIndexStr = FString::FromInt(ItemIndex);
 	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
@@ -108,7 +108,7 @@ void UJokerCardComponent::BeginPlay()
 
 	Test_Data.JokerType = ItemType;
 	Test_Data.Price = 5;
-	UpdateAddJoker(Test_Data);
+	UpdateAddJoker(Test_Data, true);
 
 
 	ItemType = EJokerType::EGG;
@@ -123,7 +123,7 @@ void UJokerCardComponent::BeginPlay()
 
 	Test_Data.JokerType = ItemType;
 	Test_Data.Price = 5;
-	UpdateAddJoker(Test_Data);
+	UpdateAddJoker(Test_Data, true);*/
 
 //#endif
 }
@@ -202,37 +202,16 @@ void UJokerCardComponent::PlayCalculatorJoker(UJokerCard_Info* JokerCard, UHandI
 	auto VM = GetVMJockerSlot();
 	EJokerType Type = JokerCard->Info.JokerType;
 
-	if (false == (Type == EJokerType::SPADE || 
-				  Type == EJokerType::HEART_MUL || 
-				  Type == EJokerType::ACE_PLUS  ))
+	if (Type == EJokerType::SPADE ||
+		Type == EJokerType::HEART_MUL ||
+		Type == EJokerType::ACE_PLUS)
 	{
-		return;
-	}
-
-	/* Emblem */
-	if (Type == EJokerType::SPADE)
-	{
-		if (CurCard->Info.SuitGrade == 1)
+		if (Type == EJokerType::SPADE)
 		{
-			CurDriange += 4;
-
-			if (IsCopy)
+			if (CurCard->Info.SuitGrade == 1)
 			{
-				CurCard->PreEventJokerType.Add(EJokerType::COPY);
-			}
-			else
-				CurCard->PreEventJokerType.Add(Type);
-		}
+				CurDriange += 4;
 
-	}
-	else if (Type == EJokerType::HEART_MUL)
-	{
-		if (CurCard->Info.SuitGrade == 3)
-		{
-			if (FRandomUtils::RandomSeed.RandRange(0, 1) == 1)
-			{
-				CurDriange *= 1.5;
-				
 				if (IsCopy)
 				{
 					CurCard->PreEventJokerType.Add(EJokerType::COPY);
@@ -240,27 +219,44 @@ void UJokerCardComponent::PlayCalculatorJoker(UJokerCard_Info* JokerCard, UHandI
 				else
 					CurCard->PreEventJokerType.Add(Type);
 			}
-			
-		}
-	}
-	/* ~Emblem */
-	else if (Type == EJokerType::ACE_PLUS)
-	{
-		if (CurCard->Info.RankGrade == 1)
-		{		
-			CurDriange += 4;
-			CurChip += 30;
-			
-			if (IsCopy)
-			{
-				CurCard->PreEventJokerType.Add(EJokerType::COPY);
-			}
-			else
-				CurCard->PreEventJokerType.Add(Type);
-		}
-	}
 
-	JokerCard->Info.UseNum += 1;
+		}
+		else if (Type == EJokerType::HEART_MUL)
+		{
+			if (CurCard->Info.SuitGrade == 3)
+			{
+				if (FRandomUtils::RandomSeed.RandRange(0, 1) == 1)
+				{
+					CurDriange *= 1.5;
+
+					if (IsCopy)
+					{
+						CurCard->PreEventJokerType.Add(EJokerType::COPY);
+					}
+					else
+						CurCard->PreEventJokerType.Add(Type);
+				}
+
+			}
+		}
+		else if (Type == EJokerType::ACE_PLUS)
+		{
+			if (CurCard->Info.RankGrade == 1)
+			{
+				CurDriange += 4;
+				CurChip += 30;
+
+				if (IsCopy)
+				{
+					CurCard->PreEventJokerType.Add(EJokerType::COPY);
+				}
+				else
+					CurCard->PreEventJokerType.Add(Type);
+			}
+		}
+
+		JokerCard->Info.UseNum += 1;
+	}
 }
 
 void UJokerCardComponent::UpdateSwapJokerData(UJokerCard_Info* Source, UJokerCard_Info* SwapDest)
@@ -293,12 +289,11 @@ void UJokerCardComponent::LastCalculatorJokerSkill(OUT int32& CurChip, OUT float
 	JokerGoldSum = 0;
 
 	int32 CopyIndex = -1;
-
 	int32 DataNum = CurJokerCards.Num();
 	for (int32 i = 0; i < DataNum; ++i)
 	{
 		JokerGoldSum += CurJokerCards[i]->Info.Price;
-		if (CurJokerCards[i]->Info.JokerType == EJokerType::COPY)
+		if (CurJokerCards[i]->Info.JokerType == EJokerType::COPY && i < DataNum - 1)
 		{
 			CopyIndex = i;
 		}
@@ -308,7 +303,6 @@ void UJokerCardComponent::LastCalculatorJokerSkill(OUT int32& CurChip, OUT float
 	{
 		VM_Joker->SetCopyJokerSetting(EJokerType::NONE);
 	}
-
 
 	for (int32 i = 0; i < DataNum; ++i)
 	{
@@ -320,7 +314,7 @@ void UJokerCardComponent::LastCalculatorJokerSkill(OUT int32& CurChip, OUT float
 		}
 		LastCalculatorJoker(CurJokerCards[i], CurChip, CurDriange);
 
-		if (i == CopyIndex && i < DataNum - 1)
+		if (IsCopy)
 		{
 			CurJokerCards[i]->Info.JokerType = EJokerType::COPY;
 
@@ -336,10 +330,12 @@ void UJokerCardComponent::CalculatorCardJokerSkill(UHandInCard_Info* CurCard, OU
 
 	int32 CopyIndex = -1;
 
+	UE_LOG(LogTemp, Warning, TEXT("CalculatorCardJokerSkill"));
+
 	int32 DataNum = CurJokerCards.Num();
 	for (int32 i=0; i<DataNum; ++i)
 	{
-		if (CurJokerCards[i]->Info.JokerType == EJokerType::COPY)
+		if (CurJokerCards[i]->Info.JokerType == EJokerType::COPY && i < DataNum - 1)
 		{
 			CopyIndex = i;
 			break;
@@ -352,12 +348,13 @@ void UJokerCardComponent::CalculatorCardJokerSkill(UHandInCard_Info* CurCard, OU
 		if (i == CopyIndex && i < DataNum -1)
 		{
 			CurJokerCards[i]->Info.JokerType = CurJokerCards[i + 1]->Info.JokerType;
+			
 			IsCopy = true;
 		}
 
 		PlayCalculatorJoker(CurJokerCards[i], CurCard, CurChip, CurDriange);
 
-		if (i == CopyIndex && i < DataNum - 1)
+		if (IsCopy)
 		{
 			CurJokerCards[i]->Info.JokerType = EJokerType::COPY;
 		}
@@ -372,7 +369,7 @@ void UJokerCardComponent::FinishRoundJokerSkill()
 
 	for (auto& Joker : CurJokerCards)
 	{
-		if (Joker->Info.JokerType == EJokerType::EGG) // 이거 나중에 그 타입을 플레이 시작, 후 순위, 선순위 라운드 끝 이런식의 타입으로 나눠야될듯?
+		if (Joker->Info.JokerType == EJokerType::EGG) 
 		{
 			VM->SetRoundFinishEventJoker(EJokerType::EGG);
 			Joker->Info.Price += 3;
@@ -382,14 +379,26 @@ void UJokerCardComponent::FinishRoundJokerSkill()
 
 }
 
-void UJokerCardComponent::UpdateAddJoker(FJokerStat& Data)
+void UJokerCardComponent::UpdateAddJoker(FJokerStat& Data, bool IsAdd)
 {
 	auto VM_Joker = GetVMJockerSlot();
 	auto PS = GetPlayerState();
-	PS->AddCurrentJokerCard(Data);
+	
+	if (IsAdd)
+	{
+		PS->AddCurrentJokerCard(Data);
+	}
+	else
+	{
+		PS->DeleteCurrentJokerCard(Data);
+
+		int32 CurPrice = Data.Price;
+		int32 GetGold = PS->GetGold();
+		PS->SetGold(GetGold + CurPrice);
+	}
+
 
 	auto& JokerCards = PS->GetCurrentJokerCards();
-	
 	VM_Joker->SetJokerDatas(JokerCards);
 }
 

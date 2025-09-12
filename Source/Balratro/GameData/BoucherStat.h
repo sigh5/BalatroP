@@ -19,7 +19,8 @@ enum class EBoucherType :uint8
 	BoucherType_ORB,  // 오브부스터팩에서 가장 많이 플레이한 핸드랭킹의 오브 카드 항상 뽑음
 	BoucherType_INVENTORY , // 소모품 +1
 	BoucherType_COST_DOWN , // 상점 25% 할인
-	BoucherType_INVENTORY_ORB // 소모품에 Orb 카드 있을때 해당 orb 카드 배수에 x 1.5 추가 // MOST_ORB 필요
+	BoucherType_INVENTORY_ORB, // 소모품에 Orb 카드 있을때 해당 orb 카드 배수에 x 1.5 추가 // MOST_ORB 필요
+	BoucherType_NONE_NONE  = 99,
 };
 
 

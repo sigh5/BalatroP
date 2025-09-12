@@ -10,7 +10,9 @@
 #include <Engine/World.h>
 #include <MVVMGameSubsystem.h>
 #include <MVVMSubsystem.h>
+
 #include "UI/MVVM/ViewModel/VM_Store.h"
+#include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 
 #include "PaperSprite.h"
 #include "Styling/SlateBrush.h"
@@ -139,6 +141,15 @@ void UBoucherCardWidget::OnBuyClickedEvent()
 {
 	auto VM = TryGetViewModel<UVM_Store>(); check(VM);
 
+	const auto VMPlayerInfo = TryGetViewModel<UVM_PlayerInfo>("VM_PlayerInfo", UVM_PlayerInfo::StaticClass()); check(VMPlayerInfo);
+	int32 CurGold = VMPlayerInfo->GetGold();
+
+	if (CurGold - BoucherInfo.Price < 0)
+	{
+		ShakingAnimStart();
+		return;
+	}
+
 	VM->BuyBoucherCard(BoucherInfo);
 
 	SetVisibility(ESlateVisibility::Collapsed);
@@ -152,3 +163,7 @@ void UBoucherCardWidget::OnButtonHoverEvent()
 }
 
 
+void UBoucherCardWidget::ShakingAnimStart()
+{
+	//PlayAnimation(ShakingAnim);
+}
