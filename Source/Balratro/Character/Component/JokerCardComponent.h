@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "GameData/JokerStat.h"
 #include "Interface/JokerCalculatorInterface.h"
+#include "GameData/EnumDatas.h"
 #include "JokerCardComponent.generated.h"
 
 
@@ -28,6 +29,8 @@ private:
 	void PlayCalculatorJoker(UJokerCard_Info* JokerCard, class UHandInCard_Info* CurCard, OUT int32& CurChip, OUT float& CurDriange);
 
 	void UpdateSwapJokerData(UJokerCard_Info* Source, UJokerCard_Info* SwapDest);
+
+	void ResetJoker(EPlayerStateType _Invalue);
 
 private:
 	class UVM_PlayerInfo* GetVMPlayerInfo();

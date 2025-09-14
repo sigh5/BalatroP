@@ -149,6 +149,9 @@ public:
 	void	SetBossBlindImage_AssetPath(FString AssetPath) { BossAssetPath = AssetPath; }
 	const FString&	GetBossBlindImage_AssetPath() const { return BossAssetPath; }
 
+	void	SetEntiBossClearFlag(bool _InValue) { EntiBossClearFlag = _InValue; }
+	const bool	GetEntiBossClearFlag() const { return EntiBossClearFlag; }
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	int32 SmallGrade = 0;
@@ -185,5 +188,8 @@ private:
 
 	UPROPERTY()
 	FString BossAssetPath;
+
+	UPROPERTY()
+	bool EntiBossClearFlag = false;
 
 };

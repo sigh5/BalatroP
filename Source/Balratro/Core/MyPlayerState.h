@@ -16,10 +16,10 @@
 // First  Test
 // 디버그일때만 사용 릴리즈 일때 꺼야됌
 // 초기 시작  Bline_View_TEST, PlayerInfoView_VIEW_TEST ,JokerSlotView_VIEW_TEST
-#define Bline_View_TEST
+//#define Bline_View_TEST
 //#define Store_View_TEST
-#define PlayerInfoView_VIEW_TEST
-#define JokerSlotView_VIEW_TEST
+//#define PlayerInfoView_VIEW_TEST
+//#define JokerSlotView_VIEW_TEST
 //#define CadDeckView_View_TEST
 //#define HandRankingView_View_TEST
 
@@ -39,7 +39,7 @@ DECLARE_MULTICAST_DELEGATE(FOnSetEntiCount);
 DECLARE_MULTICAST_DELEGATE(FOnShowUIChip); 
 DECLARE_MULTICAST_DELEGATE(FOnShowUIDrainage);
 DECLARE_MULTICAST_DELEGATE(OnBossSkillEvent);
-
+DECLARE_MULTICAST_DELEGATE(FEntiBossClear);
 
 /**
  * 
@@ -66,7 +66,7 @@ public:
 	FOnShowUIDrainage			OnShowUIDrainage;
 	OnBossSkillEvent		OnBossSkill_PreEvent;
 	FOnBlindSkipRewardSetting	OnBlindSkipRewardSetting;
-
+	FEntiBossClear				EntiBossClear;
 public:
 	FString BossImagePath();
 	FString BossTypeToString();
@@ -222,6 +222,10 @@ public:
 
 	void FindRankUpCard(OUT FDeckCardStat& CardStat);
 	void	 DeleteCards(TArray<class UHandInCard_Info*>& CardInfos);
+
+	void	EntiBossClearFlag() {
+		SetEntiCount(EntiCount + 1);
+		EntiBossClear.Broadcast(); }
 
 
 	FORCEINLINE const bool GetIsHavePriceDownBoucher() const { return IsHavePriceDownBoucher; }

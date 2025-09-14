@@ -33,7 +33,7 @@ void UBlindComponent::BeginPlay()
 	auto PS = GetPlayerState();
 	PS->OnBossSkill_PreEvent.AddUObject(this,&UBlindComponent::UseBlindBossSkill);
 	PS->OnSelectNextScene.AddUObject(this, &UBlindComponent::NewtSceneEvent);
-
+	PS->EntiBossClear.AddUObject(this, &UBlindComponent::EntiBossClear);
 
 
 	ResetBlindSelectData();
@@ -205,7 +205,9 @@ void UBlindComponent::ResetBlindSelectData()
 	PS->SetCurBossType({ -1,EBossType::NONE });
 	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);  // 일단 그 테스트용
 	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);
-	
+	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK); 
+	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);
+	// 일단 그 테스트용
 	InitBlindSelectView();
 }
 
@@ -240,6 +242,14 @@ void UBlindComponent::SetBlindSkipReward(EBlindSkip_Tag CurTagType)
 {
 	auto PS = GetPlayerState();
 	PS->SetCurBlindSkipReward(CurTagType);
+}
+
+void UBlindComponent::EntiBossClear()
+{
+	auto VM = GetVMBlindSelect();
+	VM->GetEntiBossClearFlag();
+
+	InitBlindSelectView();
 }
 
 void UBlindComponent::HOOK_Skill()

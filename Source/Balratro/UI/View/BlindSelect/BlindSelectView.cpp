@@ -23,6 +23,8 @@ UBlindSelectView::UBlindSelectView()
 void UBlindSelectView::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	//IsToolTipView = true;
 }
 
 void UBlindSelectView::NativeOnInitialized()
@@ -69,7 +71,6 @@ void UBlindSelectView::NativeOnInitialized()
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BosslBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	
-	
 	FLinearColor BlackColor = FLinearColor::Black;
 	ButtonColor[0] = ButtonColor[1] = FSlateColor(BlackColor);;
 
@@ -78,6 +79,10 @@ void UBlindSelectView::NativeOnInitialized()
 
 	ButtonStyle = BigBlindButton->WidgetStyle;
 	ButtonColor[3] = ButtonStyle.Normal.TintColor;
+
+	ButtonStyle = BiglSkipButton->WidgetStyle;
+	ButtonColor[4] = ButtonStyle.Normal.TintColor;
+
 }
 
 void UBlindSelectView::OnSmallBlindButtonClicked()
@@ -95,7 +100,7 @@ void UBlindSelectView::OnSmallBlindButtonClicked()
 	BigBlindButton->SetVisibility(ESlateVisibility::Visible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
 	
-	VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
+	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
 }
 
 void UBlindSelectView::OnBigBlindButtonClicked()
@@ -105,8 +110,8 @@ void UBlindSelectView::OnBigBlindButtonClicked()
 	BigButtonText->SetText(FText::FromString(TEXT("Victory")));
 
 	SetButtonColorAndOpacity(BigBlindButton, ButtonColor[1], 0.3f);
-
 	BiglSkipButton->SetRenderOpacity(0.3f);
+
 
 	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
@@ -122,6 +127,21 @@ void UBlindSelectView::OnBossBlindButtonClicked()
 
 	BosslBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 
+	SmallButtonText->SetText(FText::FromString(TEXT("Select")));
+	SmallBlindButton->SetVisibility(ESlateVisibility::Visible);
+	SmallSkipButton->SetVisibility(ESlateVisibility::Visible);
+
+	BigButtonText->SetText(FText::FromString(TEXT("Select")));
+	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+	SetButtonColorAndOpacity(SmallBlindButton, ButtonColor[2], 1.f);
+	SetButtonColorAndOpacity(BigBlindButton, ButtonColor[3], 1.f);
+
+	BiglSkipButton->SetRenderOpacity(1.f);
+	SmallSkipButton->SetRenderOpacity(1.f);
+
+
 	VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
 }
 
@@ -129,9 +149,14 @@ void UBlindSelectView::OnSmallBlindSkip_ButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
 
+	SetButtonColorAndOpacity(SmallBlindButton, ButtonColor[0], 0.3f);
+	SmallSkipButton->SetRenderOpacity(0.3f);
+
 	SmallButtonText->SetText(FText::FromString(TEXT("Skip")));
 	SmallBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	SmallSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+
+	
 
 	BigBlindButton->SetVisibility(ESlateVisibility::Visible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
@@ -143,9 +168,14 @@ void UBlindSelectView::OnBigBlindSkip_ButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_BlindSelect>();
 
+	SetButtonColorAndOpacity(BigBlindButton, ButtonColor[1], 0.3f);
+	BiglSkipButton->SetRenderOpacity(0.3f);
+
 	BigButtonText->SetText(FText::FromString(TEXT("Skip")));
 	BigBlindButton->SetVisibility(ESlateVisibility::HitTestInvisible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::HitTestInvisible);
+	
+	BosslBlindButton->SetVisibility(ESlateVisibility::Visible);
 
 	VMInst->SetBlindType(EPlayerStateType::BIG_BLIND_SKIP);
 }
@@ -319,6 +349,7 @@ void UBlindSelectView::VM_FieldChanged_ResetBlindView(UObject* Object, UE::Field
 
 	SetButtonColorAndOpacity(SmallBlindButton, ButtonColor[2], 1.f);
 	SetButtonColorAndOpacity(BigBlindButton, ButtonColor[3], 1.f);
+
 	BiglSkipButton->SetRenderOpacity(1.f);
 	SmallSkipButton->SetRenderOpacity(1.f);
 }

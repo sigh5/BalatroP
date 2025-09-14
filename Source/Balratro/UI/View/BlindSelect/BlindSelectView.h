@@ -60,6 +60,8 @@ private:
 
 	void	SetButtonColorAndOpacity(class UButton* Button, FSlateColor _InColor, float _Ratio);
 
+
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> SmallBlindButton;
@@ -112,5 +114,5 @@ private:
 private:
 	uint8	IsToolTipView : 1;
 
-	FSlateColor ButtonColor[4];
+	FSlateColor ButtonColor[5]; // 0,1 ºí·¢  2,small ,3 small skip ,4 big , 5,big_skip
 };

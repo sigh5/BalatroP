@@ -42,6 +42,8 @@ private:
 
 	void	StartNextTimer();
 
+	void	ResetJoker();
+
 	void SetSkillTextPos(class UJokerCardWidget* CurEventCard);
 	void SetSkillTextPos2(class UJokerCardWidget* CurEventCard);
 

@@ -222,19 +222,19 @@ void UStoreComponent::InitStoreData()
 
 EBoosterPackType UStoreComponent::SetBoosterPackType()
 {
-	//int32 TotalWeight = 0;
-	//for (auto& Elem : ItemWeights)
-	//	TotalWeight += Elem.Weight;
+	int32 TotalWeight = 0;
+	for (auto& Elem : ItemWeights)
+		TotalWeight += Elem.Weight;
 
-	//int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
-	//int32 Accumulated = 0;
+	int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
+	int32 Accumulated = 0;
 
-	//for (auto& Elem : ItemWeights)
-	//{
-	//	Accumulated += Elem.Weight;
-	//	if (RandomValue <= Accumulated)
-	//		return Elem.Type;
-	//}
+	for (auto& Elem : ItemWeights)
+	{
+		Accumulated += Elem.Weight;
+		if (RandomValue <= Accumulated)
+			return Elem.Type;
+	}
 
 	return EBoosterPackType::ORB_MEGA;
 }
