@@ -203,9 +203,19 @@ void UBlindComponent::ResetBlindSelectData()
 	}
 	
 	PS->SetCurBossType({ -1,EBossType::NONE });
-	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);  // 일단 그 테스트용
-	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);
+
+	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK); 
+	BlindSkipTags.Add(EBlindSkip_Tag::ORB_PACK);
+
+	BlindSkipTags.Add(EBlindSkip_Tag::SECREAT_JOKER);  
+	BlindSkipTags.Add(EBlindSkip_Tag::REAR_JOKER);
+
+	BlindSkipTags.Add(EBlindSkip_Tag::NEGERTIVE_JOKER); 
+	BlindSkipTags.Add(EBlindSkip_Tag::FOIL_JOKER);
 	
+	BlindSkipTags.Add(EBlindSkip_Tag::BOSTER_PACK_FREE); 
+	BlindSkipTags.Add(EBlindSkip_Tag::ADD_TEN_JKER);
+
 	InitBlindSelectView();
 }
 

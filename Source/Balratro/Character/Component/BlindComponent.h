@@ -48,10 +48,10 @@ private:
 	class UVM_Store* GetVMStore();
 	class UVM_CardDeck* GetVMCardDeck();
 private:
-	//UPROPERTY()
+
 	TMap<EBossType, TFunction<void()>> PreBossSkill;
 
-	//UPROPERTY()
+
 	TMap<EBossType, TFunction<void()>> AfterBossSkill;
 
 	TArray<int32> RandomArray;

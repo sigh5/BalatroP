@@ -137,6 +137,28 @@ UBBGameSingleton::UBBGameSingleton()
 		ensure(TaroStatMaxNum > 0);
 	}
 
+	static ConstructorHelpers::FObjectFinder<UDataTable> OrbTableRef(TEXT("/Script/Engine.DataTable'/Game/Data/DT_OrbStat.DT_OrbStat'"));
+	if (nullptr != OrbTableRef.Object)
+	{
+		const UDataTable* DataTable = OrbTableRef.Object;
+		check(DataTable->GetRowMap().Num() > 0);
+
+		for (const auto& Row : DataTable->GetRowMap())
+		{
+			const FName RowName = Row.Key;
+			FOrbStat* StatPtr = reinterpret_cast<FOrbStat*>(Row.Value);
+			if (StatPtr)
+			{
+				int32 Index = static_cast<int32>(StatPtr->_Type);
+				FString AssetPath = FString::Printf(TEXT("/Script/Paper2D.PaperSprite'/Game/CardResuorce/orb/Orb_%d.Orb_%d'"), Index, Index);
+				StatPtr->SpriteAsset = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+				OrbStatTable.Add(StatPtr);
+			}
+		}
+
+		ensure(OrbStatTable.Num() > 0);
+	}
+
 }
 
 UBBGameSingleton& UBBGameSingleton::Get()

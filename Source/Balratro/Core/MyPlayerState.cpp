@@ -40,14 +40,7 @@ void AMyPlayerState::ResetMyHandRankingInfo(const TMap<const FName, FHandRanking
 		MyInfo->Info.Level = Info.Value->Level;
 		MyInfo->Info.Chip = Info.Value->Chip;
 		MyInfo->Info.Drainage = Info.Value->Drainage;
-		MyInfo->Info.UseNum = Info.Value->UseNum;
-		
-		if (Index == 11)// Test
-		{
-			MyInfo->Info.Level += 2;
-			MyInfo->Info.UseNum = 3;
-		}
-		
+		MyInfo->Info.UseNum = Info.Value->UseNum;	
 		MyInfo->Info.IncreaseChip = Info.Value->IncreaseChip;
 		MyInfo->Info.IncreaseDrainage = Info.Value->IncreaseDrainage;
 
@@ -126,11 +119,6 @@ void AMyPlayerState::DeleteCurrentJokerCard(const FJokerStat& Info)
 	{
 		CurJokerCardInfo.RemoveAtSwap(Index);
 	}
-
-}
-
-void AMyPlayerState::ReStart()
-{
 
 }
 

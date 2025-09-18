@@ -24,14 +24,14 @@ void UStoreComponent::BeginPlay()
 	ItemWeights = {
    { EBoosterPackType::TARO_BASE, 5 },
    { EBoosterPackType::TARO_MEGA, 3 },
-   /*{ EBoosterPackType::CARD_BASE, 5 },
-   { EBoosterPackType::CARD_MEGA, 3 },
    { EBoosterPackType::ORB_BASE, 5 },
    { EBoosterPackType::ORB_MEGA, 3 },
-   { EBoosterPackType::JOKER_BASE, 5 },
-   { EBoosterPackType::JOKER_MEGA, 3 },
-   { EBoosterPackType::GHOST_BASE, 2 },
-   { EBoosterPackType::GHOST_MEGA, 1 }*/ };
+   { EBoosterPackType::TARO_BASE, 5 },
+   { EBoosterPackType::TARO_MEGA, 3 },
+   { EBoosterPackType::ORB_BASE, 5 },
+   { EBoosterPackType::ORB_MEGA, 3 },
+   { EBoosterPackType::TARO_BASE, 2 },
+   { EBoosterPackType::TARO_MEGA, 1 } };
 	auto PS = GetPlayerState();
 	auto VM = GetVMStore();
 
@@ -222,19 +222,19 @@ void UStoreComponent::InitStoreData()
 
 EBoosterPackType UStoreComponent::SetBoosterPackType()
 {
-	//int32 TotalWeight = 0;
-	//for (auto& Elem : ItemWeights)
-	//	TotalWeight += Elem.Weight;
+	int32 TotalWeight = 0;
+	for (auto& Elem : ItemWeights)
+		TotalWeight += Elem.Weight;
 
-	//int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
-	//int32 Accumulated = 0;
+	int32 RandomValue = FRandomUtils::RandomSeed.RandRange(1, TotalWeight);
+	int32 Accumulated = 0;
 
-	//for (auto& Elem : ItemWeights)
-	//{
-	//	Accumulated += Elem.Weight;
-	//	if (RandomValue <= Accumulated)
-	//		return Elem.Type;
-	//}
+	for (auto& Elem : ItemWeights)
+	{
+		Accumulated += Elem.Weight;
+		if (RandomValue <= Accumulated)
+			return Elem.Type;
+	}
 
 	return EBoosterPackType::ORB_MEGA;
 }

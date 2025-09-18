@@ -6,12 +6,9 @@
 #include "GameData/EnumDatas.h"
 #include "VM_JockerSlot.generated.h"
 
-
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSetJokerState, FJokerStat&, bool /*JokerData , SellOrAdd*/);
-
 DECLARE_MULTICAST_DELEGATE(FOnEffectUIViewFinish);
 
-
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSetJokerState, FJokerStat&, bool /*JokerData , SellOrAdd*/);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnJokerSlotSwapData, UJokerCard_Info* , UJokerCard_Info* /*Sour Dest*/ );
 
 /**

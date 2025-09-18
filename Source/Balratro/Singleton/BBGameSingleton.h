@@ -10,6 +10,7 @@
 #include "GameData/JokerStat.h"
 #include "GameData/TaroStat.h"
 #include "GameData/EnumDatas.h"
+#include "GameData/OrbStat.h"
 #include "BBGameSingleton.generated.h"
 
 /**
@@ -42,6 +43,8 @@ public:
 
 	FORCEINLINE const TArray<FJokerStat*>& GetJokerStatTable() const { return JokerStatTable; }
 
+	FORCEINLINE const TArray<FOrbStat*>& GetOrbStatTable() const { return OrbStatTable; }
+
 private:
 	TMap<const FName, FHandRankingStat*> HandRankingStatTable;
 
@@ -52,6 +55,8 @@ private:
 	TArray<FJokerStat*> JokerStatTable;
 
 	TArray<FTaroStat*>	TaroStatTable;
+
+	TArray<FOrbStat*>	OrbStatTable;
 
 	UPROPERTY()
 	int32 HandRankingMaxNum;

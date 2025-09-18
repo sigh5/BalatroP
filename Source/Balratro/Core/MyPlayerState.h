@@ -172,7 +172,6 @@ public:
 	FORCEINLINE int32 GetCurrentRoundBlindGrade() { return CurrentRoundBlindGrade; }
 	FORCEINLINE void  SetCurrentRoundBlindGrade(int32 InValue) { CurrentRoundBlindGrade = InValue; }
 
-	void ReStart();  // 죽었을때 다시 하는거
 	void SetNextRound(); // 시작하는 값들 초기화
 
 	FORCEINLINE const class UBoosterPackData* GetSelectPackType() { return CurSelcetPackType; }
