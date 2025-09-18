@@ -65,6 +65,13 @@ void UJokerSlotWidget::VM_FieldChanged_AddJokerCard(UObject* Object, UE::FieldNo
 	auto& JokerDatas = VMInstance->GetJokerDatas();
 	int32 DataNums = JokerDatas.Num();
 
+	if (DataNums == 0)
+	{
+		ResetJoker();
+	}
+
+
+
 	for (int i = 0; i < DataNums; ++i)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%d"), static_cast<int>(JokerDatas[i]->Info.JokerType));
@@ -177,6 +184,7 @@ UJokerCardWidget* UJokerSlotWidget::ReuseCardButtonWidget(int32 AllNum, int32 In
 	}
 
 	check(NewButton);
+	NewButton->SetVisibility(ESlateVisibility::Visible);
 	NewButton->SetInfo(Data);
 	NewButton->SetIsStoreHave(false);
 
@@ -475,6 +483,14 @@ void UJokerSlotWidget::StartNextTimer()
 		Delegate,
 		0.5f,
 		false);
+}
+
+void UJokerSlotWidget::ResetJoker()
+{
+	for (auto& Joker : JokerButtons)
+	{
+		Joker->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 

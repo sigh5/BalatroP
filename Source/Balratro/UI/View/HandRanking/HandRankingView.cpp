@@ -33,14 +33,12 @@ void UHandRankingView::NativeConstruct()
 	VMInst->AddFieldValueChangedDelegate(UVM_HandRankingCount::FFieldNotificationClassDescriptor::HRButtonInfo,
 		FFieldValueChangedDelegate::CreateUObject(this, &UHandRankingView::VM_FieldChanged_WidgetPos));
 
-	
+	BlindSelectToolTipWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UHandRankingView::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	BlindSelectToolTipWidget->SetVisibility(ESlateVisibility::Collapsed);
 
 	PokerHandButton->OnClicked.AddDynamic(this, &UHandRankingView::OnClicked_PokerHandButton);
 	BlindButton->OnClicked.AddDynamic(this, &UHandRankingView::OnClicked_BlindButton);

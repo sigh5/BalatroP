@@ -40,7 +40,7 @@ void AMyPlayerState::ResetMyHandRankingInfo(const TMap<const FName, FHandRanking
 		MyInfo->Info.Level = Info.Value->Level;
 		MyInfo->Info.Chip = Info.Value->Chip;
 		MyInfo->Info.Drainage = Info.Value->Drainage;
-		MyInfo->Info.UseNum = Info.Value->UseNum;	
+		MyInfo->Info.UseNum = Info.Value->UseNum;		
 		MyInfo->Info.IncreaseChip = Info.Value->IncreaseChip;
 		MyInfo->Info.IncreaseDrainage = Info.Value->IncreaseDrainage;
 
@@ -188,7 +188,7 @@ void AMyPlayerState::AddBoucherType(FBoucherInfo& _InValue)
 
 UHandRanking_Info* AMyPlayerState::MostUseHandRankingName()
 {
-	TArray<UHandRanking_Info*> HandRankingInfo = MyHandRankingInfo; // º¹»ç
+	TArray<UHandRanking_Info*> HandRankingInfo = MyHandRankingInfo; // ï¿½ï¿½ï¿½ï¿½
 	HandRankingInfo.Sort([&](const UHandRanking_Info& a, const UHandRanking_Info& b)
 		{
 			return a.Info.UseNum > b.Info.UseNum;
@@ -206,7 +206,7 @@ void AMyPlayerState::ResetInfos()
 	SetGold(4);
 	SetMaxGold(4);
 	SetUseHandCount(0);
-	SetMaxHandCount(1); // ³ªÁß¿¡ 4·Î ¹Ù²Ù±â
+	SetMaxHandCount(1); // ï¿½ï¿½ï¿½ß¿ï¿½ 4ï¿½ï¿½ ï¿½Ù²Ù±ï¿½
 	SetMaxChuckCount(3);
 	SetUseChuckCount(0);
 	SetCurrentScore(0);
@@ -276,12 +276,12 @@ void AMyPlayerState::DeleteCards(TArray<class UHandInCard_Info*>& CardInfos)
 {
 	for (UHandInCard_Info* Card : CardInfos)
 	{
-		CurrentAllHands.Remove(Card);  // ¿øº»¿¡¼­ »èÁ¦
+		CurrentAllHands.Remove(Card);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	}
 
 	for (UHandInCard_Info* Card : CardInfos)
 	{
-		Deck_Stat.Remove(Card);  // ¿øº»¿¡¼­ »èÁ¦
+		Deck_Stat.Remove(Card);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	}
 
 	int32 CurDeckNum = CardInDeckNum;

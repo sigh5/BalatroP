@@ -16,7 +16,7 @@
 #include "GameData/Utills.h"
 
 
-// µð¹ö±×¿ë
+// ï¿½ï¿½ï¿½ï¿½×¿ï¿½
 #include "PaperSprite.h"
 
 void UJokerCardComponent::BeginPlay()
@@ -29,41 +29,72 @@ void UJokerCardComponent::BeginPlay()
 	VM_Joker->OnSetJokerState.AddUObject(this, &UJokerCardComponent::UpdateAddJoker);
 	VM_Joker->OnJokerSlotSwapData.AddUObject(this, &UJokerCardComponent::UpdateSwapJokerData);
 
+	PS->OnSelectNextScene.AddUObject(this, &UJokerCardComponent::ResetJoker);
+
+	// BASE_JOKER, LAST_HAND_MUL3, PAIR_MUL_DRANGE, JOKER_GOLD_SUM, PAIR_CHIP,POP_CONE ,PAIR_DRAINAGE
 //#ifdef JokerSlotView_VIEW_TEST
-	FJokerStat Test_Data;
-	EJokerType ItemType;
-	int32 ItemIndex;
-	FString ItemIndexStr;
-	FString AssetPath;
-	
-	ItemType = EJokerType::GOLD;
-	ItemIndex = static_cast<int32>(EJokerType::GOLD);
-	ItemIndexStr = FString::FromInt(ItemIndex);
-	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
-	Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-	if (!Test_Data.CardSprite.IsValid())
-	{
-		Test_Data.CardSprite.LoadSynchronous();
-	}
+	//FJokerStat Test_Data;
+	//EJokerType ItemType;
+	//int32 ItemIndex;
+	//FString ItemIndexStr;
+	//FString AssetPath;
+	////ItemType = EJokerType::BASE_JOKER;
+	////
+	////ItemIndex = static_cast<int32>(EJokerType::BASE_JOKER);
+	////ItemIndexStr = FString::FromInt(ItemIndex);
+	//// AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
+	////Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+	////if (!Test_Data.CardSprite.IsValid())
+	////{
+	////	Test_Data.CardSprite.LoadSynchronous();
+	////}
+	////Test_Data.JokerType = ItemType;
+	////Test_Data.Price = 3;
+	////UpdateAddJoker(Test_Data);
 
-	Test_Data.JokerType = ItemType;
-	Test_Data.Price = 5;
-	UpdateAddJoker(Test_Data,true);
+	////ItemType = EJokerType::SPADE;
+	////ItemIndex = static_cast<int32>(EJokerType::SPADE);
+	////ItemIndexStr = FString::FromInt(ItemIndex);
+	////AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
+	////Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+	////if (!Test_Data.CardSprite.IsValid())
+	////{
+	////	Test_Data.CardSprite.LoadSynchronous();
+	////}
+
+	////Test_Data.JokerType = ItemType;
+	////Test_Data.Price = 3;
+	////UpdateAddJoker(Test_Data,true);
 
 
-	ItemType = EJokerType::COPY;
-	ItemIndex = static_cast<int32>(EJokerType::COPY);
-	ItemIndexStr = FString::FromInt(ItemIndex);
-	AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
-	Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
-	if (!Test_Data.CardSprite.IsValid())
-	{
-		Test_Data.CardSprite.LoadSynchronous();
-	}
+	//ItemType = EJokerType::GOLD;
+	//ItemIndex = static_cast<int32>(EJokerType::GOLD);
+	//ItemIndexStr = FString::FromInt(ItemIndex);
+	//AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
+	//Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+	//if (!Test_Data.CardSprite.IsValid())
+	//{
+	//	Test_Data.CardSprite.LoadSynchronous();
+	//}
 
-	Test_Data.JokerType = ItemType;
-	Test_Data.Price = 5;
-	UpdateAddJoker(Test_Data, true);
+	//Test_Data.JokerType = ItemType;
+	//Test_Data.Price = 5;
+	//UpdateAddJoker(Test_Data,true);
+
+
+	//ItemType = EJokerType::COPY;
+	//ItemIndex = static_cast<int32>(EJokerType::COPY);
+	//ItemIndexStr = FString::FromInt(ItemIndex);
+	//AssetPath = FString::Printf(TEXT("/Game/CardResuorce/Joker/Joker%s.Joker%s"), *ItemIndexStr, *ItemIndexStr);
+	//Test_Data.CardSprite = TSoftObjectPtr<UPaperSprite>(FSoftObjectPath(*AssetPath));
+	//if (!Test_Data.CardSprite.IsValid())
+	//{
+	//	Test_Data.CardSprite.LoadSynchronous();
+	//}
+
+	//Test_Data.JokerType = ItemType;
+	//Test_Data.Price = 5;
+	//UpdateAddJoker(Test_Data, true);
 
 //#endif
 }
@@ -220,6 +251,21 @@ void UJokerCardComponent::UpdateSwapJokerData(UJokerCard_Info* Source, UJokerCar
 	VM->SetJokerDatas(CurJokerCards);
 }
 
+void UJokerCardComponent::ResetJoker(EPlayerStateType _Invalue)
+{
+	if (_Invalue != EPlayerStateType::RESET_GAME)
+		return;
+	
+	auto PS = GetPlayerState();
+
+	auto CurJokerCards = PS->GetCurrentJokerCards();
+	CurJokerCards.Empty();
+
+	auto VM = GetVMJockerSlot();
+
+	VM->SetJokerDatas(CurJokerCards);
+}
+
 void UJokerCardComponent::LastCalculatorJokerSkill(OUT int32& CurChip, OUT float& CurDriange)
 {
 	auto PS = GetPlayerState();
@@ -324,16 +370,19 @@ void UJokerCardComponent::UpdateAddJoker(FJokerStat& Data, bool IsAdd)
 	auto VM_Joker = GetVMJockerSlot();
 	auto PS = GetPlayerState();
 	
+	int32 CurPrice = Data.Price;
+	int32 GetGold = PS->GetGold();
+
 	if (IsAdd)
 	{
 		PS->AddCurrentJokerCard(Data);
+
+		PS->SetGold(GetGold - CurPrice);
 	}
 	else
 	{
 		PS->DeleteCurrentJokerCard(Data);
 
-		int32 CurPrice = Data.Price;
-		int32 GetGold = PS->GetGold();
 		PS->SetGold(GetGold + CurPrice);
 	}
 

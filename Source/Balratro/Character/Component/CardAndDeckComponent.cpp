@@ -125,6 +125,11 @@ void UCardAndDeckComponent::FinishHandPlay()
 		auto VM_MainWidget = GetVMMainWidget();
 		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("CardDeckView", false));
 
+		if (PS->GetPlayerState() == EPlayerStateType::BOSS_BLIND)
+		{
+			PS->EntiBossClearFlag();
+		}
+
 		PS->SetPlayerState(EPlayerStateType::REWARD);
 		GetWorld()->GetTimerManager().ClearTimer(ItemSkipTimerHandle);	// 게임 끝나면 초기화 하는게 맞는듯? (마땅한 자리가 없음)
 	}

@@ -114,7 +114,9 @@ void UPlayerInfoComponent::UpdateEntiCount()
 	auto VM_PI = GetVMPlayerInfo();
 	auto PS = GetPlayerState();
 
-	VM_PI->SetEntiCnt(PS->GetEntiCount());
+	int32 Temp = PS->GetEntiCount();
+
+	VM_PI->SetEntiCnt(PS->GetEntiCount() + 1);
 }
 
 void UPlayerInfoComponent::UpdateMaxHandCount(int16 _invalue)

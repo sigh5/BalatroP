@@ -31,6 +31,8 @@ private:
 
 	void	SetBlindSkipReward(EBlindSkip_Tag CurTagType);
 
+	void	EntiBossClear();
+
 private: /* Skill */
 	void	HOOK_Skill();
 	void	OX_Skill();

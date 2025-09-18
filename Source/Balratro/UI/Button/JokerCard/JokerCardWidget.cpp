@@ -18,7 +18,7 @@
 
 #include "UI/MVVM/ViewModel/VM_ItemSelect.h"
 #include "UI/MVVM/ViewModel/VM_JockerSlot.h"
-
+#include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 
 #include "PaperSprite.h"
 #include "Styling/SlateBrush.h"
@@ -219,7 +219,19 @@ void UJokerCardWidget::OnSellButtonClicked()
 {
 	const auto VMInst = TryGetViewModel<UVM_JockerSlot>(); check(VMInst);
 
-	UE_LOG(LogTemp, Warning, TEXT("UpdateSwapJokerData"));
+	if (IsStore)
+	{
+		auto VMPlayerInfo = TryGetViewModel<UVM_PlayerInfo>("VM_PlayerInfo", UVM_PlayerInfo::StaticClass());
+		check(VMPlayerInfo);
+
+		if (VMPlayerInfo->GetGold() - JokerData->Info.Price < 0)
+		{
+			// Ã¢¶ç¿ì±â
+
+			return;
+		}
+	}
+
 
 	VMInst->SetJokerState(JokerData->Info,IsStore);
 
@@ -323,7 +335,9 @@ void UJokerCardWidget::ChangeJokerImage()
 
 	FString Pricestr = FString::Printf(TEXT("$%d"), JokerData->Info.Price);
 	PriceText->SetText(FText::FromString(Pricestr));
-	//BuyPriceText->
+	
+	FString str = FString::Format(TEXT("${0}"), { JokerData->Info.Price });
+	BuyPriceText->SetText(FText::FromString(str));
 }
 
 void UJokerCardWidget::CreateJokerImage()

@@ -33,7 +33,7 @@ void UBlindComponent::BeginPlay()
 	auto PS = GetPlayerState();
 	PS->OnBossSkill_PreEvent.AddUObject(this,&UBlindComponent::UseBlindBossSkill);
 	PS->OnSelectNextScene.AddUObject(this, &UBlindComponent::NewtSceneEvent);
-
+	PS->EntiBossClear.AddUObject(this, &UBlindComponent::EntiBossClear);
 
 
 	ResetBlindSelectData();
@@ -70,7 +70,7 @@ void UBlindComponent::InitBlindSelectView()
 	int32 SmallSkipIndex = ((EntiCnt) * 2);
 	int32 BigSkipIndex = SmallSkipIndex + 1;
 
-	VM->SetSmallBlind_SkipTag(BlindSkipTags[SmallSkipIndex]); // ³ªÁß¿¡ ±×³É 1~8±îÁö ±ò±â·Î ÇÏ±â
+	VM->SetSmallBlind_SkipTag(BlindSkipTags[SmallSkipIndex]); // ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½×³ï¿½ 1~8ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï±ï¿½
 	VM->SetBigBlind_SkipTag(BlindSkipTags[BigSkipIndex]);
 }
 
@@ -124,7 +124,7 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 	}
 	else if (InValue == EPlayerStateType::SMALL_BLIND_SKIP || InValue == EPlayerStateType::BIG_BLIND_SKIP)
 	{
-		// ½ºÅµ º¸»ó ¼ö·ÉÇÏ±â
+		// ï¿½ï¿½Åµ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
 		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", false));
 		
 		int32 CurBlindSkipTagIndex = (PS->GetEntiCount()) *2 ;
@@ -203,19 +203,11 @@ void UBlindComponent::ResetBlindSelectData()
 	}
 	
 	PS->SetCurBossType({ -1,EBossType::NONE });
-
+	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);  // ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½×½ï¿½Æ®ï¿½ï¿½
+	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);
 	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK); 
-	BlindSkipTags.Add(EBlindSkip_Tag::ORB_PACK);
-
-	BlindSkipTags.Add(EBlindSkip_Tag::SECREAT_JOKER);  
-	BlindSkipTags.Add(EBlindSkip_Tag::REAR_JOKER);
-
-	BlindSkipTags.Add(EBlindSkip_Tag::NEGERTIVE_JOKER); 
-	BlindSkipTags.Add(EBlindSkip_Tag::FOIL_JOKER);
-	
-	BlindSkipTags.Add(EBlindSkip_Tag::BOSTER_PACK_FREE); 
-	BlindSkipTags.Add(EBlindSkip_Tag::ADD_TEN_JKER);
-
+	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);
+	// ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½×½ï¿½Æ®ï¿½ï¿½
 	InitBlindSelectView();
 }
 
@@ -252,6 +244,14 @@ void UBlindComponent::SetBlindSkipReward(EBlindSkip_Tag CurTagType)
 	PS->SetCurBlindSkipReward(CurTagType);
 }
 
+void UBlindComponent::EntiBossClear()
+{
+	auto VM = GetVMBlindSelect();
+	VM->GetEntiBossClearFlag();
+
+	InitBlindSelectView();
+}
+
 void UBlindComponent::HOOK_Skill()
 {
 	auto PS = GetPlayerState();
@@ -269,7 +269,7 @@ void UBlindComponent::HOOK_Skill()
 		RestHands.RemoveAt(0, 2);
 	}
 	
-	PS->SetRestCardInHands(RestHands); // ³²¾ÆÀÖ´Â 
+	PS->SetRestCardInHands(RestHands); // ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ 
 }
 
 void UBlindComponent::OX_Skill()
