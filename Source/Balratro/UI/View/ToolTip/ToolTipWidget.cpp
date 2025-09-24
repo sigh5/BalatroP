@@ -52,7 +52,6 @@ void UToolTipWidget::SetHandRanking_ToolTipWidgetPos(const FHRButton_Info& _Info
 		
 		SetVisibility(ESlateVisibility::Visible);
 	}
-
 }
 
 void UToolTipWidget::SetImageRender(class UImage* CurImage, class UPaperSprite* Sprite)

@@ -217,6 +217,7 @@ void AMyPlayerState::ResetInfos()
 	SetCurrentRoundBlindGrade(0);
 	SetCurHandCard_Type(EPokerHand::NONE);
 
+	CurBoucherInfo.Empty();
 	MyHandRankingInfo.Empty();
 	CurrentAllHands.Empty();
 	CurSelcetPackType = nullptr;

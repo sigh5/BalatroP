@@ -72,6 +72,8 @@ void UHandRankingComponent::ResetComponentData(EPlayerStateType _InValue)
 		auto& Sigleton = UBBGameSingleton::Get();
 		auto PS = GetPlayerState();
 		PS->ResetMyHandRankingInfo(Sigleton.GetHandRankingStatTable());
+
+		ShowBoucherCard();
 	}
 }
 
