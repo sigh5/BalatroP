@@ -142,6 +142,8 @@ void AMyPlayerState::AddBoucherType(FBoucherInfo& _InValue)
 {
 	CurBoucherInfo.Add(_InValue);
 	
+	OnBoucherCollection.Broadcast(_InValue);
+
 	EBoucherType CurType = _InValue.Type;
 
 	switch (CurType)

@@ -12,6 +12,7 @@
 
 #include "GameData/BlindStat.h"
 
+
 UBlindSelectView::UBlindSelectView()
 {
 	ViewModelClass = UVM_BlindSelect::StaticClass();
@@ -100,7 +101,9 @@ void UBlindSelectView::OnSmallBlindButtonClicked()
 	BigBlindButton->SetVisibility(ESlateVisibility::Visible);
 	BiglSkipButton->SetVisibility(ESlateVisibility::Visible);
 	
-	VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
+
+	VMInst->SetBlindType(EPlayerStateType::BOSS_BLIND);
+	//VMInst->SetBlindType(EPlayerStateType::SMALL_BLIND);
 }
 
 void UBlindSelectView::OnBigBlindButtonClicked()
@@ -179,6 +182,9 @@ void UBlindSelectView::OnBigBlindSkip_ButtonClicked()
 
 	VMInst->SetBlindType(EPlayerStateType::BIG_BLIND_SKIP);
 }
+
+
+
 
 void UBlindSelectView::VM_FieldChanged_SmallBlindGrade(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {

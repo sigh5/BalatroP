@@ -14,6 +14,7 @@
 
 #include "UI/MVVM/ViewModel/VM_MainMenu.h"
 #include "UI/WidgetPool/BBUserWidgetPool.h"
+#include "UI/MVVM/ViewModel/VM_Collection.h"
 
 #include "UI/View/BlindSelect/BlindSelectView.h"
 #include "UI/View/PlayerInfoView/PlayerInfoWidget.h"
@@ -281,5 +282,7 @@ void UMainMenuWidget::OnMain_ExitButtonClicked()
 
 void UMainMenuWidget::OnMain_CollectionClicked()
 {
+	auto VM_Collection = TryGetViewModel<UVM_Collection>("VM_Collection", UVM_Collection::StaticClass()); check(VM_Collection);
 
+	VM_Collection->ShowCollection();
 }

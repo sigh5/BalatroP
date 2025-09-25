@@ -10,6 +10,7 @@
 #include "Character/Component/ItemSelectComponent.h"
 #include "Character/Component/GameOverComponent.h"
 #include "Character/Component/MainLogoComponent.h"
+#include "Character/Component/CollectionComponent.h"
 
 // Sets default values
 AMyPawn::AMyPawn()
@@ -25,4 +26,5 @@ AMyPawn::AMyPawn()
 	const auto ItemSelectComponent = CreateDefaultSubobject<UItemSelectComponent>("ItemSelectComponent");
 	const auto GameOverComponent = CreateDefaultSubobject<UGameOverComponent>("GameOverComponent");
 	const auto MainLogoComponent = CreateDefaultSubobject<UMainLogoComponent>("MainLogoComponent");
+	const auto CollectionComponent = CreateDefaultSubobject<UCollectionComponent>("CollectionComponent");
 }

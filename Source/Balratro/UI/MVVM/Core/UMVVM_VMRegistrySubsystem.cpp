@@ -15,6 +15,7 @@
 #include "UI/MVVM/ViewModel/VM_Reward.h"
 #include "UI/MVVM/ViewModel/VM_ItemSelect.h"
 #include "UI/MVVM/ViewModel/VM_GameOver.h"
+#include "UI/MVVM/ViewModel/VM_Collection.h"
 
 void UUMVVM_VMRegistrySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -39,6 +40,7 @@ void UUMVVM_VMRegistrySubsystem::RegisterViewModels()
 	AddViewModel(MVVMCollection, UVM_Reward::StaticClass(), FName("VM_Reward"));
 	AddViewModel(MVVMCollection, UVM_ItemSelect::StaticClass(), FName("VM_ItemSelect"));
 	AddViewModel(MVVMCollection, UVM_GameOver::StaticClass(), FName("VM_GameOver"));
+	AddViewModel(MVVMCollection, UVM_Collection::StaticClass(), FName("VM_Collection"));
 }
 
 void UUMVVM_VMRegistrySubsystem::AddViewModel(UMVVMViewModelCollectionObject* VMCollection, const TSubclassOf<UMVVMViewModelBase>& ViewModelClass,

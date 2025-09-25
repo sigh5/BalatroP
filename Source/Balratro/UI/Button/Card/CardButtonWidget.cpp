@@ -367,12 +367,17 @@ void UCardButtonWidget::SetGoadEvent()
 {
 	auto VM = TryGetViewModel<UVM_CardDeck>(); check(VM);
 
+	if (VM->GetItemSelectFlag())
+	{
+		SetRenderOpacity(1.0f);
+		return;
+	}
+
 	int32 Useless_Emblem = VM->GetUseless_EmblemType();
 
 	if (VM->GetCurrentBossType() == EBossType::GOAD &&
 		(Useless_Emblem == CardInfoData->Info.SuitGrade || CardInfoData->Info.EnforceType == ETaroSkillType::WILD))
 	{
-		UE_LOG(LogTemp, Warning, TEXT(" UCardButtonWidget::SetGoadEvent"));
 		SetRenderOpacity(0.3f);
 	}
 	else

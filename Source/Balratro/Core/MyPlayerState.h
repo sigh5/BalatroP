@@ -28,6 +28,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseChuck, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerUseHandPlay, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectNextScene, EPlayerStateType);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnBlindSkipRewardSetting, EBlindSkip_Tag);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnBoucherCollection, FBoucherInfo);
+
 
 DECLARE_MULTICAST_DELEGATE(FOnDeckCardNum);
 DECLARE_MULTICAST_DELEGATE(FOnCurrentPlayerHandRanking);
@@ -40,6 +42,7 @@ DECLARE_MULTICAST_DELEGATE(FOnShowUIChip);
 DECLARE_MULTICAST_DELEGATE(FOnShowUIDrainage);
 DECLARE_MULTICAST_DELEGATE(OnBossSkillEvent);
 DECLARE_MULTICAST_DELEGATE(FEntiBossClear);
+
 
 /**
  * 
@@ -64,9 +67,10 @@ public:
 	FOnDeckCardNum				OnDeckCardNum;
 	FOnShowUIChip				OnShowUIChip;
 	FOnShowUIDrainage			OnShowUIDrainage;
-	OnBossSkillEvent		OnBossSkill_PreEvent;
+	OnBossSkillEvent			OnBossSkill_PreEvent;
 	FOnBlindSkipRewardSetting	OnBlindSkipRewardSetting;
 	FEntiBossClear				EntiBossClear;
+	FOnBoucherCollection		OnBoucherCollection;
 public:
 	FString BossImagePath();
 	FString BossTypeToString();
@@ -132,7 +136,7 @@ public:
 
 	FORCEINLINE const TArray<class UHandInCard_Info*>  GetRestCardInHands() const { return CurRestCardInHands; }
 	FORCEINLINE void  SetRestCardInHands(TArray<class UHandInCard_Info*> _InValue) {CurRestCardInHands = _InValue;}
-	void		UseBossSkill() { OnBossSkill_PreEvent.Broadcast(); }
+	void			  UseBossSkill() { OnBossSkill_PreEvent.Broadcast(); }
 
 
 	FORCEINLINE const EHandInCardSortType& GetCurSortType() const { return CurSortType; }
@@ -222,9 +226,7 @@ public:
 	void FindRankUpCard(OUT FDeckCardStat& CardStat);
 	void	 DeleteCards(TArray<class UHandInCard_Info*>& CardInfos);
 
-	void	EntiBossClearFlag() {
-		SetEntiCount(EntiCount + 1);
-		EntiBossClear.Broadcast(); }
+	void	EntiBossClearFlag() {SetEntiCount(EntiCount + 1); EntiBossClear.Broadcast(); }
 
 
 	FORCEINLINE const bool GetIsHavePriceDownBoucher() const { return IsHavePriceDownBoucher; }
@@ -309,6 +311,6 @@ private:
 	TArray<FBoucherInfo> CurBoucherInfo;
 
 	UPROPERTY()
-	TArray<class UJokerCard_Info*> CurShakingEventJoker;  // 내가 가지고 있는 조커
+	TArray<class UJokerCard_Info*> CurShakingEventJoker;  // PreEvent 조커들
 
 };

@@ -124,7 +124,6 @@ void UBlindComponent::BlindSelectEvent(EPlayerStateType InValue)
 	}
 	else if (InValue == EPlayerStateType::SMALL_BLIND_SKIP || InValue == EPlayerStateType::BIG_BLIND_SKIP)
 	{
-		// ��ŵ ���� �����ϱ�
 		VM_MainWidget->SetCurWidgetName(FWidgetFlag_Info("SelectBlindView", false));
 		
 		int32 CurBlindSkipTagIndex = (PS->GetEntiCount()) *2 ;
@@ -221,6 +220,9 @@ void UBlindComponent::SetRandomBossType()
 	MyBossType = { EntiCount ,static_cast<EBossType>(RandomArray[EntiCount])};
 	
 	RandomArray.RemoveAt(EntiCount);
+
+	// TEST
+	MyBossType = { EntiCount , EBossType::GOAD };
 
 	PS->SetCurBossType(MyBossType);
 }
