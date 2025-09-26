@@ -113,6 +113,9 @@ private:
     TSubclassOf<class UGameOverView> GameOverView;
 
     UPROPERTY()
+    TSubclassOf<class UCollectionView> CollectionView;
+
+    UPROPERTY()
     TObjectPtr<class UBBUserWidgetPool> WidgetPool;
 
 

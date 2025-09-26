@@ -35,7 +35,10 @@ void UCollectionComponent::InitCollectionData()
 
 	for (auto Joker : JokerData)
 	{
-		//JokerCollection.Add(*Joker, false);
+		UJokerCard_Info* NewJoker = NewObject<UJokerCard_Info>();
+		NewJoker->Info = *Joker;
+
+		JokerCollection.Add(NewJoker, false);
 	}
 
 }
@@ -45,9 +48,9 @@ void UCollectionComponent::AddJokerCollection(FJokerStat& Data, bool IsAdd)
 	if (IsAdd == false)
 		return;
 
-	/*for (auto Joker: JokerCollection)
+	for (auto Joker : JokerCollection)
 	{
-		if (Joker.Key.JokerType == Data.JokerType )
+		if (Joker.Key->Info.JokerType == Data.JokerType)
 		{
 			if (Joker.Value == false)
 			{
@@ -57,7 +60,7 @@ void UCollectionComponent::AddJokerCollection(FJokerStat& Data, bool IsAdd)
 			else
 				return;
 		}
-	}*/
+	} 
 }
 
 void UCollectionComponent::AddBoucherCollection(FBoucherInfo Data)
@@ -83,10 +86,10 @@ void UCollectionComponent::ActiveCollectionView()
 	auto VM_MainMenu = GetVMMainWidget();
 
 	VM_Collection->SetBoucherCollection(BoucherCollection);
-	//VM_Collection->SetJokerCollection(JokerCollection);
+	VM_Collection->SetJokerCollection(JokerCollection);
 
 	// VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("HandRankingView", false));
-	//VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("", true));
+	//VM_MainMenu->SetCurWidgetName(FWidgetFlag_Info("CollectionView", true));
 }
 
 UVM_Collection* UCollectionComponent::GetVMCollection()

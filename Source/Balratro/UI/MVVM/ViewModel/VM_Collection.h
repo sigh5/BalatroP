@@ -30,12 +30,12 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(BoucherCollection);
 	}
 
-	 /*TMap<class UJokerCard_Info*, bool> GetJokerCollection()   { return JokerCollection; }
-	void SetJokerCollection(TMap<class UJokerCard_Info*, bool> InValue)
+	const TMap<UJokerCard_Info*, bool>& GetJokerCollection() const   { return JokerCollection; }
+	void SetJokerCollection(TMap<UJokerCard_Info*, bool> InValue)
 	{
 		JokerCollection = InValue;
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(JokerCollection);
-	}*/
+	}
 
 
 
@@ -43,10 +43,8 @@ public:
 	void ShowCollection() { OnShowCollection.Broadcast(); }
 
 private:
-	
-
-	//UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
-	//TMap<UJokerCard_Info*, bool> JokerCollection;
+	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
+	TMap<UJokerCard_Info*,bool> JokerCollection;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	TMap<EBoucherType, bool>		   BoucherCollection;

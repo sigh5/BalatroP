@@ -203,6 +203,19 @@ void UMainMenuWidget::NativeOnInitialized()
 		}
 	}
 
+	if (CollectionView == nullptr)
+	{
+		/*CollectionView = LoadClass<UGameOverView>(nullptr, TEXT(""));
+		CurViewName = "CollectionView";
+		UBBUserWidgetBase* BindWidget = WidgetPool->AddWidget(this, CurViewName, TSubclassOf<UBBUserWidgetBase>(CollectionView));
+		if (BindWidget)
+		{
+			CanvasSlot->AddChildToCanvas(BindWidget);
+			BindWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}*/
+	}
+
+
 	PlayButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_PlayButtonClicked);
 	OptionButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_OptionButtonClicked);
 	ExitButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnMain_ExitButtonClicked);
