@@ -34,8 +34,6 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UWrapBox> BoucherWrapBox;
 
-private:
-
 	UPROPERTY()
 	TArray<class UBoucherCardWidget*> BoucherCardWidgets;
 

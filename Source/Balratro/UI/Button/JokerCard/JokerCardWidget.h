@@ -28,8 +28,6 @@ private:
 	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	virtual void	NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
-
-private:
 	
 public:
 	void	SetInfo(UJokerCard_Info* _inValue);
@@ -50,13 +48,10 @@ public:
 private:
 	UFUNCTION()
 	void					OnJokerButtonClicked();
-
 	UFUNCTION()
 	void					OnSellButtonClicked();
-
 	UFUNCTION()
 	void					OnButtonHover();
-
 
 	void ForceSwapData(UJokerCard_Info* InfoData);
 
@@ -64,7 +59,6 @@ private:
 	void					SetInit();
 	void					ChangeJokerImage();
 	void					CreateJokerImage();
-
 	void					ForceSwapPos();
 
 private:

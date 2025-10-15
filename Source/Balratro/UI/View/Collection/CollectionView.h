@@ -25,14 +25,11 @@ private:
 	void VM_FieldChanged_JokerCollection(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 
 private:
-
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> BackButton;
 
-
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UWrapBox> JokerWrapBox;
-
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> Joker;
@@ -45,5 +42,4 @@ private:
 
 	UPROPERTY()
 	TArray<class UJokerCardWidget*> JokerCards;
-
 };

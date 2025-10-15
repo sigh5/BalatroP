@@ -113,7 +113,6 @@ public:
 	FORCEINLINE int32 GetMaxScore() { return MaxScore; }
 	FORCEINLINE void  SetMaxScore(int32 InValue) { MaxScore = FMath::Max(MaxScore, InValue); AllPlayCount++; }
 
-
 	FORCEINLINE TArray<class UHandRanking_Info*>& GetHandRankingInfoModify() { return MyHandRankingInfo; }
 	FORCEINLINE const TArray<class UHandRanking_Info*>& GetHandRankingInfo() const {return MyHandRankingInfo;}
 	void ResetMyHandRankingInfo(const TMap<const FName, FHandRankingStat*>& InHandRanking);
@@ -121,23 +120,18 @@ public:
 	FORCEINLINE int32 GetRerollCost() { return RerollCost; }
 	FORCEINLINE void  SetRerollCost(int32 InValue) { RerollCost = InValue;   }
 
-
 	FORCEINLINE TArray<class UHandInCard_Info*>& GetDeckStatTableModify()  { return Deck_Stat; }
 	FORCEINLINE const TArray<class UHandInCard_Info*>& GetDeckStatTable() const { return Deck_Stat; }
 	void ResetDeckStatTable(const TArray<FDeckCardStat*>& InHandRanking);
 	
 	FORCEINLINE const TArray<class UHandInCard_Info*>& GetCurrentAllHands() const {return CurrentAllHands;}
 	FORCEINLINE void SetCurrentAllHands(TArray<class UHandInCard_Info*>& InValue) { CurrentAllHands = InValue;}
-
-	FORCEINLINE void AddHandInCard(class UHandInCard_Info* Info)
-	{
-		CurrentAllHands.Add(Info);
-	}
+	FORCEINLINE void AddHandInCard(class UHandInCard_Info* Info) { CurrentAllHands.Add(Info); }
 
 	FORCEINLINE const TArray<class UHandInCard_Info*>  GetRestCardInHands() const { return CurRestCardInHands; }
 	FORCEINLINE void  SetRestCardInHands(TArray<class UHandInCard_Info*> _InValue) {CurRestCardInHands = _InValue;}
+	
 	void			  UseBossSkill() { OnBossSkill_PreEvent.Broadcast(); }
-
 
 	FORCEINLINE const EHandInCardSortType& GetCurSortType() const { return CurSortType; }
 	FORCEINLINE void  SetCurSortType(EHandInCardSortType& InValue) { CurSortType = InValue; }
@@ -166,7 +160,6 @@ public:
 
 	void DeleteCurrentJokerCard(const FJokerStat& Info);
 
-
 	FORCEINLINE int32 GetCurrentShowChip() { return CurrentShowChip; }
 	FORCEINLINE void  SetCurrentShowChip(int32 InValue) { CurrentShowChip = InValue;  OnShowUIChip.Broadcast(); }
 
@@ -187,10 +180,8 @@ public:
 	FORCEINLINE int32 GetCurSelectTaroNum() { return CurSelectTaroNum; }
 	FORCEINLINE void  SetCurSelectTaroNum(int32 InValue) { CurSelectTaroNum = InValue; }
 
-
 	FORCEINLINE int32 GetHaveBoosterPackNum() { return HaveBoosterPackNum; }
 	FORCEINLINE void  SetHaveBoosterPackNum(int32 InValue) { HaveBoosterPackNum = InValue;  FMath::Max(MaxHaveBoosterPackNum, HaveBoosterPackNum);}
-
 	FORCEINLINE int32 GetMaxHaveBoosterPackNum() { return MaxHaveBoosterPackNum; }
 
 	FORCEINLINE int32 GetHaveUpStoreNum() { return HaveUpStoreNum; }
@@ -219,62 +210,47 @@ public:
 	FORCEINLINE void SetDrawCardNum(int32 _InValue) { DrawCardNum = _InValue;}
 	FORCEINLINE const int32 GetDrawCardNum() const { return DrawCardNum; }
 
-	class UHandRanking_Info* MostUseHandRankingName();
-
-	void		ResetInfos();
-
-	void FindRankUpCard(OUT FDeckCardStat& CardStat);
-	void	 DeleteCards(TArray<class UHandInCard_Info*>& CardInfos);
-
-	void	EntiBossClearFlag() {SetEntiCount(EntiCount + 1); EntiBossClear.Broadcast(); }
-
-
 	FORCEINLINE const bool GetIsHavePriceDownBoucher() const { return IsHavePriceDownBoucher; }
 
+	class UHandRanking_Info* MostUseHandRankingName();
+
+	void	ResetInfos();
+	void	FindRankUpCard(OUT FDeckCardStat& CardStat);
+	void	DeleteCards(TArray<class UHandInCard_Info*>& CardInfos);
+	void	EntiBossClearFlag() {SetEntiCount(EntiCount + 1); EntiBossClear.Broadcast(); }
 
 private:
-	int32 DrawCardNum = 8;
-
-	int32 RoundCount;
-	
-	int32 Gold;
-	int32 MaxGold;
-	
-	int32 EntiCount;
-	
-	int32 MaxHandCount;
-	int32 UseHandCount;
-
-	int32 MaxChuckCount;
-	int32 UseChuckCount;
-
-	int32 CardInHand = 8; // 초기 손에든 패 8장
-	int32 CardInDeckNum; // 초기 Deck 52장
-
-	int32 CurrentScore;
-	int32 MaxScore;
-
-	int32 AllPlayCount = 0;
-	int32 AllChuckCount = 0;
-
+	int32	DrawCardNum = 8;
+	int32	RoundCount;
+	int32	Gold;
+	int32	MaxGold;
+	int32	EntiCount;
+	int32	MaxHandCount;
+	int32	UseHandCount;
+	int32	MaxChuckCount;
+	int32	UseChuckCount;
+	int32	CardInHand = 8; // 초기 손에든 패 8장
+	int32	CardInDeckNum; // 초기 Deck 52장
+	int32	CurrentScore;
+	int32	MaxScore;
+	int32	AllPlayCount = 0;
+	int32	AllChuckCount = 0;
 	int32	CurrentShowChip;	 // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 칩
 	int32	CurrentShowDrainage; // 초기값 : 핸드랭킹에 있는 레벨업에 따른 기본 배수
-
 	int32	RerollCost = 3;
 	int32	HaveBoosterPackNum = 2;
 	int32	MaxHaveBoosterPackNum = 2;
-
 	int32	HaveUpStoreNum = 2;
 	int32	CurrentRoundBlindGrade = 0;
 	int32	CurSelectTaroNum = 0;
-
 	uint8	HandPlayFlag : 1;
 	uint8   IsHavePriceDownBoucher : 1;
+	int32	BlindSkipCount = 0;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	EPlayerStateType		CurPlayerState;
 	EHandInCardSortType		CurSortType;
 	EPokerHand				CurHandCard_Type;
-
 	TPair<int32, EBossType> CurrentBostType;
 
 	UPROPERTY()
@@ -303,9 +279,6 @@ private:
 
 	UPROPERTY()
 	TArray<class UTaroStat_Info*>	CurTaroStatTable;   // 현재 내 타로 카드 리스트
-
-	UPROPERTY()
-	int32	BlindSkipCount = 0;
 
 	UPROPERTY()
 	TArray<FBoucherInfo> CurBoucherInfo;

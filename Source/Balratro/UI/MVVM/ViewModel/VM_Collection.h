@@ -37,8 +37,6 @@ public:
 		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(JokerCollection);
 	}
 
-
-
 	/////////////////////
 	void ShowCollection() { OnShowCollection.Broadcast(); }
 

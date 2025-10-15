@@ -202,11 +202,11 @@ void UBlindComponent::ResetBlindSelectData()
 	}
 	
 	PS->SetCurBossType({ -1,EBossType::NONE });
-	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);  // �ϴ� �� �׽�Ʈ��
+	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK); 
 	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);
 	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK); 
 	BlindSkipTags.Add(EBlindSkip_Tag::ARCANA_PACK);
-	// �ϴ� �� �׽�Ʈ��
+
 	InitBlindSelectView();
 }
 
@@ -222,7 +222,7 @@ void UBlindComponent::SetRandomBossType()
 	RandomArray.RemoveAt(EntiCount);
 
 	// TEST
-	MyBossType = { EntiCount , EBossType::GOAD };
+	// MyBossType = { EntiCount , EBossType::GOAD };
 
 	PS->SetCurBossType(MyBossType);
 }
@@ -271,7 +271,7 @@ void UBlindComponent::HOOK_Skill()
 		RestHands.RemoveAt(0, 2);
 	}
 	
-	PS->SetRestCardInHands(RestHands); // �����ִ� 
+	PS->SetRestCardInHands(RestHands);
 }
 
 void UBlindComponent::OX_Skill()

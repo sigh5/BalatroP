@@ -15,8 +15,6 @@
 #include "UI/MVVM/ViewModel/VM_PlayerInfo.h"
 #include "GameData/Utills.h"
 
-
-// ����׿�
 #include "PaperSprite.h"
 
 void UJokerCardComponent::BeginPlay()

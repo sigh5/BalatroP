@@ -25,16 +25,11 @@ protected:
 protected:
 	void VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CardUpExist(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
 	void VM_FieldChanged_CurPlayCardData(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
 	void VM_FieldChanged_ItemSelectFlag(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
 	void VM_FieldChanged_RestCardData(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
 	void VM_FieldChanged_CurBossUseSkill(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 	void VM_FieldChanged_CurBossText(UObject* Object, UE::FieldNotification::FFieldId FieldId);
-
 	void VM_FieldChanged_UselessBlindEmblem(UObject* Object, UE::FieldNotification::FFieldId FieldId);
 private:
 	UFUNCTION()
@@ -54,7 +49,7 @@ private:
 	void	SetRestCard_EffectOrder(class UCardButtonWidget* EventCard, class UHandInCard_Info* CardData); // 맨뒤 효과
 
 	// 순서 BaseChip >  Chip_Plus or Drainage > 10배수 or 1.5 or 50(foil) > Ghost (retriger)
-	void SetScoreTextPos(class UCardButtonWidget* CurEventCard, bool IsUp = false);
+	void	SetScoreTextPos(class UCardButtonWidget* CurEventCard, bool IsUp = false);
 
 	void	StartNextTimer();
 	void	PushTimerEvent(TFunction<void(class UCardButtonWidget*,int32)> InFunc, class UCardButtonWidget* CurEventCard,int32 InValue);
@@ -87,7 +82,6 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> ScoreResultText;
 
-	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UBorder> HandSortBorder;
 	
@@ -114,7 +108,6 @@ private:
 	FTimerHandle MyTimerHandle;
 
 	TQueue<FTimerDelegate> TimerFuncQueue;
-
 
 	FTimerHandle FinishScoreTimerHandle;
 };

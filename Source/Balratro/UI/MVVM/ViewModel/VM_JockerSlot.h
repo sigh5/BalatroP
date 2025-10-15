@@ -29,8 +29,6 @@ public:
 	{
 		return JokerDatas;
 	}
-	
-
 	void SetJokerDatas(const TArray<UJokerCard_Info*>& InValue)
 	{
 		JokerDatas = InValue;
@@ -63,30 +61,24 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////
 	void	SetJokerState(FJokerStat& Data,bool IsAdd) { OnSetJokerState.Broadcast(Data, IsAdd); }// JokerList에 내 조커 추가하기
-
 	void	All_EffectFinish() { OnEffectUIViewFinish.Broadcast(); }
 	
-
 	const   bool GetIsLastHandPlay() const { return IsLastHandPlay; }
 	void	SetIsLastHandPlay(bool _InValue) { IsLastHandPlay = _InValue; }
 
 	const   EPokerHand GetCurrentPokerHand() const { return CurrentPokerHand; }
 	void	SetCurrentPokerHand(EPokerHand _InValue) { CurrentPokerHand = _InValue; }
 
-
 	const   float GetAddtionalValue() const { return AddtionalValue; }
 	void	SetAddtionalValue(float _InValue) { AddtionalValue = _InValue; }
 
-
 	const EJokerType GetCopyJokerSetting() const { return CopyJokerSetting; }
-	void SetCopyJokerSetting(EJokerType _InValue) {
-		CopyJokerSetting = _InValue;}
+	void SetCopyJokerSetting(EJokerType _InValue) {CopyJokerSetting = _InValue;}
 
 	void SwapCardData(UJokerCard_Info* Source, UJokerCard_Info* SwapDest)
 	{
 		OnJokerSlotSwapData.Broadcast(Source, SwapDest);
 	}
-
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
@@ -101,7 +93,6 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	bool	JokerEventStopFlag = false;
 
-
 	UPROPERTY()
 	bool	IsLastHandPlay = false;
 
@@ -113,7 +104,6 @@ private:
 
 	UPROPERTY()
 	EJokerType	CopyJokerSetting = EJokerType::NONE;
-
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter, meta = (AllowPrivateAccess))
 	EJokerType	RoundFinishEventJoker = EJokerType::NONE;

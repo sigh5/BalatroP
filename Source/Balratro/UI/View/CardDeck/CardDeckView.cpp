@@ -98,8 +98,6 @@ UCardButtonWidget* UCardDeckView::ReuseCardButtonWidget(int32 CurAllCardNum, int
 	return NewButton;
 }
 
-
-
 void UCardDeckView::VM_FieldChanged_HandInCard(UObject* Object, UE::FieldNotification::FFieldId FieldId)
 {
 	GetWorld()->GetTimerManager().ClearTimer(FinishScoreTimerHandle);
